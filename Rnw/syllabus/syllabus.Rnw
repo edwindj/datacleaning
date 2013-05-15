@@ -7,10 +7,25 @@
 %\usepackage[default]{comfortaa}
 \usepackage[T1]{fontenc}
 \usepackage{palatino}
+\usepackage{inconsolata}
 
+%%% Code commands
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\R}{\code{R}}
-\usepackage{inconsolata}
+
+%%% 
+\newenvironment{tip}{
+\begin{center}
+\begin{tabular}{p{0.9\textwidth}}
+  \hline \\
+  \textbf{Tip.} \em 
+}{
+\\
+\hline
+\end{tabular}
+\end{center}
+}
+
 
 \DeclareMathOperator*{\argmin}{\arg\min}
 
@@ -61,8 +76,15 @@ This article is a stub. It may or may not ever be finished.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
+\newpage
 
 \subsection{An overview of statistical analyses}
+Besides data collection, a typical statistical analyses may be seen as
+the result of a number of data processing steps where each step increases the
+``value'' of the data. Figure \ref{fig:steps} shows an overview of a typical
+data analyses project. Here, each rectangle represents a certain state
+of the data and the arrows represent the activities needed to get from
+one state to the other.
 
 \begin{wrapfigure}{l}{0.5\textwidth}
 \begin{center}
@@ -70,7 +92,7 @@ This article is a stub. It may or may not ever be finished.
     \node[statpoint] (raw) {Raw data};
     \node[statpoint, below of=raw] (input) {Technically correct data};
     \node[statpoint, below of=input] (micro) {Consistent data};
-    \node[statpoint, below of=micro] (stat) {Statistics};
+    \node[statpoint, below of=micro] (stat) {Statistical results};
     \node[statpoint, below of=stat] (output) {Formatted output};
     \draw[arr] (raw.south) to node[action]   {type checking, normalizing} (input.north);
     \draw[arr] (input.south) to node[action] {fix and impute} (micro.north);
@@ -86,10 +108,59 @@ This article is a stub. It may or may not ever be finished.
               (raw.west);
   \end{tikzpicture}
 \end{center}
-\caption{Steps involved in a typical statistical analyses.}
+\caption{Steps involved in a typical statistical analyses. With \textsl{data cleaning}
+we understand all the activities necessary to get data in an analyzable format.}
+\label{fig:steps}
 \end{wrapfigure}
+The first state (\textsf{Raw data}) is the data as it comes in. Often raw data
+files contain no or faulty headers, wrong data types (\textsl{e.g.} numbers
+stored as strings), wrong category labels, unknown or unexpected character
+encodings and so on. In short, reading such files into an \R{}
+\code{data.frame}  directly is either difficult or impossible without some sort
+of preprocessing.
 
+Once this preprocessing has taken place, data can be deemed \textsf{Technically
+correct}.  That is, in this state data can be read into an \R{}
+\code{data.frame}, with correct names, types and labels, without further
+trouble. However, that does not mean that the values are error-free. For
+example, an \emph{age} variable may be reported negative, an under-aged person
+may be registred to possess a driver's license, or  data may simply be missing.
+Such inconsistencies are obviously related to the subject matter that the data
+is used to describe, and they must be ironed out before valid statistical
+statements about such data can be produced.
+
+The \textsf{Consistent data} stage is the stage where data is ready for
+trouble-free statistical inference.  Ideally, this can be done without taking
+previous data cleaning steps into account. However, in many cases statistical
+methods like imputation of missing values will influence statical inference
+based on the consistent data.
+
+Once your \textsf{Statistical results} are produced you can store them for
+reuse and finally, results can be \textsf{Formatted} to include in statistical
+reports or publications.
+
+\begin{tip}
+We reccomend to store your data at the stages where they are
+raw, technically correct, consistent, aggregated and formatted. Each step
+may be performed by a separate (annotated) \code{R} script which can be stored as a log
+or re-run for reproducability.\\
+\end{tip}
+
+
+\subsection*{Exercises}
+
+\clearpage
 \section{From raw data to technically correct data}
+
+% Some ideas:
+%
+% - Character encoding issues
+% - regels overslaan, gebruiken van readLines
+% - Special values, and how are they stored (NA, NULL,...)
+% - Datatypen en conversie, yaml(?)
+% - labels van categoriale variabelen
+% - spelfouten in tekstvariabelen, normaliseren
+%
 
 
 \section{From technically correct data to clean data}
