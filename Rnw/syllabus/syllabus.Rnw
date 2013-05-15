@@ -1,0 +1,53 @@
+\documentclass[a4paper, 11pt, fleqn]{article}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{natbib}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+
+%\usepackage[default]{comfortaa}
+\usepackage[T1]{fontenc}
+\usepackage{palatino}
+
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\R}{\code{R}}
+\usepackage{inconsolata}
+
+\DeclareMathOperator*{\argmin}{\arg\min}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1ex}
+
+
+\title{An introduction to data cleaning with R}
+
+\author{Edwin de Jonge and Mark van der Loo}
+\date{\today}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+<<setup, include=FALSE, cache=FALSE>>=
+library(knitr)
+opts_chunk$set(size='small')
+@
+
+<<include=FALSE >>=
+library(rspa)
+library(deducorrect)
+library(editrules)
+@
+\maketitle
+
+\begin{abstract}
+This article is a stub. It may or may not ever be finished.
+\end{abstract}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+
+\end{document}
+
+
