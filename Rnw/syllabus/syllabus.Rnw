@@ -17,6 +17,20 @@
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{1ex}
 
+\usepackage{wrapfig}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,decorations.pathreplacing}
+  \tikzstyle{statpoint}=[
+            fill=blue!10,
+            draw, rectangle,
+            rounded corners,
+            text width=2.3cm,
+            font=\scriptsize\bf\sf,
+            node distance=2cm,
+            align=center]
+  \tikzstyle{arr}=[->,thick,>=stealth',color=black]
+  \tikzstyle{action}=[right, font=\scriptsize\sf]
 
 \title{An introduction to data cleaning with R}
 
@@ -46,6 +60,40 @@ This article is a stub. It may or may not ever be finished.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
+
+
+\subsection{An overview of statistical analyses}
+
+\begin{wrapfigure}{l}{0.5\textwidth}
+\begin{center}
+  \begin{tikzpicture}
+    \node[statpoint] (raw) {Raw data};
+    \node[statpoint, below of=raw] (input) {Technically correct data};
+    \node[statpoint, below of=input] (micro) {Consistent data};
+    \node[statpoint, below of=micro] (stat) {Statistics};
+    \node[statpoint, below of=stat] (output) {Formatted output};
+    \draw[arr] (raw.south) to node[action]   {type checking, normalizing} (input.north);
+    \draw[arr] (input.south) to node[action] {fix and impute} (micro.north);
+    \draw[arr] (micro.south) to node[action] {estimate, analyze} (stat.north);
+    \draw[arr] (stat.south) to node[action]  {tabulate, plot} (output.north);
+    \draw[decorate,
+      decoration={
+        raise=6pt,
+        brace,
+        amplitude=10pt},
+        thick](micro.west) -- 
+                node[sloped,above=0.5cm,font=\scriptsize\sf] {data cleaning}
+              (raw.west);
+  \end{tikzpicture}
+\end{center}
+\caption{Steps involved in a typical statistical analyses.}
+\end{wrapfigure}
+
+\section{From raw data to technically correct data}
+
+
+\section{From technically correct data to clean data}
+
 
 
 \end{document}
