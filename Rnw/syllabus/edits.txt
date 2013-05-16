@@ -1,0 +1,15 @@
+## @knitr rules
+# numerical rules
+x + y == z
+x >= 0
+y >= 0
+
+# categorical rules
+A %in% letters[1:3]
+B %in% letters[6:8]
+if ( A %in% c('b','c') ) B %in% c('f','h')
+
+# mixed rules
+if ( x > 0 ) y > 0
+if ( A %in% "a" ) 2*x > y
+

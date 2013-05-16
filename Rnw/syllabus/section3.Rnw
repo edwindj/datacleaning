@@ -24,9 +24,9 @@ numerical or mixed data sets which each record must obey. Restrictions can
 be defined by typing them in a file and reading them into \R{} with
 the \code{editfile} function.
 
-<<rules, cache=FALSE,echo=FALSE>>=
-read_chunk('myrules.txt')
+<<cache=FALSE,echo=FALSE>>=
+read_chunk('edits.txt')
 @
-<<test,eval=FALSE>>=
+<<rules,eval=FALSE>>=
 @
 
