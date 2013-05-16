@@ -1,0 +1,13 @@
+
+\section{From raw data to technically correct data}
+\label{sect:rawtoinput}
+% Some ideas:
+%
+% - Character encoding issues
+% - regels overslaan, gebruiken van readLines
+% - Special values, and how are they stored (NA, NULL,...)
+% - Datatypen en conversie, yaml(?)
+% - labels van categoriale variabelen
+% - spelfouten in tekstvariabelen, normaliseren
+%
+

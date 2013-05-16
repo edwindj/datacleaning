@@ -1,0 +1,92 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+
+\subsection{An overview of statistical analyses}
+Besides data collection, a typical statistical analyses may be seen as
+the result of a number of data processing steps where each step increases the
+``value'' of the data. Figure \ref{fig:steps} shows an overview of a typical
+data analyses project. Here, each rectangle represents a certain state
+of the data and the arrows represent the activities needed to get from
+one state to the other.
+
+\begin{wrapfigure}{l}{0.5\textwidth}
+\begin{center}
+  \begin{tikzpicture}
+    \node[statpoint] (raw) {Raw data};
+    \node[statpoint, below of=raw] (input) {Technically correct data};
+    \node[statpoint, below of=input] (micro) {Consistent data};
+    \node[statpoint, below of=micro] (stat) {Statistical results};
+    \node[statpoint, below of=stat] (output) {Formatted output};
+    \draw[arr] (raw.south) to node[action]   {type checking, normalizing} (input.north);
+    \draw[arr] (input.south) to node[action] {fix and impute} (micro.north);
+    \draw[arr] (micro.south) to node[action] {estimate, analyze} (stat.north);
+    \draw[arr] (stat.south) to node[action]  {tabulate, plot} (output.north);
+    \draw[decorate,
+      decoration={
+        raise=6pt,
+        brace,
+        amplitude=10pt},
+        thick](micro.west) -- 
+                node[sloped,above=0.5cm,font=\scriptsize\sf] {data cleaning}
+              (raw.west);
+  \end{tikzpicture}
+\end{center}
+\caption{Steps involved in a typical statistical analyses. With \textsl{data cleaning}
+we understand all the activities necessary to get data in an analyzable format.}
+\label{fig:steps}
+\end{wrapfigure}
+The first state (\textsf{Raw data}) is the data as it comes in. Often raw data
+files contain no or faulty headers, wrong data types (\textsl{e.g.} numbers
+stored as strings), wrong category labels, unknown or unexpected character
+encodings and so on. In short, reading such files into an \R{}
+\code{data.frame}  directly is either difficult or impossible without some sort
+of preprocessing.
+
+Once this preprocessing has taken place, data can be deemed \textsf{Technically
+correct}.  That is, in this state data can be read into an \R{}
+\code{data.frame}, with correct names, types and labels, without further
+trouble. However, that does not mean that the values are error-free. For
+example, an \emph{age} variable may be reported negative, an under-aged person
+may be registred to possess a driver's license, or  data may simply be missing.
+Such inconsistencies obviously depend on the subject matter that the data
+pertains to, and they should be ironed out before valid statistical inference
+from such data may be produced.
+
+The \textsf{Consistent data} stage is the stage where data is ready for
+trouble-free statistical inference.  Ideally, this can be done without taking
+previous data cleaning steps into account. However, in many cases statistical
+methods like imputation of missing values will influence statical inference
+based on the consistent data.
+
+Once your \textsf{Statistical results} are produced you can store them for
+reuse and finally, results can be \textsf{Formatted} to include in statistical
+reports or publications.
+
+\begin{tip}
+Store the data at the stages where they are raw, technically correct,
+consistent, aggregated and formatted so they can be reused later.  Each step
+between the stages may be performed by a separate \code{R} script
+which can be stored for reproducibility.
+\end{tip}
+
+Summarizing, a statistical analyses can be separated in five stages, from raw
+data to formatted output, where the quality of the data improves in every step
+towards the final result. Data cleaning is related to the first two stages in a
+statistical analyses, and in Sections \ref{sect:rawtoinput} and
+\ref{sect:inputtomicro} we define more clearly which quality aspect are improved
+in which stage, and we show how to do this with \R{}.
+
+
+\subsection*{Exercises}
+\begin{exercise}
+  In which of the steps outlined in Figure \ref{fig:steps} would you perform the following activities?
+  \begin{subex}
+    \item Estimating values for empty fields.
+    \item Setting the font for the title of a histogram.
+    \item Rewrite a column of categorical variables so that they are al written in capitals.
+    \item Use \code{knitr} to produce a statistical report.
+    \item Exporting data from \code{Excel} to \code{csv}. 
+  \end{subex}
+\end{exercise}
+
