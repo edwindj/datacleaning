@@ -1,4 +1,32 @@
+% Ideas
+% - Define 
+% - univariate, multivariate rules
+% - rule checking, summarizing, plotting
+% - soft rules and outlier detection
+% - deterministic corrections with deducorrect
+% - 
+%
 
-\section{From technically correct data to clean data}
+\section{From technically correct data to consistent data}
 \label{sect:inputtomicro}
+With \emph{consistent data} we mean that the data obeys all expectations you
+have based on subject matter knowledge. Such expectations are usually expressed
+in terms of rules wich may be interpreted as being obligatory (\emph{hard
+rules}), or indicative (\emph{soft rules}). 
+
+
+
+
+
+\subsection{Checking record-wise rules with the \code{editrules} package.}
+The \code{editrules} package allows one to define rules on categorical,
+numerical or mixed data sets which each record must obey. Restrictions can
+be defined by typing them in a file and reading them into \R{} with
+the \code{editfile} function.
+
+<<rules, cache=FALSE,echo=FALSE>>=
+read_chunk('myrules.txt')
+@
+<<test,eval=FALSE>>=
+@
 

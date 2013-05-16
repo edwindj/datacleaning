@@ -13,6 +13,12 @@
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\R}{\code{R}} %% call as \R{} to avoid extra spaces.
 
+%%% listings from external files
+\usepackage{listings}
+\lstset{
+    stringstyle=\ttfamily
+}
+
 %%% Exercises are like theorems, subexercises are like lists 
 \usepackage{amsthm}
 \newtheorem{exercise}{Exercise}[section]
