@@ -11,3 +11,148 @@
 % - spelfouten in tekstvariabelen, normaliseren
 %
 
+\subsection{Reading data into R}
+
+\subsubsection{\code{read.table} and its cousins}
+
+
+\begin{tip}{Best practice}
+Whenever you need to read data from a foreign file format, like a spreadsheet or
+commercial statistical software, make that software responsible for exporting the 
+data to an open format that can be read by \R{}.
+\end{tip}
+
+
+\subsubsection{Reading \code{XML} files}
+
+
+\subsection{String normalisation and (fuzzy) matching}
+\label{sect:stringnormalisation}
+Character data can be notoriously hard to process. For example, consider the
+following excerpt of a data set with a \code{gender} variable.
+<<echo=2>>=
+data.frame(gender=c("M","male ","Female","fem."))
+@
+If this would be treated as a factor variable without any preprocessing,
+obviously four, not two classes would be stored. The job at hand is therefore
+to automatically recognize from the above data whether each elements
+pertains to \code{male} or \code{female}.
+
+
+String normalisation techniques are aimed at transforming a variety of strings to a
+(possibly) smaller set of string values. String matching, or possibly fuzzy matching
+aims to match a set of messy strings to a smaller set of standard string values.
+Below, we will discuss the following topics.
+\begin{itemize}[itemsep=0pt]
+\item Remove prepending or trailing white spaces.
+\item Pad strings to a certain width.
+\item Transform to upper/lower case.
+\item Search for strings containing simple patterns (substrings).
+\item Simple fuzzy matching procedures.
+\end{itemize}
+
+\subsubsection{String normalisation}
+By default, \R{} comes with extensive string manipulation functionality that is
+based on the two basic string operations: \emph{finding} a pattern in a string and
+\emph{replacing} one patterns with another. We will deal with \R{}'s generic functions
+below but start by pointing out some common string cleaning operations.
+  
+The \code{stringr} package\cite{wickham:2009} offers a number of functions that make 
+a some string manipulation tasks a lot easier. For example, extra white spaces
+at the beginning or end of a string can be removed using \code{str\_trim}.
+<<>>=
+library(stringr)
+str_trim("  hello world ")
+str_trim("  hello world ",side="left")
+str_trim("  hello world ",side="right")
+@
+Conversely, strings can be padded with spaces or other characters with \code{str\_pad} to
+a certain width. For example, numerical codes are often represented with prepending zeros.
+<<>>=
+str_pad(112,width=6,side='left', pad=0)
+@
+Both \code{str\_trim} and \code{str\_pad} accept a \code{side} argument to indicate wether
+trimming or padding should occur at the beginning (\code{left}), end (\code{right}) or both
+sides of the string. 
+
+Converting strings to complete upper or lower case can be done with \R{}'s built-in
+\code{toupper} and \code{tolower} functions.
+<<>>=
+toupper("Hello world")
+tolower("Hello World")
+@
+We will return to string string normalisation in the Section \ref{sect:encoding}.
+
+\subsubsection{String matching}
+More advanced string manipulation is possible with \R{}'s native string processing
+functions. The most important ones are listed below.
+%
+\begin{center}
+\begin{tabular}{ll}
+\code{grep}, \code{grepl}  & detect whether a pattern occurs in a string\\
+
+
+\end{tabular}
+\end{center}
+%
+In the most simple case, the pattern to look for is a simple substring. For example, using
+the data of the example on page \pageref{sect:stringnormalisation}.
+<<>>=
+gender <- c("M","male ","Female","fem.")
+grepl('m',gender)
+@
+Here, \code{grepl} returns a \code{logical} vector indicating in which strings
+the pattern \code{m} has been found. The function \code{grep} does the same as
+\code{grepl}, except that its output is not a logical, but an integer vector
+indicating where matches occur (\code{grep(...)} is similar to
+\code{which(grepl(...))}). Note that the result is case sensitive: the capital
+\code{M} in the second element of \code{gender} does not match the lower case
+\code{m}. There are several ways to circumvent this case sensitivity.  Either
+by case normalisation or by the optional argument \code{ignore.case}.
+<<>>=
+grepl('m',gender,ignore.case=TRUE)
+grepl('m',tolower(gender))
+@
+Obviously, looking for the occurrence of \code{m} or \code{M} in the \code{gender}
+vector does not allow us to determine which strings pertain to \code{male} and which 
+not. Preferably we would like to search for strings that start with an \code{m} or \code{M}.
+Fortunately, the search patterns that \code{grep} accepts allow for such searches. The
+beginning of a string is indicated with a caret (\code{\^}).
+<<>>=
+grepl('^m',gender,ignore.case=TRUE)
+@
+Indeed, the \code{grepl} function now finds only the first two elements of
+\code{gender}.  The caret is an example of a so-called \emph{meta-character}. That is,
+it does not indicate the caret itself but something else, namely the beginning
+of a string. The search patterns that \code{grep}, \code{grepl} (and \code{sub}
+and \code{gsub}) understand have more of these meta-characters, namely: \verb". \ | ( ) [ {  ^ $ * + ?". 
+If you need to search a string for any of these characters, you can use the option
+\code{fixed=TRUE}.
+<<>>=
+grepl('^',gender,fixed=TRUE)
+@
+This will make \code{grepl} ignore any meta-characters in the search string.
+
+
+Search patterns using meta-characters are called \emph{regular expressions}.
+Regular expressions offer powerful and flexible ways to search (and alter)
+text.  A discussion of regular expressions is beyond the scope of these lecture
+notes. However, a concise description of regular expressions allowed by \R{}'s
+built-in string processing functions can be found by typing \code{?regex} at
+the \R{} command line. The books by Fitzgerald\cite{fitzgerald:2012} or
+Friedl\cite{friedl:2006} provide a thorough introduction to the subject of
+regular expression. If you frequently have to deal with ``messy'' text
+variables, learning to work with regular expressions is a worthwhile
+investment. Also because regular expressions are supported by many popular
+programming languages like \code{perl} or \code{python}.
+
+
+
+
+
+
+\subsection{Converting times and dates}
+
+\subsection{Character encoding issues}
+\label{sect:encoding}
+

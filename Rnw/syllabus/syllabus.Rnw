@@ -2,9 +2,13 @@
 \usepackage[english]{babel}
 \usepackage{amsmath,amssymb}
 \usepackage{natbib}
+\bibliographystyle{plain}
+\bibpunct{}{}{,}{s}{}{}
+
+% nicer bold symbols in math mode:
 \newcommand{\bs}[1]{\boldsymbol{#1}}
 
-%\usepackage[default]{comfortaa}
+% nicer fonts
 \usepackage[T1]{fontenc}
 \usepackage{palatino}
 \usepackage{inconsolata}
@@ -29,12 +33,12 @@
 \end{enumerate}
 }
 
-%%% 
-\newenvironment{tip}{
+%%% Sometimes we give tips, best practices...
+\newenvironment{tip}[1]{
 \begin{center}
 \begin{tabular}{p{0.8\textwidth}}
   \hline \\
-  \textbf{Tip.} \em 
+  \textbf{#1.} \em 
 }{
 \\
 \\
@@ -43,7 +47,7 @@
 \end{center}
 }
 
-
+% the always handy-dandy argmin operator
 \DeclareMathOperator*{\argmin}{\arg\min}
 
 \setlength{\parindent}{0pt}
@@ -64,6 +68,11 @@
   \tikzstyle{arr}=[->,thick,>=stealth',color=black]
   \tikzstyle{action}=[right, font=\scriptsize\sf]
 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% preamble stuff
 \title{An introduction to data cleaning with R}
 
 \author{Edwin de Jonge and Mark van der Loo}
@@ -101,7 +110,7 @@ This article is a stub. It may or may not ever be finished.
 <<child='section3.Rnw',eval=TRUE>>=
 @
 
-
+\bibliography{datacleaning}
 \end{document}
 
 

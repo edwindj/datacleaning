@@ -63,7 +63,7 @@ Once your \textsf{Statistical results} are produced you can store them for
 reuse and finally, results can be \textsf{Formatted} to include in statistical
 reports or publications.
 
-\begin{tip}
+\begin{tip}{Tip}
 Store the data at the stages where they are raw, technically correct,
 consistent, aggregated and formatted so they can be reused later.  Each step
 between the stages may be performed by a separate \code{R} script
@@ -85,7 +85,7 @@ in which stage, and we show how to do this with \R{}.
     \item Estimating values for empty fields.
     \item Setting the font for the title of a histogram.
     \item Rewrite a column of categorical variables so that they are al written in capitals.
-    \item Use \code{knitr} to produce a statistical report.
+    \item Use the \code{knitr} package\cite{xi:2013} to produce a statistical report.
     \item Exporting data from \code{Excel} to \code{csv}. 
   \end{subex}
 \end{exercise}
