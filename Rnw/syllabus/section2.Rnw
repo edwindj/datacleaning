@@ -25,8 +25,9 @@ data to an open format that can be read by \R{}.
 
 \subsubsection{Reading \code{XML} files}
 
+\subsection{Type conversion}
 
-\subsection{String normalisation and (fuzzy) matching}
+\subsection{Text coding}
 \label{sect:stringnormalisation}
 Character data can be notoriously hard to process. For example, consider the
 following excerpt of a data set with a \code{gender} variable.
@@ -35,23 +36,27 @@ data.frame(gender=c("M","male ","Female","fem."))
 @
 If this would be treated as a factor variable without any preprocessing,
 obviously four, not two classes would be stored. The job at hand is therefore
-to automatically recognize from the above data whether each elements
-pertains to \code{male} or \code{female}.
+to automatically recognize from the above data whether each elements pertains
+to \code{male} or \code{female}. In statistical contexts, classifying such
+``messy'' text strings into a number of fixed categories is often referred to
+as \emph{coding}.
 
-
-String normalisation techniques are aimed at transforming a variety of strings to a
-(possibly) smaller set of string values. String matching, or possibly fuzzy matching
-aims to match a set of messy strings to a smaller set of standard string values.
-Below, we will discuss the following topics.
+Below we discuss two complementary approaches to string coding: \emph{string
+normalisation} and \emph{approximate text matching}. In particular, the following topics
+are discussed.
 \begin{itemize}[itemsep=0pt]
 \item Remove prepending or trailing white spaces.
 \item Pad strings to a certain width.
 \item Transform to upper/lower case.
 \item Search for strings containing simple patterns (substrings).
-\item Simple fuzzy matching procedures.
+\item Simple approximate matching procedures based on string distances.
 \end{itemize}
 
+
 \subsubsection{String normalisation}
+%
+String normalisation techniques are aimed at transforming a variety of strings to a
+(possibly) smaller set of string values which are more easily processed.
 By default, \R{} comes with extensive string manipulation functionality that is
 based on the two basic string operations: \emph{finding} a pattern in a string and
 \emph{replacing} one patterns with another. We will deal with \R{}'s generic functions
@@ -81,34 +86,38 @@ Converting strings to complete upper or lower case can be done with \R{}'s built
 toupper("Hello world")
 tolower("Hello World")
 @
-We will return to string string normalisation in the Section \ref{sect:encoding}.
+We will return to string normalisation in the Section \ref{sect:encoding}.
 
-\subsubsection{String matching}
-More advanced string manipulation is possible with \R{}'s native string processing
-functions. The most important ones are listed below.
+\subsubsection{Approximate string matching}
+There are two forms of string matching. The first consists of determining
+whether a (range of) substring(s) occurs within another string. In this case
+one needs to specify a range of substrings (called a \emph{pattern}) to search
+for in another string. In the second form one defines a distance metric between
+strings that measures how ``different'' two strings are.  Below we will discuss
+a short introduction to pattern matching and string distances with \R{}.
+
+
+There are several pattern matching functions that come with base \R{}. The most
+used are probably \code{grep} and \code{grepl}. Both functions take a pattern
+and a \code{character} vector as input. The output only differs in that \code{grepl}
+returns a logical index, indicating which element of the input \code{charater} vector
+contains the pattern, while \code{grep} returns a numerical index. You may think of
+\code{grep(...)} as \code{which(grepl(...))}.
+
 %
-\begin{center}
-\begin{tabular}{ll}
-\code{grep}, \code{grepl}  & detect whether a pattern occurs in a string\\
-
-
-\end{tabular}
-\end{center}
 %
 In the most simple case, the pattern to look for is a simple substring. For example, using
 the data of the example on page \pageref{sect:stringnormalisation}.
 <<>>=
 gender <- c("M","male ","Female","fem.")
 grepl('m',gender)
+grep('m',gender)
 @
-Here, \code{grepl} returns a \code{logical} vector indicating in which strings
-the pattern \code{m} has been found. The function \code{grep} does the same as
-\code{grepl}, except that its output is not a logical, but an integer vector
-indicating where matches occur (\code{grep(...)} is similar to
-\code{which(grepl(...))}). Note that the result is case sensitive: the capital
-\code{M} in the second element of \code{gender} does not match the lower case
-\code{m}. There are several ways to circumvent this case sensitivity.  Either
-by case normalisation or by the optional argument \code{ignore.case}.
+Note that the result is case sensitive: the capital \code{M} in the first
+element of \code{gender} does not match the lower case \code{m}. There are
+several ways to circumvent this case sensitivity.  Either by case normalisation
+or by the optional argument
+\code{ignore.case}.
 <<>>=
 grepl('m',gender,ignore.case=TRUE)
 grepl('m',tolower(gender))
@@ -143,15 +152,66 @@ the \R{} command line. The books by Fitzgerald\cite{fitzgerald:2012} or
 Friedl\cite{friedl:2006} provide a thorough introduction to the subject of
 regular expression. If you frequently have to deal with ``messy'' text
 variables, learning to work with regular expressions is a worthwhile
-investment. Also because regular expressions are supported by many popular
-programming languages like \code{perl} or \code{python}.
+investment. Moreover, since many popular programming languages support some
+dialect of regexps, it is an investment that could pay off several times.
+
+We now turn our attention to the second method of approximate matching, namely
+string distances.  A string distance is an algorithm or equation that indicates
+how much two strings differ from eachother.  An important distance measure is
+implemented by the \R{}'s native \code{adist} function. This function counts
+how many basic operations are needed to turn one string into another. These
+operations include insertion, deletion or substitution of a single
+character\cite{levenshtein:1966}.  For example
+<<>>=
+adist("abc","bac")
+@
+The result equals two since turning \code{"abc"} into \code{"bac"} involves two
+character substitutions. Using \code{adist}, we can compare fuzzy text strings to
+a list of known codes. For example:
+<<>>=
+codes <- c('male','female')
+D <- adist(gender,c('male','female'))
+colnames(D) <- codes
+rownames(D) <- gender
+D
+@
+Here, \code{adist} returns the distance matrix between our vector of fixed codes and 
+the input data. For readability we added row- and column names accordingly. Now, to
+find out which code matches best with our raw data, we need to find the index of the smallest
+distance for each row of \code{D}. This can be done as follows.
+<<>>=
+i <- apply(D,1,which.min)
+data.frame(
+  rawtext = gender,
+  coded   = codes[i]
+)
+@
+We use \code{apply} to apply \code{which.min} on every row of \code{D}. Note
+that in the case of multiple minima, the first match will be returned.
+
+Finally, we mention two more functions based on string distances. First, the \R{}-builting
+function \code{agrep} is similar to grep, but it allows one to specify a maximum
+Levenshtein distance between the input pattern and the found substring. 
+
+Secondly, the functions \code{stringdist} and \code{stringdistmatrix} of the
+\code{stringdist} package\cite{loo:2013} offer an interfaces to a variety of
+string distance metrics. For example, \code{agrep} does not allow for character
+transpositions, which is quite common in typing errors. Using the \emph{optimal
+string alignment distance} (the default choice for \code{stringdist}) we get
+<<message=FALSE>>=
+library(stringdist)
+stringdist("abc","bac")
+@
+The answer is now 1 (not 2), since the optimal string alignment distance allows
+for transpositions of adjacent characters.
 
 
 
 
 
 
-\subsection{Converting times and dates}
+
+
 
 \subsection{Character encoding issues}
 \label{sect:encoding}
