@@ -26,6 +26,11 @@ data to an open format that can be read by \R{}.
 \subsubsection{Reading \code{XML} files}
 
 \subsection{Type conversion}
+In \R{}'s built-in help files, converting a variable from one type to another
+is called \emph{coercion}.
+
+\subsubsection{Converting times and dates}
+
 
 \subsection{Text coding}
 \label{sect:stringnormalisation}
@@ -42,8 +47,8 @@ to \code{male} or \code{female}. In statistical contexts, classifying such
 as \emph{coding}.
 
 Below we discuss two complementary approaches to string coding: \emph{string
-normalisation} and \emph{approximate text matching}. In particular, the following topics
-are discussed.
+normalisation} and \emph{approximate text matching}. In particular, the
+following topics are discussed.
 \begin{itemize}[itemsep=0pt]
 \item Remove prepending or trailing white spaces.
 \item Pad strings to a certain width.
@@ -55,16 +60,18 @@ are discussed.
 
 \subsubsection{String normalisation}
 %
-String normalisation techniques are aimed at transforming a variety of strings to a
-(possibly) smaller set of string values which are more easily processed.
+String normalisation techniques are aimed at transforming a variety of strings
+to a (possibly) smaller set of string values which are more easily processed.
 By default, \R{} comes with extensive string manipulation functionality that is
-based on the two basic string operations: \emph{finding} a pattern in a string and
-\emph{replacing} one patterns with another. We will deal with \R{}'s generic functions
-below but start by pointing out some common string cleaning operations.
+based on the two basic string operations: \emph{finding} a pattern in a string
+and \emph{replacing} one patterns with another. We will deal with \R{}'s
+generic functions below but start by pointing out some common string cleaning
+operations.
   
-The \code{stringr} package\cite{wickham:2009} offers a number of functions that make 
-a some string manipulation tasks a lot easier. For example, extra white spaces
-at the beginning or end of a string can be removed using \code{str\_trim}.
+The \code{stringr} package\cite{wickham:2009} offers a number of functions that
+make a some string manipulation tasks a lot easier. For example, extra white
+spaces at the beginning or end of a string can be removed using
+\code{str\_trim}.
 <<>>=
 library(stringr)
 str_trim("  hello world ")
@@ -99,15 +106,16 @@ a short introduction to pattern matching and string distances with \R{}.
 
 There are several pattern matching functions that come with base \R{}. The most
 used are probably \code{grep} and \code{grepl}. Both functions take a pattern
-and a \code{character} vector as input. The output only differs in that \code{grepl}
-returns a logical index, indicating which element of the input \code{charater} vector
-contains the pattern, while \code{grep} returns a numerical index. You may think of
-\code{grep(...)} as \code{which(grepl(...))}.
+and a \code{character} vector as input. The output only differs in that
+\code{grepl} returns a logical index, indicating which element of the input
+\code{charater} vector contains the pattern, while \code{grep} returns a
+numerical index. You may think of \code{grep(...)} as \code{which(grepl(...))}.
 
 %
 %
-In the most simple case, the pattern to look for is a simple substring. For example, using
-the data of the example on page \pageref{sect:stringnormalisation}.
+In the most simple case, the pattern to look for is a simple substring. For
+example, using the data of the example on page
+\pageref{sect:stringnormalisation}.
 <<>>=
 gender <- c("M","male ","Female","fem.")
 grepl('m',gender)
@@ -116,27 +124,28 @@ grep('m',gender)
 Note that the result is case sensitive: the capital \code{M} in the first
 element of \code{gender} does not match the lower case \code{m}. There are
 several ways to circumvent this case sensitivity.  Either by case normalisation
-or by the optional argument
-\code{ignore.case}.
+or by the optional argument \code{ignore.case}.
 <<>>=
 grepl('m',gender,ignore.case=TRUE)
 grepl('m',tolower(gender))
 @
-Obviously, looking for the occurrence of \code{m} or \code{M} in the \code{gender}
-vector does not allow us to determine which strings pertain to \code{male} and which 
-not. Preferably we would like to search for strings that start with an \code{m} or \code{M}.
-Fortunately, the search patterns that \code{grep} accepts allow for such searches. The
-beginning of a string is indicated with a caret (\code{\^}).
+Obviously, looking for the occurrence of \code{m} or \code{M} in the
+\code{gender} vector does not allow us to determine which strings pertain to
+\code{male} and which not. Preferably we would like to search for strings that
+start with an \code{m} or \code{M}.  Fortunately, the search patterns that
+\code{grep} accepts allow for such searches. The beginning of a string is
+indicated with a caret (\code{\^}).
 <<>>=
 grepl('^m',gender,ignore.case=TRUE)
 @
 Indeed, the \code{grepl} function now finds only the first two elements of
-\code{gender}.  The caret is an example of a so-called \emph{meta-character}. That is,
-it does not indicate the caret itself but something else, namely the beginning
-of a string. The search patterns that \code{grep}, \code{grepl} (and \code{sub}
+\code{gender}.  The caret is an example of a so-called \emph{meta-character}.
+That is, it does not indicate the caret itself but something else, namely the
+beginning of a string. The search patterns that \code{grep}, \code{grepl} (and
+\code{sub}
 and \code{gsub}) understand have more of these meta-characters, namely: \verb". \ | ( ) [ {  ^ $ * + ?". 
-If you need to search a string for any of these characters, you can use the option
-\code{fixed=TRUE}.
+If you need to search a string for any of these characters, you can use the
+option \code{fixed=TRUE}.
 <<>>=
 grepl('^',gender,fixed=TRUE)
 @
@@ -166,8 +175,8 @@ character\cite{levenshtein:1966}.  For example
 adist("abc","bac")
 @
 The result equals two since turning \code{"abc"} into \code{"bac"} involves two
-character substitutions. Using \code{adist}, we can compare fuzzy text strings to
-a list of known codes. For example:
+character substitutions. Using \code{adist}, we can compare fuzzy text strings
+to a list of known codes. For example:
 <<>>=
 codes <- c('male','female')
 D <- adist(gender,c('male','female'))
@@ -175,10 +184,11 @@ colnames(D) <- codes
 rownames(D) <- gender
 D
 @
-Here, \code{adist} returns the distance matrix between our vector of fixed codes and 
-the input data. For readability we added row- and column names accordingly. Now, to
-find out which code matches best with our raw data, we need to find the index of the smallest
-distance for each row of \code{D}. This can be done as follows.
+Here, \code{adist} returns the distance matrix between our vector of fixed
+codes and the input data. For readability we added row- and column names
+accordingly. Now, to find out which code matches best with our raw data, we
+need to find the index of the smallest distance for each row of \code{D}. This
+can be done as follows.
 <<>>=
 i <- apply(D,1,which.min)
 data.frame(
@@ -186,12 +196,13 @@ data.frame(
   coded   = codes[i]
 )
 @
-We use \code{apply} to apply \code{which.min} on every row of \code{D}. Note
+We use \code{apply} to apply \code{which.min} to every row of \code{D}. Note
 that in the case of multiple minima, the first match will be returned.
 
-Finally, we mention two more functions based on string distances. First, the \R{}-builting
-function \code{agrep} is similar to grep, but it allows one to specify a maximum
-Levenshtein distance between the input pattern and the found substring. 
+Finally, we mention two more functions based on string distances. First, the
+\R{}-builting function \code{agrep} is similar to grep, but it allows one to
+specify a maximum Levenshtein distance between the input pattern and the found
+substring. 
 
 Secondly, the functions \code{stringdist} and \code{stringdistmatrix} of the
 \code{stringdist} package\cite{loo:2013} offer an interfaces to a variety of
