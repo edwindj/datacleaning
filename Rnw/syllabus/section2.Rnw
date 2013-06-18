@@ -27,12 +27,63 @@ data to an open format that can be read by \R{}.
 
 \subsection{Type conversion}
 In \R{}'s built-in help files, converting a variable from one type to another
-is called \emph{coercion}.
+is called \emph{coercion}. The reader is probably familiar with \R{}'s basic
+coercion functions, but as a reference they are listed here.
+\begin{center}
+\begin{tabular}{ll}
+  \code{as.numeric}     & \code{as.logical}\\
+  \code{as.integer}     & \code{as.factor} \\
+  \code{as.character}   & \code{as.ordered} 
+\end{tabular}
+\end{center}
+Each of these functions takes an \R{} object and tries to convert it to the
+class specified behind the ``\code{as.}''.
+
+Below, we give a some background by delving a little into \R{}'s typing and
+storage system and explain, amongst others, the difference between \R{}
+\emph{types} and \emph{classes}. After that we discuss time and date
+conversion.
+
+\subsubsection{Introduction to \R{}'s typing system}
+Everything in \R{} is an object\cite{chambers:2008}. An object is a container
+of data with a \emph{class} label describing that data. Moreover, objects can
+be created, destroyed or overwritten on-the-fly by the user.
+
+The function \code{class} returns the class label of an \R{} object.
+<<>>=
+class(c('abc','def'))
+class(1:10)
+class(c(pi,exp(1)))
+class(mean)
+@
+The above example demonstrates that not only basic data, but also more complex
+structures like functions are also objects endowed with a class label.
+
+For the user of \R{} these class labels should be enough to handle \R{} objects
+in \R{} scripts. Under the hood, the basic \R{} objects are stored as \C{}
+structures as \C{} is language in which \R{} itself has been written. The type
+of \C{} structure that is used to store a basic type can be found with the
+\code{typeof} function. Compare the results below with those in the previous
+code snippet.
+<<>>=
+typeof(c('abc','def'))
+typeof(1:10)
+typeof(c(pi,exp(1)))
+typeof(mean)
+@
+
+
+
 
 \subsubsection{Converting times and dates}
 
 
-\subsection{Text coding}
+
+
+
+
+
+\subsection{Recoding strings}
 \label{sect:stringnormalisation}
 Character data can be notoriously hard to process. For example, consider the
 following excerpt of a data set with a \code{gender} variable.
@@ -227,3 +278,13 @@ for transpositions of adjacent characters.
 \subsection{Character encoding issues}
 \label{sect:encoding}
 
+
+\subsection*{Exercises}
+\begin{exercise}
+Type checking
+
+  \begin{subex}
+    \item Use the \code{\%in\%} operator to check wether \emph{something something} is either \code{numeric} or \code{integer}.
+
+\end{subex}
+\end{exercise}

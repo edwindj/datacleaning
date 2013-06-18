@@ -16,6 +16,7 @@
 %%% Code commands
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\R}{\code{R}} %% call as \R{} to avoid extra spaces.
+\newcommand{\C}{\code{C}} %% call as \C{} to avoid extra spaces.
 
 %%% listings from external files
 \usepackage{listings}
