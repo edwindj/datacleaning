@@ -95,9 +95,75 @@ retrieve or modify an object's type.
 
 
 
-\subsubsection{Converting times and dates}
+\subsubsection{Converting dates}
+The base \R{} installation has three types of objects to store a time instance
+\code{Date}, \code{POSIXlt} and \code{POSIXct}. The \code{Date} object
+can only be used to store dates, the other two store date and/or time. Here, we
+focus on converting text to \code{POSIXct} objects since this is probably the
+most portable way to store such information.
 
+Under the hood, a \code{POSIXct} object stores the number of seconds that have
+passed since January 1, 1970 $00:00:00$. This makes it possible to compute
+durations by simply subtracting two \code{POSIXct} objects. Converting from a
+calender time to \code{POSIXct} and back is not entirely trivial, since there
+are many idiosyncracies to handle in calander systems like leap days, leap
+seconds, daylight saving times, time zones and so on.
+%
+Converting from text to \code{POSIXct} is further complicated by the many
+textual conventions of time/date denotation. For example, both \code{28
+September 1976} and \code{1976/09/28} both indicate the same day of the same
+year. Moreover, the name of the month (or weekday) is language-dependent. In
+this section we will not go into the idiosyncracies of calander systems but we
+will limit ourselves to converting the textual representation of a date to a
+\code{POSIXct} object.
 
+The \code{lubridate} package\cite{grolemund:2011} contains a number of
+functions facilitating the conversion of text to \code{POSIXct} dates.
+%
+<<message=FALSE>>=
+library(lubridate)
+dates <- c("15/02/2013","15 Feb  13")
+dmy(dates)
+@
+Here, the function \code{dmy} assumes that dates are denoted in the order
+day-month-year and tries to extract valid dates. There are similar functions
+for all permutations of \code{d}, \code{m} and \code{y}, so once it is known in
+what order days, months and years are denoted, extraction is very easy. 
+
+It should be noted that \code{lubridate} (as well as \R{}'s base functionality) is
+only capable of converting certain standard notations. For example, the following
+notation does not convert.
+<<>>=
+dmy("15 Febr. 2013")
+@
+The standard notations that can be recognised by \R{}, either using \code{lubridate}
+or \R{}'s builtin functionality are shown in Table \ref{tab:dateformats}.
+%
+\begin{table}
+\begin{threeparttable}
+  \caption{Day, month and year formats recognized by \R{}.}
+  \label{tab:dateformats}
+  \begin{tabular}{ll}
+    \hline
+    Code       & description\cite{}\\
+    \hline
+    \code{\%a} & Abbreviated weekday name in the current locale.  \\
+    \code{\%A} & Full weekday name in the current locale.  \\
+    \code{\%b} & Abbreviated month name in the current locale. \\
+    \code{\%B} & Full month name in the current locale. \\
+    \code{\%d} & Day of the month as decimal number (01-31). \\
+    \code{\%y} & Year without century (00-99)\\
+    \code{\%Y} & Year including century. \\
+    \hline
+  \end{tabular}
+\end{threeparttable}
+\end{table}
+%
+%
+Here, the names of (abbreviated) week or month names that are sought for in the
+text depend on the locale settings of the machine that is running \R{}. For example,
+on a PC running under a Dutch locale, \code{Maandag} will be recognized as the
+first day of the week while in English locales \code{Monday} will be recognized.
 
 
 
@@ -249,7 +315,7 @@ character substitutions. Using \code{adist}, we can compare fuzzy text strings
 to a list of known codes. For example:
 <<>>=
 codes <- c('male','female')
-D <- adist(gender,c('male','female'))
+D <- adist(gender,codes)
 colnames(D) <- codes
 rownames(D) <- gender
 D

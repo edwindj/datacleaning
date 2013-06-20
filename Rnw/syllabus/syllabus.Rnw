@@ -1,6 +1,7 @@
 \documentclass[a4paper, 11pt, fleqn]{article}
 \usepackage[english]{babel}
 \usepackage{amsmath,amssymb}
+\usepackage{threeparttable}
 \usepackage{natbib}
 \bibliographystyle{plain}
 \bibpunct{}{}{,}{s}{}{}
