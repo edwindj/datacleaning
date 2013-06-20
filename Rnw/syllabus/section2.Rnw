@@ -54,10 +54,17 @@ The function \code{class} returns the class label of an \R{} object.
 class(c('abc','def'))
 class(1:10)
 class(c(pi,exp(1)))
-class(mean)
 @
 The above example demonstrates that not only basic data, but also more complex
 structures like functions are also objects endowed with a class label.
+%
+\begin{tip}{Tip}
+Here's a quick way to retrieve the classes of all columns in a \code{data.frame} called \code{dat}.
+<<eval=FALSE>>=
+sapply(dat,class)
+@
+\vspace{-10mm}
+\end{tip}
 
 For the user of \R{} these class labels should be enough to handle \R{} objects
 in \R{} scripts. Under the hood, the basic \R{} objects are stored as \C{}
@@ -69,8 +76,21 @@ code snippet.
 typeof(c('abc','def'))
 typeof(1:10)
 typeof(c(pi,exp(1)))
-typeof(mean)
 @
+Note that the type of an \R{} object of class \code{numeric} is \code{double}.
+The term \code{double} refers to \code{double precision}, which is a standard
+way for lower-level computer languages such as \C{} to store approximations of real numers. 
+
+Summarizing, one can regard the \emph{class} of an object the object's type from
+the user's point of view while the \emph{type} of an object is the way \R{} looks
+at the object.
+
+Confusingly, \R{} objects also have a \emph{mode} (and \emph{storage.mode})
+which can be retrieved or set using functions of the same name. Both
+\code{mode} and \code{storage.mode} differ slightly from \code{typeof}, and are
+only there for backwards compatibility with \R{}'s precursor language:
+\code{S}. We therefore advise the user to avoid using these functions to
+retrieve or modify an object's type. 
 
 
 
@@ -202,7 +222,6 @@ grepl('^',gender,fixed=TRUE)
 @
 This will make \code{grepl} ignore any meta-characters in the search string.
 
-
 Search patterns using meta-characters are called \emph{regular expressions}.
 Regular expressions offer powerful and flexible ways to search (and alter)
 text.  A discussion of regular expressions is beyond the scope of these lecture
@@ -281,10 +300,15 @@ for transpositions of adjacent characters.
 
 \subsection*{Exercises}
 \begin{exercise}
-Type checking
+Type checking and classes
 
   \begin{subex}
-    \item Use the \code{\%in\%} operator to check wether \emph{something something} is either \code{numeric} or \code{integer}.
-
+    \item Use the \code{\%in\%} operator to check wether \emph{<something-something>} is either \code{numeric} or \code{integer}.
+    \item Error messages in \R{} sometimes report the underlying \emph{type} of an object rather than the user-level \emph{class}.
+          Derive from the following code and error message what the underlying type of an \R{} function is.
+          <<>>=
+          mean[1]
+          @
+    Confirm your answer using \code{typeof}.
 \end{subex}
 \end{exercise}
