@@ -37,16 +37,13 @@
 
 %%% Sometimes we give tips, best practices...
 \newenvironment{tip}[1]{
-\begin{center}
-\begin{tabular}{p{0.8\textwidth}}
-  \hline \\
-  \textbf{#1.} \em 
+\begin{quote}
+\rule{0.85\textwidth}{0.4pt}
+  \textbf{#1.}
 }{
-\\
-\\
-\hline
-\end{tabular}
-\end{center}
+~\newline
+\rule{0.85\textwidth}{0.4pt}
+\end{quote}
 }
 
 % the always handy-dandy argmin operator
