@@ -37,16 +37,17 @@ coercion functions, but as a reference they are listed here.
 \end{tabular}
 \end{center}
 Each of these functions takes an \R{} object and tries to convert it to the
-class specified behind the ``\code{as.}''.
-
-Below, we give a some background by delving a little into \R{}'s typing and
+class specified behind the ``\code{as.}''. The only counterintuitive result
+appears when coercing a \code{factor} or \code{ordered} variable to
+\code{character}. The reason for this has to do with differences between
+\emph{classes} and \emph{types} in \R{}. An example will be worked out
+in Exercise \ref{ex:factorconversion}. Below, we  introduce \R{}'s typing and
 storage system and explain, amongst others, the difference between \R{}
-\emph{types} and \emph{classes}. After that we discuss time and date
-conversion.
+\emph{types} and \emph{classes}. After that we discuss date conversion.
 
 \subsubsection{Introduction to \R{}'s typing system}
 Everything in \R{} is an object\cite{chambers:2008}. An object is a container
-of data with a \emph{class} label describing that data. Moreover, objects can
+of data endowed with a \emph{class} label describing the data. Objects can
 be created, destroyed or overwritten on-the-fly by the user.
 
 The function \code{class} returns the class label of an \R{} object.
@@ -54,9 +55,10 @@ The function \code{class} returns the class label of an \R{} object.
 class(c('abc','def'))
 class(1:10)
 class(c(pi,exp(1)))
+class(mean)
 @
 The above example demonstrates that not only basic data, but also more complex
-structures like functions are also objects endowed with a class label.
+structures like functions are objects endowed with a class label.
 %
 \begin{tip}{Tip}
 Here's a quick way to retrieve the classes of all columns in a \code{data.frame} called \code{dat}.
@@ -66,9 +68,9 @@ sapply(dat,class)
 \vspace{-1cm}
 \end{tip}
 
-For the user of \R{} these class labels should be enough to handle \R{} objects
+For the user of \R{} these class labels are usually enough to handle \R{} objects
 in \R{} scripts. Under the hood, the basic \R{} objects are stored as \C{}
-structures as \C{} is language in which \R{} itself has been written. The type
+structures as \C{} is the language in which \R{} itself has been written. The type
 of \C{} structure that is used to store a basic type can be found with the
 \code{typeof} function. Compare the results below with those in the previous
 code snippet.
@@ -76,6 +78,7 @@ code snippet.
 typeof(c('abc','def'))
 typeof(1:10)
 typeof(c(pi,exp(1)))
+typeof(mean)
 @
 Note that the type of an \R{} object of class \code{numeric} is \code{double}.
 The term \code{double} refers to \code{double precision}, which is a standard
@@ -83,7 +86,9 @@ way for lower-level computer languages such as \C{} to store approximations of r
 
 Summarizing, one can regard the \emph{class} of an object the object's type from
 the user's point of view while the \emph{type} of an object is the way \R{} looks
-at the object.
+at the object. It is important to realize that \R{}'s coercion functions are fundamentaly
+functions that change the underlying \code{type} of an object and that class changes
+are a consequence of the type changes. 
 
 Confusingly, \R{} objects also have a \emph{mode} (and \emph{storage.mode})
 which can be retrieved or set using functions of the same name. Both
@@ -113,9 +118,14 @@ current_time <- Sys.time()
 class(current_time)
 current_time
 @
+Here, \code{Sys.time} uses the time zone that is stored in the \code{locale} settings
+of the machine running \R{}. 
+
 Converting from a calender time to \code{POSIXct} and back is not entirely
 trivial, since there are many idiosyncracies to handle in calander systems like
-leap days, leap seconds, daylight saving times, time zones and so on.
+leap days, leap seconds, daylight saving times, time zones and so on.  It is
+possible to add information on time zone to a \code{POSIXct} object when it is
+created. 
 %
 Converting from text to \code{POSIXct} is further complicated by the many
 textual conventions of time/date denotation. For example, both \code{28
@@ -147,7 +157,7 @@ So once it is known in what order days, months and years are denoted,
 extraction is very easy. 
 
 \begin{tip}{Note}
-Years, indicated with two numbers are always interpreted as years in the 20'th century.
+Years, indicated with two numbers are always interpreted as years in the 21st century.
 <<>>=
 dmy("01 01 13")
 @
@@ -176,6 +186,7 @@ or \R{}'s builtin functionality are shown in Table \ref{tab:dateformats}.
     \code{\%A} & Full weekday name in the current locale.       & \code{Monday}\\
     \code{\%b} & Abbreviated month name in the current locale.  & \code{Sep} \\
     \code{\%B} & Full month name in the current locale.         & \code{September}\\
+    \code{\%m} & Month number (01-12)                           & \code{09}\\
     \code{\%d} & Day of the month as decimal number (01-31).    & \code{28} \\
     \code{\%y} & Year without century (00-99)                   & \code{13}\\
     \code{\%Y} & Year including century.                        & \code{2013}\\
@@ -190,10 +201,43 @@ text depend on the locale settings of the machine that is running \R{}. For exam
 on a PC running under a Dutch locale, ``\code{maandag}'' will be recognized as the
 first day of the week while in English locales ``\code{Monday}'' will be recognized. If
 the machine running \R{} has multiple locales installed you may add the argument
-\code{locale} to one of the \code{dmy}-like functions.
-<<>>=
+\code{locale} to one of the \code{dmy}-like functions. In \code{linux}-alike systems
+you can use the command \code{locale -a} in \code{bash} terminal to see the list of
+installed locales. In \code{Windows} you can find available locale settings under
+``language and regional settings'', under the configuration screen.
 
+If you know the textual format that is used to describe a date in the input, you may
+want to use \R{}'s core functionality to convert from text to \code{POSIXct}. This
+can be done with the \code{as.POSIXct} function. It takes as arguments a \code{character}
+vector with time/date strings and a string describing the format. 
+<<>>=
+dates <- c("15-9-2009","16-07-2008","17 12-2007","29-02-2011")
+as.POSIXct(dates,format="%d-%m-%Y")
 @
+In the format string, date and time fields are indicated by a letter preceded
+by a percent sign (\code{\%}). Basically, such a \code{\%}-code tells \R{} to
+look for a range of substrings. For example, the \code{\%d} indicator makes
+\R{} look for numbers \code{1-31} where precursor zeros are allowed, so
+\code{01}, \code{02},$\ldots$\code{31} are recognized as well. Table
+\ref{tab:dateformats} shows which date-codes are recognized by \R{}. The
+complete list can be found by typing \code{?strptime} in the \R{} console.
+Strings that are not in the exact format specified by the \code{format}
+argument (like the third string in the above example) will not be converted by
+\code{as.POSIXct}.  Impossible dates, such as the leap day in the fourth date
+above are also not converted.
+
+Finally, to convert dates from \code{POSIXct} back to character, one may use
+the \code{format} function that comes with base \R{}. It accepts a \code{POSIXct}
+date/time object and an output format string.
+<<>>=
+mybirth <- dmy("28 Sep 1976")
+format(mybirth,format="I was born on %B %d, %Y")
+@
+
+
+
+
+
 
 
 
@@ -397,10 +441,13 @@ for transpositions of adjacent characters.
 
 \subsection*{Exercises}
 \begin{exercise}
-Type checking and classes
+Type conversions.
 
   \begin{subex}
-    \item Use the \code{\%in\%} operator to check wether \emph{<something-something>} is either \code{numeric} or \code{integer}.
+    \item Load the buildtin \code{warpbreaks} data set .
+          Find out, in a single command, which columns of \code{warpbreaks} are either \code{numeric} or \code{integer}.
+    \item Is \code{numeric} a logical data type for the columns which are stored as such? Convert to integer when necessary.
+          (See also \code{?warpbreaks} for an explanation of the data).
     \item Error messages in \R{} sometimes report the underlying \emph{type} of an object rather than the user-level \emph{class}.
           Derive from the following code and error message what the underlying type of an \R{} function is.
           <<>>=
@@ -409,3 +456,23 @@ Type checking and classes
     Confirm your answer using \code{typeof}.
 \end{subex}
 \end{exercise}
+
+\begin{exercise}
+Create a factor variable by extracting the wool type from the \code{warpbreaks}
+data set of the previous exercise.
+<<>>=
+myfac <- warpbreaks$wool
+@
+
+\begin{subex}
+  \item Take a look at the values of \code{myfac}, and convert it to \code{character} using \code{as.character}.
+  \item Investigate the \code{class} and underlying \code{type} of \code{myfac}. Explain what happened in the previous subexercise.
+  \item Now convert \code{myfac} to character, making sure that the labels, not the underlying integers are returned in the character vector.
+        Tip: You can use \code{labels(myfac)} to get the factor labels.
+  \item Use \code{format} to convert \code{myfac} to character vectors (tip: \code{\%s} indicates a text field).
+\end{subex}
+\label{ex:factorconversion}
+\end{exercise}
+
+
+
