@@ -430,13 +430,54 @@ for transpositions of adjacent characters.
 
 
 
-
-
-
-
-
 \subsection{Character encoding issues}
 \label{sect:encoding}
+A \emph{character encoding system} is a system that defines how to translate
+each character of a given alphabet into a computer byte or sequence of
+bytes\footnote{In fact, the definition can be more general, for example to
+include Morse code. However for this tutorial it is sufficient to limit
+ourselves to computerized character encodings.}. For example, \code{ASCII} is
+an encoding system that prescribes how to translate 127 characters into single
+bytes (where the first bit of each byte is necessarily 0). The \code{ASCII} characters
+include the upper and lower case letters of the latin alphabet (\code{a-z},
+\code{A-Z}), arabic numbers (\code{0}-\code{9}), a number of interpunction
+characters and a number of invisible so-called control characters such as
+newline and carriage return. 
+
+
+Although it is widely used, \code{ASCII} is obviously incapable of encoding
+characters outside the latin alphabet, so you can say ``hello'', but not
+``$\gamma\varepsilon\iota\alpha$ $\sigma\alpha\varsigma$'' in this encoding.
+For this reason, a number of character encoding systems have been developed
+that extend \code{ASCII} or replace it alltogether. Some well-known schemes
+include \code{UTF-8} and \code{latin1}. The character encoding scheme that is
+used by default by your operating system is defined in your \code{locale}
+settings. Most unix-alikes use \code{UTF-8} by default while \code{Windows}
+often uses (a \code{Windows}-specific variant of) \code{latin1}. The
+\code{UTF-8} encoding standard is also widely used on the web.
+
+For \R{} to be able to correctly read in a textfile, it must understand which
+character encoding scheme was used to store it. By default, \R{} assumes that a
+textfile is stored in the encoding scheme defined by the operating system's
+\code{locale} settting.  This may fail when the file was not generated on the
+same computer that \R{} is running on but was obtained from the web, for
+example.  To make things worse, it is impossible to determine automatically
+with certainty from a file what encoding scheme has been used. This means that
+you may run into situations where you have to tell \R{} literally in which
+encoding a file has been stored. Once a file has been read into \R{}, a
+character vector will internally be stored in either \code{UTF-8} or
+\code{latin1}. 
+
+The \code{fileEncoding} argument of \code{read.table} and its relatives 
+tells \R{} what encoding scheme was used to store the file. When reading
+the file, \R{} will not translate the encoding to \code{UTF-8} or \code{latin1}
+by itself, but instead relies on libraries offered by the operating system.
+\R{}'s \code{iconv} function forms an interface to the OS-specific character
+encoding conversion libraries. With \code{iconvlist()} you can check what 
+encodings can be translated by your operating system.
+
+
+
 
 
 \subsection*{Exercises}
