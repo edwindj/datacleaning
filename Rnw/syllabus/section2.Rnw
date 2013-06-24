@@ -72,23 +72,34 @@ containing one element for each line in the file.  \code{readLines} detects
 both the end-of-line and carriage return characters so lines are detected
 regardless of whether the file was created under \code{DOS}, \code{UNIX} or
 \code{MAC} (each OS has traditionally had different ways of marking an
-end-of-line).
+end-of-line). Here's an example (the file can be obtained from our
+\href{https://github.com/edwindj/datacleaning/tree/master/Rnw/syllabus/files}{Github}
+page.
+<<>>=
+(txt <- readLines("files/daltons.txt"))
+@
+The variable \code{txt} has \Sexpr{length(txt)} elements, equal to the number
+of lines in the textfile.
 
 \textbf{Step 2. Selecting lines containing data.} This is generally done by
-throwing out lines containing comments. You can use \code{grep} or \code{grepl}
-for such selections (see section \ref{sect:appstringmatching}). 
+throwing out lines containing comments or otherwise lines that do not contain
+any data fields. You can use \code{grep} or \code{grepl}
+to detect such lines. \code{grep} and \code{grepl} are discussed in more detail in
+section \ref{sect:appstringmatching}), but below is an example of how to remove
+lines that start with a \code{\%}-sign.
+<<>>=
+# detect lines starting with a percentage sign..
+I <- grepl("^%",txt)
+# and throw them out
+(dat <- txt[!I])
+@
 
 \textbf{Step 3. Splitting lines into separate fields.} This can be done with
 \code{strsplit}. This function accepts a \code{character} vector and a \code{split}
 argument which tells \code{strsplit} how to split a string into substrings. The
 result is a \code{list} of \code{character} vectors.
 <<>>=
-mychar <- c(
-  "john 12",
-  "joe 16 8.5"
-)
-myfields <- strsplit(mychar,split=" ")
-myfields
+(myfields <- strsplit(dat,split=","))
 @
 Here, \code{split} is a character of sequence of characters that are to be
 interpreted as field separators. By default, \code{split} is interpreted as a
