@@ -29,13 +29,52 @@ of the techniques mentioned here will be more broadly applicable.
 
 
 \subsubsection{\code{read.table} and its cousins}
+If you are able to read in your data with any of the following functions
+\begin{center}
+\begin{tabular}{ll}
+\code{read.delim} & \code{read.delim2}\\
+\code{read.csv}   & \code{read.csv2}\\
+\code{read.table}
+\end{tabular}
+\end{center}
+your data is basically in a ``technically correct'' state. However, there are
+some tips and tricks we'll point out here to help you read those allmost-standard
+files.
 
-
+The \code{read.table} function is the most flexible function to read tabular data
+that is stored in a textual format. In fact the other \code{read}-functions mentioned
+earlier are just calls to \code{read.table} with some arguments already fixed. 
+Specifically
+\begin{center}
+\begin{tabular}{lp{0.7\textwidth}}
+\code{read.csv}  & for comma separated values with period as decimal separator.\\
+\code{read.csv2} & for semicolon separated values with comma as decimal separator.\\
+\code{read.delim}& tab-delimited files with period as decimal separator. \\
+\code{read.delim2}& tab-delimited files with comma as decimal separator.
+\end{tabular}
+\end{center}
+All these functions expect that the first line of the file contains column
+headers by default.
+%
+%
+%
 \begin{tip}{Best practice}
 Whenever you need to read data from a foreign file format, like a spreadsheet or
 commercial statistical software, make that software responsible for exporting the 
 data to an open format that can be read by \R{}.
 \end{tip}
+
+By default, all \code{character} columns read by \code{read.table} etc. are
+coerced to \code{factor} variables. This may be unwanted, for example when
+a column contains uniqe identifying strings (like names) so converting to \code{factor}
+is unwanted. This behaviour can be switched off completely either by specifying 
+\code{stringsAsFactors=FALSE} or by explicitly tell \code{read.table} the 
+class of each column with \code{colClasses}. Other arguments worth mentioning
+here are \code{na.strings}: a \code{character} vector indicating which codes
+are to be interpreted as \code{NA}, \code{skip}, telling \code{read.table}
+how many lines to skip at the beginning of the file and \code{comment.char}
+indicating how to recognize lines of comment in the file.
+
 
 
 \subsubsection{Reading data with \code{readLines}}
@@ -45,6 +84,21 @@ yourself.  This is allows you to exercise precise control over how each line is
 interpreted and transformed into fields in a rectangular data set. Table
 \ref{tab:transform} gives an overview of the steps to be taken. Below, each step is
 discussed in more detail.
+
+\textbf{Step 1. Reading data.} Reading in data with \code{readLines} is simple
+enough. It accepts filename as argument and returns a \code{character} vector
+containing one element for each line in the file.  \code{readLines} detects
+both the end-of-line and carriage return characters so lines are detected
+regardless of whether the file was created under \code{DOS}, \code{UNIX} or
+\code{MAC} (each OS has traditionally had different ways of marking an
+end-of-line). Here's an example (the file can be obtained from our
+\href{https://github.com/edwindj/datacleaning/tree/master/Rnw/syllabus/files}{Github}
+page.
+<<>>=
+(txt <- readLines("files/daltons.txt"))
+@
+The variable \code{txt} has \Sexpr{length(txt)} elements, equal to the number
+of lines in the textfile.
 %
 \begin{table}
 \begin{threeparttable}
@@ -65,21 +119,6 @@ with correctly typed columns.}
 \end{tabular}
 \end{threeparttable}
 \end{table}
-
-\textbf{Step 1. Reading data.} Reading in data with \code{readLines} is simple
-enough. It accepts filename as argument and returns a \code{character} vector
-containing one element for each line in the file.  \code{readLines} detects
-both the end-of-line and carriage return characters so lines are detected
-regardless of whether the file was created under \code{DOS}, \code{UNIX} or
-\code{MAC} (each OS has traditionally had different ways of marking an
-end-of-line). Here's an example (the file can be obtained from our
-\href{https://github.com/edwindj/datacleaning/tree/master/Rnw/syllabus/files}{Github}
-page.
-<<>>=
-(txt <- readLines("files/daltons.txt"))
-@
-The variable \code{txt} has \Sexpr{length(txt)} elements, equal to the number
-of lines in the textfile.
 
 \textbf{Step 2. Selecting lines containing data.} This is generally done by
 throwing out lines containing comments or otherwise lines that do not contain

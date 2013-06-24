@@ -1,7 +1,8 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{An overview of statistical analyses}
 Besides data collection, a typical statistical analyses may be seen as
 the result of a number of data processing steps where each step increases the
@@ -82,20 +83,116 @@ We assume that the reader has some proficiency in \R{}. However, as a service
 to the reader, below we summarize a few concepts which are fundamental to working
 with \R{}, especially when working with ``dirty data''.
 
-\subsubsection{Special values}
+\subsubsection{Variable types and indexing techniques}
+If you can choose to be proficient in just one \R{}-skill, it should be
+indexing. By indexing we mean all the tricks and methods in \R{} that allow you
+to select and manipulate data using \code{logical}, \code{integer} or named
+indices. Since indexing skills are important for data cleaning, we quickly
+review \code{vectors} and things you can do with indices below.
+
 The most basic variable in \R{} is a \code{vector}. An \R{} vector is a
 sequence of ordered values of the same type. All basic operations in \R{} act
-on vectors (think of the element-wise arithmetic, for example).  Like alomost
+on vectors (think of the element-wise arithmetic, for example). The basic types
+in \R{} are as follows.
+\begin{center}
+\begin{tabular}{ll}
+  \code{numeric} & Numeric data (approximations of the real numbers, $\mathbb{R}$)\\
+  \code{integer} & Integer data (whole numbers, $\mathbb{Z}$)\\
+  \code{factor}  & Categorical data (simple classifications, like \emph{gender})\\
+  \code{ordered} & Ordinal data (ordered classifications, like \emph{educational level})\\
+  \code{character} & Character data (strings)\\
+  \code{raw}  & Binary data\\
+\end{tabular}
+\end{center}
+All basic operations in \R{} work elementwise on vector where the shortest
+argument is recycled if necessary. This goes for arithmetic operations
+(addition, substraction,$\ldots$), comparison operators (\code{==},
+\code{<=},\ldots), logical operators (\code{\&}, \code{|}, \code{!},$\ldots$)
+and basic math functions like \code{sin}, \code{cos}, \code{exp} and so on. 
+If you want to brush up your basic knowledge of vector and recycling properties,
+you can execute the following code and think about why it works the way it does.
+<<eval=FALSE>>=
+# vectors have variables of _one_ type
+c(1,2,"three")
+# shorter arguments are recycled
+(1:3) * 2
+(1:4) * c(1,2)
+# warning! (why?)
+(1:4) * (1:3)
+@
+
+Each element of a vector can be given a \code{name}. This can be done
+by passing named arguments to the \code{c()} funtion or later with
+the \code{names} function. Such names can be helpful giving meaning
+to  your variables. For example consider the vector
+<<>>=
+x <- c("red","green","blue")
+@
+with the one below.
+<<>>=
+capColor = c(huey="red",duey="blue",louie="green")
+@
+Obviously the second version is much more suggestive of its meaning.
+The names of a vector need not be unique, but in most applications
+you'll want unique names (if any).
+
+Elements of a vector can be chosen replaced using the square bracket operators
+\code{[ ]} (more precisely, the \code{`[`} operator, but we'll skip technical
+details).  The square brackets accept either a vector of names, index numbers
+or a logicals.  In the case of logicals, the index is recycled if it is shorter
+than the indexed vector.  You may check the above by predicting and then
+verifying the result of the following statements.
+<<eval=FALSE>>=
+capColor['louie']
+names(capColor)[capColor == 'blue']
+x <- c(4,7,6,5,2,8)
+I <- x < 6
+J <- x > 7
+x[I|J]
+x[c(TRUE,FALSE)]
+@
+Assigning values to vectors can be done in the same way. For example,
+you may check that in the following assigment
+<<eval>>=
+x <- 1:10
+x[c(TRUE,FALSE)] <- 1
+@
+every other value of \code{x} is replaced with \code{1}.
+
+A \code{list} is a generalisation of a vector in that it can contain objects of
+different types, even other lists. There are two ways to index a \code{list}.
+The single bracket operator always returns a \code{sublist} of the indexed \code{list}.
+That is, the resulting type is again a \code{list}. The \code{double bracket} operator
+(\code{[[ ]]}) may only result in a single \code{list} item, and it returns the 
+object in the list itself. To understand the above, check the results of the following
+statements.
+<<eval=FALSE>>=
+L <- list(x = c(1:5), y=c('a','b','c'),z=capColor)
+L[[2]]
+L[c(1,3)]
+@
+%
+A \code{data.frame} is a \code{list} of
+vectors, possibly of different types, but with every vector of the same length.
+\code{data.frame}s are indexed with two indices separated by a comma, where the
+first index pertains to rows and the second to columns (it is also possible to
+use array indices but we'll skip this here). 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Special values}
+Like alomost
 every other programming language, \R{} has a number of Special values that are
 exceptions to the normal values of a type. These are \code{NA}, \code{NULL},
 \code{$\pm$Inf} and \code{NaN}. Below, we quickly illustrate the meaning and
 differences between them.
 %
 \begin{itemize}
-\item[\code{NA}] Stands for \emph{not available}. \code{NA} is a placeholder for a missing value.
-All basic operations in \R{} handle \code{NA} without crashing and mostly return \code{NA} as an
-answer whenever one of the input arguments is \code{NA}. If you understand \code{NA}, you should
-be able to predict the result of the following \R{} statements.
+\item[\code{NA}] Stands for \emph{not available}. \code{NA} is a placeholder
+for a missing value.  All basic operations in \R{} handle \code{NA} without
+crashing and mostly return \code{NA} as an answer whenever one of the input
+arguments is \code{NA}. If you understand \code{NA}, you should be able to
+predict the result of the following \R{} statements.
 <<eval=FALSE>>=
 NA + 1
 sum(c(NA,1,2))
@@ -156,8 +253,6 @@ The function \code{is.nan} can be used to detect \code{NaN}'s.
 The function \code{is.finite} checks a  vector for the occurrence of 
 any non-numerical or special values.
 \end{tip}
-
-\subsubsection{Indexing techniques}
 
 
 

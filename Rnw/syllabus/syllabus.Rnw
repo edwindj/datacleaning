@@ -101,6 +101,38 @@ library(editrules)
 This article is a stub. It may or may not ever be finished.
 \end{abstract}
 
+
+\newpage
+\tableofcontents
+
+\newpage
+\subsection*{Notes to the reader}
+\addcontentsline{toc}{subsection}{Notes to the reader}
+This tutorial is aimed at users who have some \R{} experience.  That is, we
+expect the reader to be familiar with concepts like variable assigment, simple
+loops, and functions. More complicated constructs, when used, will be explained
+in the text. All code examples in this tutorial can be executed, unless
+otherwise indicated. Code examples are shown in gray boxes, like this:
+<<>>=
+1 + 1
+@
+where output is preceded by a double hash sign \code{\#\#}. 
+When we use inline code or function names, these are typset
+in \code{fixed width} font, just like the code in gray boxes.
+Here and there we have tips, best practices, or other remarks that
+may be  relevant but not part of the main text. These are
+shown in separate paragraphs as follows.
+\begin{tip}{Example tip}
+A useful tip, not part of the main text.
+\end{tip}
+Finally, this document was written for the \textit{useR!2013} conference.
+We'd like to thank the organizers for providing us with the opportunity for
+giving this tutorial. We are happy to receive comments and suggestions of
+readers.
+
+\hfill {EdJ and MvdL}
+
+
 \clearpage
 <<child='section1.Rnw',eval=TRUE>>=
 @
