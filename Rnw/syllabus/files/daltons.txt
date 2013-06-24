@@ -1,0 +1,5 @@
+%% Data on the Dalton Brothers
+Gratt,1861,1892
+Bob,1869,1892
+Emmet,1871,1937
+% Names, birth and death dates

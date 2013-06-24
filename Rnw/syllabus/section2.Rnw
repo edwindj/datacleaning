@@ -42,12 +42,15 @@ data to an open format that can be read by \R{}.
 When the rows in a data file are not uniformly formatted you can consider
 reading in the text line-by-line and transforming the data to a rectangular set
 yourself.  This is allows you to exercise precise control over how each line is
-interpreted and transformed into fields in a rectangular data set.
-
-The following table indicates which steps need to be taken to go from a raw textfile
-to a structured data set. We assume that every the data for a single row is contained
-on a single line in the file.\\
+interpreted and transformed into fields in a rectangular data set. Table
+\ref{tab:transform} gives an overview of the steps to be taken. Below, each step is
+discussed in more detail.
 %
+\begin{table}
+\begin{threeparttable}
+\caption{Steps to take when converting lines in a raw text file to a \code{data.frame}
+with correctly typed columns.}
+\label{tab:transform}
 \begin{tabular}{lll}
 \hline
 & \textbf{Step} & \textbf{result} \\
@@ -55,11 +58,58 @@ on a single line in the file.\\
 1 & Read the data with \code{readLines} & \code{character}\\
 2 & Select lines containing data        & \code{character}\\
 3 & Split lines into separate fields    & \code{list}     \\
-4 & Make every row equally long         & \code{list}     \\
+4 & Make every row of equal length      & \code{list}     \\
 5 & Transform to \code{data.frame}      & \code{data.frame}\\
 6 & Normalize and coerce to correct type& \code{data.frame}\\
 \hline
 \end{tabular}
+\end{threeparttable}
+\end{table}
+
+\textbf{Step 1. Reading data.} Reading in data with \code{readLines} is simple
+enough. It accepts filename as argument and returns a \code{character} vector
+containing one element for each line in the file.  \code{readLines} detects
+both the end-of-line and carriage return characters so lines are detected
+regardless of whether the file was created under \code{DOS}, \code{UNIX} or
+\code{MAC} (each OS has traditionally had different ways of marking an
+end-of-line).
+
+\textbf{Step 2. Selecting lines containing data.} This is generally done by
+throwing out lines containing comments. You can use \code{grep} or \code{grepl}
+for such selections (see section \ref{sect:appstringmatching}). 
+
+\textbf{Step 3. Splitting lines into separate fields.} This can be done with
+\code{strsplit}. This function accepts a \code{character} vector and a \code{split}
+argument which tells \code{strsplit} how to split a string into substrings. The
+result is a \code{list} of \code{character} vectors.
+<<>>=
+mychar <- c(
+  "john 12",
+  "joe 16 8.5"
+)
+myfields <- strsplit(mychar,split=" ")
+myfields
+@
+Here, \code{split} is a character of sequence of characters that are to be
+interpreted as field separators. By default, \code{split} is interpreted as a
+regular expression (see Section \ref{sect:appstringmatching}) which means you
+need to be careful when the split argument contains any of the special characters
+listed on page \pageref{lab:regexp}. The meaning of these special characters can
+be ignored by passing \code{fixed=TRUE} as extra parameter. Compare as an example
+the following results.
+<<>>=
+strsplit("a.b",split=".")
+strsplit("a.b",split=".",fixed=TRUE)
+@
+The reason for the first result is that the period (\code{.}) is used as a
+wildcard character in regular expressions.
+
+
+\textbf{Step 4. Make every row of equal length.} 
+
+
+
+
 
 \subsection{Type conversion}
 In \R{}'s built-in help files, converting a variable from one type to another
@@ -91,7 +141,7 @@ The function \code{class} returns the class label of an \R{} object.
 class(c('abc','def'))
 class(1:10)
 class(c(pi,exp(1)))
-class(mean)
+class(factor(c("abc","def")))
 @
 The above example demonstrates that not only basic data, but also more complex
 structures like functions are objects endowed with a class label.
@@ -114,7 +164,7 @@ code snippet.
 typeof(c('abc','def'))
 typeof(1:10)
 typeof(c(pi,exp(1)))
-typeof(mean)
+typeof(factor(c("abc","def")))
 @
 Note that the type of an \R{} object of class \code{numeric} is \code{double}.
 The term \code{double} refers to \code{double precision}, which is a standard
@@ -344,6 +394,7 @@ tolower("Hello World")
 
 
 \subsubsection{Approximate string matching}
+\label{sect:appstringmatching}
 There are two forms of string matching. The first consists of determining
 whether a (range of) substring(s) occurs within another string. In this case
 one needs to specify a range of substrings (called a \emph{pattern}) to search
@@ -392,7 +443,10 @@ That is, it does not indicate the caret itself but something else, namely the
 beginning of a string. The search patterns that \code{grep}, \code{grepl} (and
 \code{sub}
 and \code{gsub}) understand have more of these meta-characters, namely: 
-\verb". \ | ( ) [ {  ^ $ * +" and \verb"?". 
+\begin{verbatim}
+   . \ | ( ) [ {  ^ $ * + ? 
+\end{verbatim}
+\label{lab:regexp}
 If you need to search a string for any of these characters, you can use the
 option \code{fixed=TRUE}.
 <<>>=
