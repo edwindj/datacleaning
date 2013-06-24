@@ -57,8 +57,8 @@ with correctly typed columns.}
 \hline
 1 & Read the data with \code{readLines} & \code{character}\\
 2 & Select lines containing data        & \code{character}\\
-3 & Split lines into separate fields    & \code{list}     \\
-4 & Make every row of equal length      & \code{list}     \\
+3 & Split lines into separate fields    & \code{list} of \code{character} vectors     \\
+4 & Standardize rows                    & \code{list} of equivalent vectors      \\
 5 & Transform to \code{data.frame}      & \code{data.frame}\\
 6 & Normalize and coerce to correct type& \code{data.frame}\\
 \hline
@@ -94,14 +94,14 @@ I <- grepl("^%",txt)
 (dat <- txt[!I])
 @
 
-\textbf{Step 3. Splitting lines into separate fields.} This can be done with
+\textbf{Step 3. Split lines into separate fields.} This can be done with
 \code{strsplit}. This function accepts a \code{character} vector and a \code{split}
 argument which tells \code{strsplit} how to split a string into substrings. The
 result is a \code{list} of \code{character} vectors.
 <<>>=
-(myfields <- strsplit(dat,split=","))
+(fieldList <- strsplit(dat,split=","))
 @
-Here, \code{split} is a character of sequence of characters that are to be
+Here, \code{split} is a single character or sequence of characters that are to be
 interpreted as field separators. By default, \code{split} is interpreted as a
 regular expression (see Section \ref{sect:appstringmatching}) which means you
 need to be careful when the split argument contains any of the special characters
@@ -116,11 +116,101 @@ The reason for the first result is that the period (\code{.}) is used as a
 wildcard character in regular expressions.
 
 
-\textbf{Step 4. Make every row of equal length.} 
+\textbf{Step 4. Standardize rows.} The goal of this step is to make sure that
+1) every row has the same number of fields and 2) the fields are in the right
+order. This step involves a loop over all elements of \code{fieldList}. You
+can either use a \code{for}-loop or the \code{lapply} function to treat
+all elements of a \code{list}. In the running example we need to 
+replace every vector that is shorter than the number of columns in the data file
+with a vector with the correct length. Extra fields should be set to \code{NA}.
+<<>>=
+standardFields <- list(length(fieldList))
+for ( i in 1:length(fieldList)){
+  x <- fieldList[[i]]
+  length(x) <- 3
+  standardFields[[i]] <- x
+}
+standardFields
+@
+By setting the \code{length} of each element to 3, every element with less 
+elements is concatenated with enough \code{NA}'s to reach lenght 3. 
+
+The above code snippet does the job, but we can do a little better than that.
+The \R{} function \code{lapply} offers a convinient way to loop over all
+elemets in a list. \code{lapply} accepts as arguments a \code{list} and a
+function. The function will be fed the elements of the \code{list} one-by-one
+and the results are gathered in a \code{list} again (optionally, extra
+parameters to the function can be passed as extra named arguments). The
+function \code{sapply} does exactly the same as \code{lapply}, but it tries to
+simplify the results to a simpler structure than a list. We'll use
+\code{sapply} to get the maximum number of fields in \code{fieldList}.
+<<>>=
+nrows = max(sapply(fieldList,length))
+@
+Here, \code{sapply} applies \code{length} to each vector in \code{fieldList} and gathers
+the result in a \code{numeric} vector. \code{max} returns its largest value. We now
+use \code{lapply} to change the length of each field.
+<<tidy=FALSE>>=
+standardFields <- lapply(fieldList,
+  function(x){
+    length(x) <- nrows
+    x
+  }
+)
+standardFields
+@
+Note that here, it is not necessary to first define a \code{standardFields}
+list to assign values to.
+
+\begin{tip}{Tip}
+Another advantage of \code{lapply} is that it is really easy to paralellize
+list-wise operations using the \code{parallel} package. For example, on a quadcore
+computer you can do the following.
+<<eval=FALSE,tidy=FALSE>>=
+library(parallel)
+cluster <- makeCluster(4)
+standardFields <- parLapply(cl=cluster, fieldList, 
+  function(x){
+    length(x) <- nrows
+    x
+  }
+)
+stopCluster(cl)
+@
+Of course, paralellization only makes sense when you have a fairly long list to process,
+since there is some overhead in setting up and running the cluster.
+\end{tip}
 
 
 
+\textbf{Step 5. Transform to \code{data.frame}.}
+There are several ways to transform a list to a \code{data.frame} object.
+Here we first copy all our elements in a \code{matrix} wich we'll then coerce
+into a \code{data.frame}.
+<<>>=
+(M <- matrix(unlist(standardFields),nrow=nrows,byrow=TRUE))
+colnames(M) <- c("name","birth","death")
+(daltons <- as.data.frame(M, stringsAsFactors=FALSE))
+@
+The function \code{unlist} concatenates all vectors in a \code{list} into one large
+character vector. We then use that vector to fill a \code{matrix} of class \code{character}.
+However, the \code{matrix} function usually fills up a matrix column by column. Here, our
+data is stored with rows concatenated, so we need to add the argument \code{byrow=TRUE}.
+Finally, we add column names and coerce the matrix to a \code{data.frame}. We use
+\code{stringsAsFactors=FALSE} since we have not started interpreting the values yet.
 
+\textbf{Step 6. Normalize and coerce to correct types.}
+This step consists of preparing the \code{character} columns of our \code{data.frame}
+for coercion and translating numbers into \code{numeric} vectors and possibly
+\code{character} vectors to \code{factor} variables. String normalisation is
+the subject of section \ref{sect:stringnormalisation} and type conversion is
+discussed in some more detail in the next section. However, in our example
+we can suffice with the following statements.
+<<>>=
+daltons$birth <- as.numeric(daltons$birth)
+daltons$death <- as.numeric(daltons$death)
+daltons
+@
 
 \subsection{Type conversion}
 In \R{}'s built-in help files, converting a variable from one type to another
@@ -154,8 +244,6 @@ class(1:10)
 class(c(pi,exp(1)))
 class(factor(c("abc","def")))
 @
-The above example demonstrates that not only basic data, but also more complex
-structures like functions are objects endowed with a class label.
 %
 \begin{tip}{Tip}
 Here's a quick way to retrieve the classes of all columns in a \code{data.frame} called \code{dat}.
@@ -177,7 +265,7 @@ typeof(1:10)
 typeof(c(pi,exp(1)))
 typeof(factor(c("abc","def")))
 @
-Note that the type of an \R{} object of class \code{numeric} is \code{double}.
+Note that the \code{type} of an \R{} object of class \code{numeric} is \code{double}.
 The term \code{double} refers to \code{double precision}, which is a standard
 way for lower-level computer languages such as \C{} to store approximations of real numers. 
 
@@ -342,7 +430,6 @@ format(mybirth,format="I was born on %B %d, %Y")
 
 
 \subsection{Recoding strings}
-\label{sect:stringnormalisation}
 Character data can be notoriously hard to process. For example, consider the
 following excerpt of a data set with a \code{gender} variable.
 <<echo=2>>=
@@ -368,6 +455,7 @@ following topics are discussed.
 
 
 \subsubsection{String normalisation}
+\label{sect:stringnormalisation}
 %
 String normalisation techniques are aimed at transforming a variety of strings
 to a (possibly) smaller set of string values which are more easily processed.
@@ -636,7 +724,8 @@ We will coerce the columns of the data of the previous exercise to a structured 
   \item Use a string distance technique to transform the \code{Gender} column into
     a \code{factor} variable with labels \code{man} and \code{woman}.
   \item Coerce the \code{Age} column to \code{integer}.
-  \item Coerce the \code{weight} column to \code{numeric}. 
+  \item Coerce the \code{weight} column to \code{numeric}. Hint: use \code{gsub} to replace
+   comma's with a period.
 \end{subex}
 \end{exercise}
 
