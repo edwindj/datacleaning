@@ -1,0 +1,8 @@
+// Survey data. Created : 21 May 2013
+// Field 1: Gender
+// Field 2: Age (in years)
+// Field 3: Weight (in kg)
+M;28;81.3
+male;45;
+Female;17;57,2
+fem.;64;62.8

@@ -1,17 +1,32 @@
 
 \section{From raw data to technically correct data}
 \label{sect:rawtoinput}
-% Some ideas:
-%
-% - Character encoding issues
-% - regels overslaan, gebruiken van readLines
-% - Special values, and how are they stored (NA, NULL,...)
-% - Datatypen en conversie, yaml(?)
-% - labels van categoriale variabelen
-% - spelfouten in tekstvariabelen, normaliseren
-%
+% Some ideas: [x] = todo,[-]= in progress, [v] = finished, [c] = cancelled. 
+% 
+% -[v]  Character encoding issues
+% -[x]  regels overslaan, gebruiken van readLines
+% -[x]  Special values, and how are they stored (NA, NULL,...)
+% -[v]  Datatypen en conversie, yaml(?)
+% -[x]  labels van categoriale variabelen
+% -[v]  spelfouten in tekstvariabelen, normaliseren
+% -[x]  indexing skills
+% -[-]  exercises
 
 \subsection{Reading data into R}
+If the data you are trying to read into \R{} is formatted nicely, for example
+as a \code{csv} or \code{tab}-delimeted file you will in general have no
+problems getting data into \R{} correctly. Things become more difficult however
+when the storage format is not constant over the whole file. For example, in
+one column, some numbers may have a period (\code{.}) as decimal separator
+while others have a comma (\code{,}). Some lines may contain comments
+instead of data, or have a different number of columns. In such cases \R{}'s
+high-level data-reading functions such as \code{read.table} are not always capable
+of reading the data correctly in a single go.
+
+In this section we point out techniques to read (badly) formatted text files
+into \R{}. This tutorial is limited to rectangular data sets, although some
+of the techniques mentioned here will be more broadly applicable.
+
 
 \subsubsection{\code{read.table} and its cousins}
 
@@ -23,7 +38,7 @@ data to an open format that can be read by \R{}.
 \end{tip}
 
 
-\subsubsection{Reading \code{XML} files}
+\subsubsection{Reading data with \code{readLines}}
 
 \subsection{Type conversion}
 In \R{}'s built-in help files, converting a variable from one type to another
@@ -305,7 +320,7 @@ Converting strings to complete upper or lower case can be done with \R{}'s built
 toupper("Hello world")
 tolower("Hello World")
 @
-We will return to string normalisation in the Section \ref{sect:encoding}.
+
 
 \subsubsection{Approximate string matching}
 There are two forms of string matching. The first consists of determining
@@ -468,8 +483,22 @@ encoding a file has been stored. Once a file has been read into \R{}, a
 character vector will internally be stored in either \code{UTF-8} or
 \code{latin1}. 
 
-The \code{fileEncoding} argument of \code{read.table} and its relatives 
-tells \R{} what encoding scheme was used to store the file. When reading
+The \code{fileEncoding} argument of \code{read.table} and its relatives tells
+\R{} what encoding scheme was used to store the file. For \code{readLines} the
+file encoding must be specified when the file is opened, before calling
+\code{readLines}, as in the example below.
+<<eval=FALSE>>=
+# 1. open a connection to your file, specifying its encoding
+  f <- file('myUTF16file.txt',encoding='UTF-16')
+# 2. Read the data with readLines. 
+#    Text read from the file is converted to uft8 or latin1
+  input <- readLines(f)
+# close the file connection.
+  close(f)
+@
+%
+%
+When reading
 the file, \R{} will not translate the encoding to \code{UTF-8} or \code{latin1}
 by itself, but instead relies on libraries offered by the operating system.
 \R{}'s \code{iconv} function forms an interface to the OS-specific character
@@ -481,6 +510,22 @@ encodings can be translated by your operating system.
 
 
 \subsection*{Exercises}
+
+\begin{exercise}
+In this exercise we'll use \code{readLines} to read in an irregular textfile.
+The file looks like this (without numbering).
+\begin{center}
+\lstinputlisting[
+  xleftmargin=1cm,
+  numbers=left,
+  basicstyle=\ttfamily\scriptsize]{files/example.txt}
+\end{center}
+You may copy the text from this pdf file in a textfile called \code{example.txt} or
+download the file from
+
+\end{exercise}
+
+
 \begin{exercise}
 Type conversions.
 
