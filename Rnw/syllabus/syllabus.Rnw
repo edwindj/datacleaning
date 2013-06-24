@@ -3,6 +3,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{threeparttable}
 \usepackage{natbib}
+\usepackage{hyperref}
 \bibliographystyle{plain}
 \bibpunct{}{}{,}{s}{}{}
 

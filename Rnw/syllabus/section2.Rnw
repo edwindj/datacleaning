@@ -39,6 +39,27 @@ data to an open format that can be read by \R{}.
 
 
 \subsubsection{Reading data with \code{readLines}}
+When the rows in a data file are not uniformly formatted you can consider
+reading in the text line-by-line and transforming the data to a rectangular set
+yourself.  This is allows you to exercise precise control over how each line is
+interpreted and transformed into fields in a rectangular data set.
+
+The following table indicates which steps need to be taken to go from a raw textfile
+to a structured data set. We assume that every the data for a single row is contained
+on a single line in the file.\\
+%
+\begin{tabular}{lll}
+\hline
+& \textbf{Step} & \textbf{result} \\
+\hline
+1 & Read the data with \code{readLines} & \code{character}\\
+2 & Select lines containing data        & \code{character}\\
+3 & Split lines into separate fields    & \code{list}     \\
+4 & Make every row equally long         & \code{list}     \\
+5 & Transform to \code{data.frame}      & \code{data.frame}\\
+6 & Normalize and coerce to correct type& \code{data.frame}\\
+\hline
+\end{tabular}
 
 \subsection{Type conversion}
 In \R{}'s built-in help files, converting a variable from one type to another
@@ -123,7 +144,7 @@ focus on converting text to \code{POSIXct} objects since this is probably the
 most portable way to store such information.
 
 Under the hood, a \code{POSIXct} object stores the number of seconds that have
-passed since January 1, 1970 $00:00:00$. This makes it possible to compute
+passed since January 1, 1970 \mbox{00:00}. This makes it possible to compute
 durations by simply subtracting two \code{POSIXct} objects. When a \code{POSIXct}
 object is printed, \code{R} shows it in a human-readable calander format. For example,
 the command \code{Sys.time} returns the system time provided by the operating system
@@ -155,7 +176,7 @@ functions facilitating the conversion of text to \code{POSIXct} dates.
 %
 <<message=FALSE>>=
 library(lubridate)
-dates <- c("15/02/2013","15 Feb  13")
+dates <- c("15/02/2013","15 Feb  13","It happened on 15 02 '13")
 dmy(dates)
 @
 Here, the function \code{dmy} assumes that dates are denoted in the order
@@ -370,7 +391,8 @@ Indeed, the \code{grepl} function now finds only the first two elements of
 That is, it does not indicate the caret itself but something else, namely the
 beginning of a string. The search patterns that \code{grep}, \code{grepl} (and
 \code{sub}
-and \code{gsub}) understand have more of these meta-characters, namely: \verb". \ | ( ) [ {  ^ $ * + ?". 
+and \code{gsub}) understand have more of these meta-characters, namely: 
+\verb". \ | ( ) [ {  ^ $ * +" and \verb"?". 
 If you need to search a string for any of these characters, you can use the
 option \code{fixed=TRUE}.
 <<>>=
@@ -498,36 +520,64 @@ file encoding must be specified when the file is opened, before calling
 @
 %
 %
-When reading
-the file, \R{} will not translate the encoding to \code{UTF-8} or \code{latin1}
-by itself, but instead relies on libraries offered by the operating system.
-\R{}'s \code{iconv} function forms an interface to the OS-specific character
-encoding conversion libraries. With \code{iconvlist()} you can check what 
-encodings can be translated by your operating system.
+When reading the file, \R{} will not translate the encoding to \code{UTF-8} or
+\code{latin1} by itself, but instead relies on libraries offered by the
+operating system.  \R{}'s \code{iconv} function forms an interface to the
+OS-specific character encoding conversion libraries. With \code{iconvlist()}
+you can check what encodings can be translated by your operating system.
 
 
-
-
-
-\subsection*{Exercises}
+\section*{Exercises}
 
 \begin{exercise}
 In this exercise we'll use \code{readLines} to read in an irregular textfile.
 The file looks like this (without numbering).
 \begin{center}
 \lstinputlisting[
-  xleftmargin=1cm,
-  numbers=left,
-  basicstyle=\ttfamily\scriptsize]{files/example.txt}
+    xleftmargin=1cm,
+    numbers=left,
+    basicstyle=\ttfamily\scriptsize
+  ]{files/example.txt}
 \end{center}
-You may copy the text from this pdf file in a textfile called \code{example.txt} or
-download the file from
+You may copy the text from this pdf file in a textfile called
+\code{example.txt} or download the file from our
+\href{https://github.com/edwindj/datacleaning/blob/master/Rnw/syllabus/files}{github
+page}.
 
+\begin{subex}
+  \item Read the complete file using \code{readLines}.
+  \item Separate the \code{list} of lines into a \code{list} containing
+    comments and a \code{list} containing the data.  Hint: use \code{grepl}.
+  \item Extract the date from the first comment line.
+  \item Read the data into a \code{matrix} as follows.
+  \begin{enumerate}
+    \item Split the character vectors in the vector containing \code{data}
+      lines by semicolon (\code{;}) using \code{strsplit}.
+    \item Find the maximum number of fields retrieved by \code{split}. Append
+      rows that are shorter with \code{NA}'s.
+    \item Use \code{unlist} and \code{matrix} to transform the data to
+      row-column format.
+  \end{enumerate}
+  \item From comment lines \code{2-4}, extract the names of the fields. Set
+    these as \code{colnames} for the \code{matrix} you just created.
+\end{subex}
+\end{exercise}
+
+\begin{exercise}
+We will coerce the columns of the data of the previous exercise to a structured data set.
+\begin{subex}
+  \item Coerce the matrix to a \code{data.frame}, making sure all colums are
+    \code{character} columns.
+  \item Use a string distance technique to transform the \code{Gender} column into
+    a \code{factor} variable with labels \code{man} and \code{woman}.
+  \item Coerce the \code{Age} column to \code{integer}.
+  \item Coerce the \code{weight} column to \code{numeric}. 
+\end{subex}
 \end{exercise}
 
 
 \begin{exercise}
-Type conversions.
+More on type conversions.
 
   \begin{subex}
     \item Load the buildtin \code{warpbreaks} data set .

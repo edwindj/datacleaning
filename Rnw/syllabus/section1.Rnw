@@ -77,8 +77,104 @@ statistical analyses, and in Sections \ref{sect:rawtoinput} and
 \ref{sect:inputtomicro} we define more clearly which quality aspect are improved
 in which stage, and we show how to do this with \R{}.
 
+\subsection{Some general background in \R{}}
+We assume that the reader has some proficiency in \R{}. However, as a service
+to the reader, below we summarize a few concepts which are fundamental to working
+with \R{}, especially when working with ``dirty data''.
+
+\subsubsection{Special values}
+The most basic variable in \R{} is a \code{vector}. An \R{} vector is a
+sequence of ordered values of the same type. All basic operations in \R{} act
+on vectors (think of the element-wise arithmetic, for example).  Like alomost
+every other programming language, \R{} has a number of Special values that are
+exceptions to the normal values of a type. These are \code{NA}, \code{NULL},
+\code{$\pm$Inf} and \code{NaN}. Below, we quickly illustrate the meaning and
+differences between them.
+%
+\begin{itemize}
+\item[\code{NA}] Stands for \emph{not available}. \code{NA} is a placeholder for a missing value.
+All basic operations in \R{} handle \code{NA} without crashing and mostly return \code{NA} as an
+answer whenever one of the input arguments is \code{NA}. If you understand \code{NA}, you should
+be able to predict the result of the following \R{} statements.
+<<eval=FALSE>>=
+NA + 1
+sum(c(NA,1,2))
+median(c(NA,1,2,3), na.rm=TRUE)
+length(c(NA, 2, 3, 4))
+3 == NA
+NA == NA
+TRUE | NA
+@
+The function \code{is.na} can be used to detect \code{NA}'s.
+
+\item[\code{NULL}] You may think \code{NULL} as the empty set from
+mathemathics.  \code{NULL} is special since it has no \code{class} (its class
+is \code{NULL}) and has length 0 so it does not take up any space in a vector.
+In particular, if you understand \code{NULL}, the result of the following
+statements should be clear to you without starting \R{}.
+<<eval=FALSE>>=
+length(c(1,2,NULL,4))
+sum(c(1,2,NULL,4))
+x <- NULL
+c(x,2)
+@
+The function \code{is.null} can be used to detect \code{NULL} variables.
+
+\item[\code{Inf}] Stands for \emph{infinity} and only applies to vecors of
+class \code{numeric} and \code{integer} can never be \code{Inf}. This is
+because the \code{Inf} in \R{} is directly derived from the international
+standard for floating point arithmetic\cite{ieee:2008}. Technically, \code{Inf}
+is a valid \code{numeric} that results from calculations like division of a
+number by zero. Since \code{Inf} is a numeric, operations between \code{Inf}
+and a finite numeric are well-defined and comparison operators work as
+expected. If you understand \code{Inf}, the result of the following statements
+should be clear to you.
+<<eval=FALSE>>=
+pi/0
+2*Inf
+Inf - 1e10
+Inf + Inf
+3 < -Inf
+Inf == Inf
+@
+
+\item[\code{NaN}] Stands for \emph{not a number}. This is generally the result
+of a calculation of which the result is unknown, but it is surely not a number.
+In particular operations like \code{0/0}, \code{Inf-Inf} and \code{Inf/Inf} result
+in \code{NaN}. Technically, \code{NaN} is of class numeric, which may seem odd
+since it is used to indicate that something is \emph{not} numeric. Computations
+involving numbers and \code{NaN} always result in \code{NaN}, so the result
+of the following computations should be clear.
+<<eval=FALSE>>=
+NaN + 1
+exp(NaN)
+@
+The function \code{is.nan} can be used to detect \code{NaN}'s.
+\end{itemize}
+
+\begin{tip}{Tip}
+The function \code{is.finite} checks a  vector for the occurrence of 
+any non-numerical or special values.
+\end{tip}
+
+\subsubsection{Indexing techniques}
+
+
 
 \subsection*{Exercises}
+
+\begin{exercise}
+Predict the result of the following \R{} statements.
+\begin{subex}
+\item \code{exp(-Inf)}
+\item \code{NA == NA}
+\item \code{NA == NULL}
+\item \code{NULL == NULL}
+\item \code{NA \& FALSE}
+\end{subex}
+\end{exercise}
+
+
 \begin{exercise}
   In which of the steps outlined in Figure \ref{fig:steps} would you perform the following activities?
   \begin{subex}
