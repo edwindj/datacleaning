@@ -12,7 +12,13 @@
 % -[x]  labels van categoriale variabelen
 % -[v]  spelfouten in tekstvariabelen, normaliseren
 % -[x]  indexing skills
+% -[x]  factors, relevel
 % -[-]  exercises
+
+\subsection{Technically correct}
+
+The first step is to 
+Definitio
 
 \subsection{Reading data into R}
 If the data you are trying to read into \R{} is formatted nicely, for example
