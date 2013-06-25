@@ -1,10 +1,12 @@
 
 \section{From raw data to technically correct data}
 \label{sect:rawtoinput}
+
 % Some ideas: [x] = todo,[-]= in progress, [v] = finished, [c] = cancelled. 
 % 
 % -[v]  Character encoding issues
 % -[x]  regels overslaan, gebruiken van readLines
+% -[x]  regels overslaan, gebruiken van scan
 % -[x]  Special values, and how are they stored (NA, NULL,...)
 % -[v]  Datatypen en conversie, yaml(?)
 % -[x]  labels van categoriale variabelen
