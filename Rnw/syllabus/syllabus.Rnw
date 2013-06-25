@@ -92,7 +92,6 @@ opts_chunk$set(size='small')
 
 <<include=FALSE >>=
 library(rspa)
-library(deducorrect)
 library(editrules)
 @
 \maketitle
