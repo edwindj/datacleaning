@@ -30,3 +30,16 @@ read_chunk('edits.txt')
 <<rules,eval=FALSE>>=
 @
 
+
+\subsection{Resolving errors with \code{deducorrect}}
+
+
+
+
+\subsection{Imputation of missing data}
+
+
+
+\subsection{Adjusting values with \code{rspa}}
+
+
