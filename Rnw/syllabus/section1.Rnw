@@ -88,6 +88,7 @@ working with \R{}, especially when working with ``dirty data''.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Variable types and indexing techniques}
+\label{sect:indexing}
 If you can choose to be proficient in just one \R{}-skill, it should be
 indexing. By indexing we mean all the tricks and methods in \R{} that allow you
 to select and manipulate data using \code{logical}, \code{integer} or named

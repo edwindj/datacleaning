@@ -1,0 +1,16 @@
+## @knitr conversions
+# convert centimeters
+if ( unit == "cm" ){
+  height <- height/100
+}
+# convert inches
+if (unit == "inch" ){
+  height <- height/39.37
+}
+# convert feet
+if (unit == "ft" ){
+  height <- height/3.28
+}
+# set all units to meter
+unit <- "m"
+
