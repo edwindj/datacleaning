@@ -2,10 +2,20 @@
 \usepackage[english]{babel}
 \usepackage{amsmath,amssymb}
 \usepackage{threeparttable}
+\usepackage{rotating}
 \usepackage{natbib}
 \usepackage{hyperref}
 \bibliographystyle{plain}
 \bibpunct{}{}{,}{s}{}{}
+
+% environment with different margins (for wide tables)
+\usepackage{chngpage}
+
+% fonts for checkmarks
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+%\newcommand{\xmark}{\ding{55}}%
+\newcommand{\xmark}{$\cdot$}%
 
 % nicer bold symbols in math mode:
 \newcommand{\bs}[1]{\boldsymbol{#1}}
@@ -147,6 +157,7 @@ readers.
 <<child='section3.Rnw',eval=TRUE>>=
 @
 
+\clearpage
 \bibliography{datacleaning}
 \end{document}
 

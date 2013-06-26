@@ -16,8 +16,6 @@ rules}), or indicative (\emph{soft rules}).
 
 
 
-
-
 \subsection{Checking record-wise rules with the \code{editrules} package.}
 The \code{editrules} package allows one to define rules on categorical,
 numerical or mixed data sets which each record must obey. Restrictions can
@@ -189,10 +187,11 @@ your data. A \code{deducorrect} object also contains data on timing, user,
 and so on. See \code{?"deducorrect-object"} for a full explanation.
 \end{tip}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Imputation of missing data}
 
-\subsubsection{Deriving imputation values with certainty}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Deriving imputation values with (near) certainty}
 Under some circumstances, the rules that your data have to obey are
 so restrictive that there's just a single solution for a missing value.
 As an example, consider a record with variables listing the costs
@@ -254,9 +253,199 @@ cor$corrected
 Here, \code{deduImpute} uses automated logic to derive from the conditional
 rules that if someone has a driverslicense, he has to be an adult.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Model-based imputation}
+\label{sect:mbimputation}
+When deterministic or deductive corrections and imputations are not sufficient
+to replace missing values, one may either correct for the missing data using
+advances weight models or by estimating the actual missing values using
+statistical models. There is a vast body of literature on imputation methods
+and is goes beyond the scope of this tutorial to discuss them all. In stead, we
+present in Table \ref{tab:imputation} an overview of packages that offer some
+kind of imputation method and list them against a number of popular model-based
+imputation methods. We note that the list of packages and methods are somewhat
+arbitrary as they result from an investigation conducted at Statistics
+Netherlands \cite{broek:2012} for internal purposes. Nevertheless we feel that
+this overview is a quite useful place to start. The packages \code{Amelia},
+\code{deducorrect} and \code{mix} do not implement any of the methods mentioned
+in the table. That is because \code{Amelia} implements a multiple imputation
+method based on the assumption of a conditional multinormal variable
+distribution. The \code{deducorrect} package implements deductive and
+deterministic method, and we choose not to call this model-based in this
+tutorial. The \code{mix} package implements a Bayesian estimation method based
+on an Markov Chain Monte Carlo algorithm.
+
+There is no one single best imputation method that works in all cases. The
+imputation model of choice depends on what auxiliary information is available
+and whether there are (multivariate) edit restrictions on the data to be
+imputed. The availability of \R{} software for imputation under edit
+restrictions is, to our best knowledge, limited. However, a viable strategy for
+imputing numerical data is to first impute missing values without restrictions,
+and then minimally adjust the imputed values so that the restrictions are
+obeyed.  Separately, these methods are available in \R{}.
+
+\begin{table}[!t]
+\begin{adjustwidth}{-2cm}{}
+\begin{threeparttable}
+\caption{An overview of imputation funcitonality offered by some  \R{} packages.
+reg: regression, rand: random, seq: sequential, NN: nearest neighbour, pmm:
+predictive mean matching, kNN: $K$-nearest-neighbours, int: interpolation,
+lo/no last observation carried forward / next observation carried backward,
+LS: method of Little and Su.
+}
+\label{tab:imputation}
+\begin{tabular}{|l|ccc|cccc|c|ccc|}
+\hline
+\multicolumn{1}{|l}{} & 
+\multicolumn{3}{|c|}{Numeric} &
+\multicolumn{4}{|c|}{Hot deck}&
+\multicolumn{1}{|c|}{}&
+\multicolumn{3}{|c|}{Longitudinal}\\
+
+Package                             & 
+\multicolumn{1}{|c}{mean}  & 
+\multicolumn{1}{c}{ratio}  & 
+\multicolumn{1}{c|}{reg.}   & 
+\multicolumn{1}{c}{rand}  & 
+\multicolumn{1}{c}{seq}   & 
+\multicolumn{1}{c}{NN}    & 
+\multicolumn{1}{c|}{pmm}   & 
+\multicolumn{1}{c}{kNN}   & 
+\multicolumn{1}{|c}{int}   & 
+\multicolumn{1}{c}{lo/no}  & 
+\multicolumn{1}{c|}{LS}     \\ \hline
+\code{Amelia}\cite{honaker:2011}    &\xmark & \xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
+\code{BaBoon}\cite{meinfelder:2011} &\xmark & \xmark &\xmark &\xmark &\xmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
+\code{cat}\cite{harding:2012}       &\xmark & \xmark &\xmark &\cmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\  
+\code{deducorrect}\cite{loo:2011}   &\xmark & \xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ \hline
+\code{e1071}\cite{meyer:2012}       &\cmark & \xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
+\code{ForImp}                       &\cmark & \xmark &\xmark &\xmark &\xmark &\cmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
+\code{Hmisc}\cite{harrel:2013}      &\cmark & \xmark &\xmark &\cmark &\xmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
+\code{imputation}\cite{wong:2013}   &\xmark & \xmark &\xmark &\xmark &\xmark &\cmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ \hline
+\code{impute}\cite{hastie}          &\xmark & \xmark &\xmark &\xmark &\xmark &\cmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
+\code{mi}\cite{su:2011}             &\xmark & \xmark &\cmark &\cmark &\xmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
+\code{mice}\cite{buren:2011}        &\cmark & \xmark &\cmark &\cmark &\xmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
+\code{mix}\cite{schafer:2010}       &\xmark & \xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ \hline
+\code{norm}\cite{alvaro:2013}       &\xmark & \xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
+\code{robCompositions}\cite{templ:2011}&\xmark & \xmark &\cmark &\cmark &\xmark &\cmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
+\code{rrcovNA}\cite{todorov:2012}      &\xmark & \xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
+\code{StatMatch}\cite{orazio:2012}     &\xmark & \xmark &\xmark &\cmark &\xmark &\cmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ \hline
+\code{VIM}\cite{templ:2012}            &\xmark & \xmark &\cmark &\cmark &\xmark &\cmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
+\code{yaImpute}\cite{crookston:2007}   &\xmark & \xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
+\code{zoo}\cite{zeileis:2005}          &\cmark & \xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\cmark &\cmark & \xmark \\ 
+\hline                                                                                                             
+\end{tabular}
+\end{threeparttable}
+\end{adjustwidth}
+\end{table}
+%
+In the following subsections we discuss three types of imputation
+models and give some pointers to how to implement them using \R{}.
+The next section (\ref{sect:rspa}) is devoted to value adjustment.
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Basic numeric imputation models}
+\label{sect:numericimputation}
+Here, we distinguish three imputation models. The first is imputation of the mean:
+\begin{equation}
+\hat{x}_i = \bar{x},
+\end{equation}
+where the mean is taken over the observed values. The usability of this model
+is limited since it obviously causes a bias in measures of spread, estimated
+from the sample after imputation. However, in base \R{} it is implemented
+simply enough.
+<<eval=FALSE>>=
+x[is.na(x)] <- mean(x,na.rm=TRUE)
+@
+In principle one can use other measures of centrality, and in fact, the \code{Hmisc}
+package has a convenient wrapper function allowing you to specify what function is
+used to compute imputed values from the non-missing. For example, imputation of 
+the mean or median can be done as follows. 
+<<eval=FALSE>>=
+library(Hmisc)
+x <- impute(x, fun=mean)     # mean imputation
+x <- impute(x, fun=median)   # median imputation
+@
+An nice feature of the \code{impute} function is that the resulting
+vector ``remembers'' what values were imputed. This information
+may be requested with \code{is.imputed} as in the example below.
+<<echo=FALSE,message=FALSE>>=
+library(Hmisc)
+@
+<<>>=
+x <- 1:5   # create a vector...
+x[2] <- NA # ...with an empty value
+x <- impute(x,mean)
+x
+is.imputed(x)
+@
+Note also that imputed values are printed with a post-fixed asterix.
+
+The second imputation model we discuss is ratio imputation. Here, the
+imputation estimate $\hat{x}_i$ is given by 
+\begin{equation}
+\hat{x}_i = \hat{R} y_i,
+\end{equation}
+Where $y_i$ is a covariate and $\hat{R}$ is an estimate of the average ratio
+between $x$ and $y$. Often this will be given by the sum of observed $x$ values
+divided by the sum of corresponding $y$ values although variants are possible.
+Ratio imputation has the property that the estimated value equals $\hat{x}=0$
+when $y=0$, which is in general not guaranteed in linear regression. Ratio
+imputation may be a good model to use when restrictions like $x\geq 0$ and/or
+$y\geq0$ apply. There is no package directly implementing ratio imputation,
+unless it is regarded a special case of regression imputation. It is easily
+implemented using plain \R{} though. Below, we suppose that \code{x} and \code{y}
+are numeric vectors of equal length, \code{x} contains missing values and \code{y}
+is complete.
+<<eval=FALSE>>=
+I <- is.na(x)
+R <- sum(x[!I])/sum(y[!I])
+x[I] <- R*y[I] 
+@
+Unfortunately, it is not possible to simply wrap the above in a function and
+pass this to \code{HMisc}'s \code{impute} function. There seem to be no packages
+that implement ratio imputation in a single function.
+
+
+The third, and last numerical model we treat are (generalized) linear
+regression models. In such models, missing values are imputed
+using as follows
+\begin{equation}
+\hat{x}_i = \hat{\beta}_0 + \hat{\beta}_1y_{1,i} + \ldots + \hat{\beta}_ky_{k,i},
+\end{equation}
+where the $\hat{\beta}_0,\hat{\beta}_1\ldots\hat{\beta}_k$ are estimated linear
+regression coefficients for each of the auxiliary variables
+$y_1,y_2\ldots,y_k$. Estimating linear models is easy enough using \code{lm}
+and \code{predict} in standard \R{}. Here, we use the built-in \code{iris}
+data set as an example.
+<<>>=
+data(iris)
+iris$Sepal.Length[1:10] <- NA
+model <- lm(Sepal.Length ~ Sepal.Width + Petal.Width,data=iris)
+I <- is.na(iris$Sepal.Length)
+iris$Sepal.Length[I] <- predict(model, newdata=iris[I,])
+@
+Above, \code{lm} automatically omits rows with empty values and estimates the
+model based on the remaining records. Next, we used \code{predict} to estimate
+the missing values. 
+
+It should be noted that although \code{Hmisc}, \code{VIM}, \code{mi} and
+\code{mice} all implement imputation methods that ultimately use some form of
+regression, none of them include the simple case described above.
+
+
+\subsubsection{Hot deck imputation}
+\label{sect:hotdeck}
+
+
+
+\subsubsection{Longitudinal imputation}
+\label{sect:logitudinal}
+
 
 
 
 \subsection{Adjusting values with \code{rspa}}
-
+\label{sect:rspa}
 
