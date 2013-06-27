@@ -301,13 +301,14 @@ daltons$death <- as.numeric(daltons$death)
 daltons
 @
 
-<<>>=
-daltons = transform( daltons,
-                   , birth = as.numeric(birth)
-                   , death = as.numeric(death)
-                   )
-daltons
-@
+% this gave an error for some reason (mvdl)
+%<<>>=
+%daltons = transform( daltons,
+%                   , birth = as.numeric(birth)
+%                   , death = as.numeric(death)
+%                   )
+%daltons
+%@
 
 
 \subsection{Type conversion}
