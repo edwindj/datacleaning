@@ -17,8 +17,39 @@
 
 \subsection{Technically correct}
 
-The first step is to 
-Definitio
+We use the following simple definition for {\em technically correct} in \R{}:
+\begin{itemize}
+\item The data to be analyzed are stored in a \code{data.frame}
+\item Each column of the \code{data.frame} has the correct \R{} type.
+\end{itemize}
+
+This definition is simple, yet can be difficult in practice.
+The data you collect for your statistical analysis in {\em raw} format, which is typically not
+a \R{} data.frame. 
+
+If your data is stored in a database or another binary structured form, retrieving
+the data within R does give you a data.frame. However even in these cases it is advisable to
+store your data in an open text format such as Comma Separated Values to make your analysis
+reproducible. Furthermore, many times your imported data contains text values that need to be processed
+to the right \R{} type: the columns of the data.frame need to have the right types.
+
+Typically raw data are in a text file, which has several favorable properties:
+\begin{itemize}
+\item It is an open format that can be read by human beings
+\item In many cases it is in a format that can be read by computer software
+\item Text is very permissive in the values that are stored. For many experimental data
+this is desirable, because data can be annotated or explained. It is also problematic 
+because it make automatic conversion into a technical correct \code{data.frame} more difficult.
+\end{itemize}
+
+So without further a due we assume that our data is in text format and needs to be processed into
+a data.frame.
+
+The steps for transforming raw data into technical correct data can be summerized as:
+\begin{enumerate}
+\item 
+\end{enumerate}
+
 
 \subsection{Reading data into R}
 If the data you are trying to read into \R{} is formatted nicely, for example
