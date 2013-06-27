@@ -23,15 +23,15 @@ We use the following simple definition for {\em technically correct} in \R{}:
 \item Each column of the \code{data.frame} has the correct \R{} type.
 \end{itemize}
 
-This definition is simple, yet can be difficult in practice.
+This definition is simple, yet has important details in practice.
 The data you collect for your statistical analysis in {\em raw} format, which is typically not
 a \R{} data.frame. 
 
-If your data is stored in a database or another binary structured form, retrieving
-the data within R does give you a data.frame. However even in these cases it is advisable to
-store your data in an open text format such as Comma Separated Values to make your analysis
-reproducible. Furthermore, many times your imported data contains text values that need to be processed
-to the right \R{} type: the columns of the data.frame need to have the right types.
+If your data is stored in database or an other binary structured form, 
+retrieving the data within R does give you a \code{data.frame}. However even in these cases it is advisable to
+store your data in an open text format (e.g. Comma Separated Values) to make your analysis
+reproducible. Furthermore, many times your imported data contains (text) values that need to be processed
+into the right \R{} type: for {\em technically correct} data the columns of the data.frame need to have the right types.
 
 Typically raw data are in a text file, which has several favorable properties:
 \begin{itemize}
@@ -47,25 +47,29 @@ a data.frame.
 
 The steps for transforming raw data into technical correct data can be summerized as:
 \begin{enumerate}
-\item 
+\item Process the text file into a \code{data.frame}. How the processing can be done depends on
+the structure of the raw data
+\item Extract and convert columns, \code{character} columns often need processing to extract the right
+values from the raw data.Conversion of vectors into the right type can be tricky and can also 
+remove valid data from your \code{data.frame}.
 \end{enumerate}
-
 
 \subsection{Reading data into R}
 If the data you are trying to read into \R{} is formatted nicely, for example
-as a \code{csv} or \code{tab}-delimited file you will in general have no
-problems getting data into \R{} correctly. Things become more difficult however
-when the storage format is not constant over the whole file. For example, in
+as a \code{csv} or \code{tab}-delimited file reading data into a \code{data.frame} 
+in general will succeed. However without using the right parameters the resulting data.frame
+is often not technically correct.
+
+Things become more difficult however when the storage format is not constant over the whole file. For example, in
 one column, some numbers may have a period (\code{.}) as decimal separator
 while others have a comma (\code{,}). Some lines may contain comments
 instead of data, or have a different number of columns. In such cases \R{}'s
 high-level data-reading functions such as \code{read.table} are not always capable
 of reading the data correctly in a single go.
 
-In this section we point out techniques to read (badly) formatted text files
+In this section we point out techniques to read normal and badly formatted text files
 into \R{}. This tutorial is limited to rectangular data sets, although some
 of the techniques mentioned here will be more broadly applicable.
-
 
 \subsubsection{\code{read.table} and its cousins}
 If you are able to read in your data with any of the following functions
@@ -76,6 +80,7 @@ If you are able to read in your data with any of the following functions
 \code{read.table}
 \end{tabular}
 \end{center}
+
 your data is basically in a ``technically correct'' state. However, there are
 some tips and tricks we'll point out here to help you read those almost-standard
 files.
@@ -114,12 +119,16 @@ are to be interpreted as \code{NA}, \code{skip}, telling \code{read.table}
 how many lines to skip at the beginning of the file and \code{comment.char}
 indicating how to recognize lines of comment in the file.
 
+\subsubsection{Reading data with \code{scan}}
 
+The \code{scan} function is a lower level text processing that allows you to read in blocks of formatted lines.
+It offers a little more freedom then \code{read.table}, but if your file cannot be processed by \code{read.table}
+you will probably will need  \code{readLines}.
 
 \subsubsection{Reading data with \code{readLines}}
 When the rows in a data file are not uniformly formatted you can consider
 reading in the text line-by-line and transforming the data to a rectangular set
-yourself.  This is allows you to exercise precise control over how each line is
+yourself.  With \code{readLines} you can exercise precise control over how each line is
 interpreted and transformed into fields in a rectangular data set. Table
 \ref{tab:transform} gives an overview of the steps to be taken. Below, each step is
 discussed in more detail.
@@ -192,6 +201,8 @@ strsplit("a.b",split=".",fixed=TRUE)
 @
 The reason for the first result is that the period (\code{.}) is used as a
 wild card character in regular expressions.
+
+Note that str
 
 
 \textbf{Step 4. Standardize rows.} The goal of this step is to make sure that
@@ -290,7 +301,22 @@ daltons$death <- as.numeric(daltons$death)
 daltons
 @
 
+<<>>=
+daltons = transform( daltons,
+                   , birth = as.numeric(birth)
+                   , death = as.numeric(death)
+                   )
+daltons
+@
+
+
 \subsection{Type conversion}
+
+<<>>=
+as.numeric(c("7","7*","7.","7,"))
+@
+
+
 In \R{}'s built-in help files, converting a variable from one type to another
 is called \emph{coercion}. The reader is probably familiar with \R{}'s basic
 coercion functions, but as a reference they are listed here.
@@ -497,17 +523,8 @@ mybirth <- dmy("28 Sep 1976")
 format(mybirth,format="I was born on %B %d, %Y")
 @
 
-
-
-
-
-
-
-
-
-
-
 \subsection{Recoding strings}
+
 Character data can be notoriously hard to process. For example, consider the
 following excerpt of a data set with a \code{gender} variable.
 <<echo=2>>=

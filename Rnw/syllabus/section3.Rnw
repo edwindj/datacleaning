@@ -9,7 +9,8 @@
 
 \section{From technically correct data to consistent data}
 \label{sect:inputtomicro}
-With \emph{consistent data} we mean that the data obeys all expectations you
+With \emph{consistent data} 
+we mean that the data obeys all expectations you
 have based on subject matter knowledge. Such expectations are usually expressed
 in terms of rules wich may be interpreted as being obligatory (\emph{hard
 rules}), or indicative (\emph{soft rules}). 
