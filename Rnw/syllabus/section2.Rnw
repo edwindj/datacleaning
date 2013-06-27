@@ -311,6 +311,12 @@ daltons
 
 
 \subsection{Type conversion}
+
+<<>>=
+as.numeric(c("7","7*","7.","7,"))
+@
+
+
 In \R{}'s built-in help files, converting a variable from one type to another
 is called \emph{coercion}. The reader is probably familiar with \R{}'s basic
 coercion functions, but as a reference they are listed here.
