@@ -188,10 +188,8 @@ and so on. See \code{?"deducorrect-object"} for a full explanation.
 \end{tip}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Imputation of missing data}
+\subsubsection{Deterministic imputation methods}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Deriving imputation values with (near) certainty}
 Under some circumstances, the rules that your data have to obey are
 so restrictive that there's just a single solution for a missing value.
 As an example, consider a record with variables listing the costs
@@ -266,14 +264,15 @@ kind of imputation method and list them against a number of popular model-based
 imputation methods. We note that the list of packages and methods are somewhat
 arbitrary as they result from an investigation conducted at Statistics
 Netherlands \cite{broek:2012} for internal purposes. Nevertheless we feel that
-this overview is a quite useful place to start. The packages \code{Amelia},
-\code{deducorrect} and \code{mix} do not implement any of the methods mentioned
-in the table. That is because \code{Amelia} implements a multiple imputation
-method based on the assumption of a conditional multinormal variable
-distribution. The \code{deducorrect} package implements deductive and
-deterministic method, and we choose not to call this model-based in this
-tutorial. The \code{mix} package implements a Bayesian estimation method based
-on an Markov Chain Monte Carlo algorithm.
+this overview is a quite useful place to start. See for example the paper by
+Kalton and Kasprzyk\cite{kalton:1986} for an overview of established imputation
+methods.  The packages \code{Amelia}, \code{deducorrect} and \code{mix} do not
+implement any of the methods mentioned in the table. That is because
+\code{Amelia} implements a multiple imputation method based on the assumption
+of a conditional multinormal variable distribution. The \code{deducorrect}
+package implements deductive and deterministic method, and we choose not to
+call this model-based in this tutorial. The \code{mix} package implements a
+Bayesian estimation method based on an Markov Chain Monte Carlo algorithm.
 
 There is no one single best imputation method that works in all cases. The
 imputation model of choice depends on what auxiliary information is available
@@ -289,16 +288,16 @@ obeyed.  Separately, these methods are available in \R{}.
 \begin{threeparttable}
 \caption{An overview of imputation funcitonality offered by some  \R{} packages.
 reg: regression, rand: random, seq: sequential, NN: nearest neighbour, pmm:
-predictive mean matching, kNN: $K$-nearest-neighbours, int: interpolation,
+predictive mean matching, kNN: $k$-nearest-neighbours, int: interpolation,
 lo/no last observation carried forward / next observation carried backward,
 LS: method of Little and Su.
 }
 \label{tab:imputation}
-\begin{tabular}{|l|ccc|cccc|c|ccc|}
+\begin{tabular}{|l|ccc|ccc|c|ccc|}
 \hline
 \multicolumn{1}{|l}{} & 
 \multicolumn{3}{|c|}{Numeric} &
-\multicolumn{4}{|c|}{Hot deck}&
+\multicolumn{3}{|c|}{Hot deck}&
 \multicolumn{1}{|c|}{}&
 \multicolumn{3}{|c|}{Longitudinal}\\
 
@@ -308,33 +307,36 @@ Package                             &
 \multicolumn{1}{c|}{reg.}   & 
 \multicolumn{1}{c}{rand}  & 
 \multicolumn{1}{c}{seq}   & 
-\multicolumn{1}{c}{NN}    & 
 \multicolumn{1}{c|}{pmm}   & 
-\multicolumn{1}{c}{kNN}   & 
+\multicolumn{1}{c}{kNN}    & 
 \multicolumn{1}{|c}{int}   & 
 \multicolumn{1}{c}{lo/no}  & 
 \multicolumn{1}{c|}{LS}     \\ \hline
-\code{Amelia}\cite{honaker:2011}    &\xmark & \xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
-\code{BaBoon}\cite{meinfelder:2011} &\xmark & \xmark &\xmark &\xmark &\xmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
-\code{cat}\cite{harding:2012}       &\xmark & \xmark &\xmark &\cmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\  
-\code{deducorrect}\cite{loo:2011}   &\xmark & \xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ \hline
-\code{e1071}\cite{meyer:2012}       &\cmark & \xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
-\code{ForImp}                       &\cmark & \xmark &\xmark &\xmark &\xmark &\cmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
-\code{Hmisc}\cite{harrel:2013}      &\cmark & \xmark &\xmark &\cmark &\xmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
-\code{imputation}\cite{wong:2013}   &\xmark & \xmark &\xmark &\xmark &\xmark &\cmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ \hline
-\code{impute}\cite{hastie}          &\xmark & \xmark &\xmark &\xmark &\xmark &\cmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
-\code{mi}\cite{su:2011}             &\xmark & \xmark &\cmark &\cmark &\xmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
-\code{mice}\cite{buren:2011}        &\cmark & \xmark &\cmark &\cmark &\xmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
-\code{mix}\cite{schafer:2010}       &\xmark & \xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ \hline
-\code{norm}\cite{alvaro:2013}       &\xmark & \xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
-\code{robCompositions}\cite{templ:2011}&\xmark & \xmark &\cmark &\cmark &\xmark &\cmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
-\code{rrcovNA}\cite{todorov:2012}      &\xmark & \xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
-\code{StatMatch}\cite{orazio:2012}     &\xmark & \xmark &\xmark &\cmark &\xmark &\cmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ \hline
-\code{VIM}\cite{templ:2012}            &\xmark & \xmark &\cmark &\cmark &\xmark &\cmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
-\code{yaImpute}\cite{crookston:2007}   &\xmark & \xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
-\code{zoo}\cite{zeileis:2005}          &\cmark & \xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark &\cmark &\cmark & \xmark \\ 
+\code{Amelia}\cite{honaker:2011}       &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
+\code{BaBoon}\cite{meinfelder:2011}    &\xmark & \xmark &\xmark           &\xmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
+\code{cat}\cite{harding:2012}          &\xmark & \xmark &\xmark           &\cmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\  
+\code{deducorrect}\cite{loo:2011}      &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ \hline
+\code{e1071}\cite{meyer:2012}          &\cmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
+\code{ForImp}                          &\cmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\cmark$^\ddagger$ &\xmark &\xmark & \xmark \\ 
+\code{Hmisc}\cite{harrel:2013}         &\cmark & \xmark &\xmark           &\cmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
+\code{imputation}\cite{wong:2013}      &\cmark & \xmark &\cmark$^\dagger$ &\xmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ \hline
+\code{impute}\cite{hastie}             &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
+\code{mi}\cite{su:2011}                &\xmark & \xmark &\cmark$^*$       &\cmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
+\code{mice}\cite{buren:2011}           &\cmark & \xmark &\cmark$^*$       &\cmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
+\code{mix}\cite{schafer:2010}          &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ \hline
+\code{norm}\cite{alvaro:2013}          &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
+\code{robCompositions}\cite{templ:2011}&\xmark & \xmark &\cmark$^*$       &\cmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
+\code{rrcovNA}\cite{todorov:2012}      &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
+\code{StatMatch}\cite{orazio:2012}     &\xmark & \xmark &\xmark           &\cmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ \hline
+\code{VIM}\cite{templ:2012}            &\xmark & \xmark &\cmark$^*$       &\cmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
+\code{yaImpute}\cite{crookston:2007}   &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
+\code{zoo}\cite{zeileis:2005}          &\cmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\cmark &\cmark & \xmark \\ 
 \hline                                                                                                             
 \end{tabular}
+{\scriptsize ${^*}$Methods are ultimately based on some form of regression, but are more involved than simple linear regression.\\
+${^\dagger}$Uses a non-informative auxiliary variable (row number).\\
+${^\ddagger}$Uses nearest neighbor as part of a more involved imputation scheme.
+}
 \end{threeparttable}
 \end{adjustwidth}
 \end{table}
@@ -412,7 +414,7 @@ The third, and last numerical model we treat are (generalized) linear
 regression models. In such models, missing values are imputed
 using as follows
 \begin{equation}
-\hat{x}_i = \hat{\beta}_0 + \hat{\beta}_1y_{1,i} + \ldots + \hat{\beta}_ky_{k,i},
+\hat{x}_i = \hat{\beta}_0 + \hat{\beta}_1y_{1,i} + \cdots + \hat{\beta}_ky_{k,i},
 \end{equation}
 where the $\hat{\beta}_0,\hat{\beta}_1\ldots\hat{\beta}_k$ are estimated linear
 regression coefficients for each of the auxiliary variables
@@ -432,20 +434,186 @@ the missing values.
 
 It should be noted that although \code{Hmisc}, \code{VIM}, \code{mi} and
 \code{mice} all implement imputation methods that ultimately use some form of
-regression, none of them include the simple case described above.
+regression, they do not include a simple interface for the case described
+above.  The more advanced methods in those packages are aimed to be more
+precise and/or robust against outliers than stanard (generalized) linear
+regression.  Moreover, both \code{mice} and \code{mi} implement methods for
+multiple imputation, which allows for estimation of the imputation variance.
+Such methods are beyond th scope of the current text. The \code{imputation}
+package has a function \code{lmImpute} but is uses a the row number as
+auxiliary variable which limits the practical usability.
 
 
 \subsubsection{Hot deck imputation}
 \label{sect:hotdeck}
+In hot deck imputation, missing values are imputed by copying values from
+similar records in the same dataset. Or, in notation:
+\begin{equation}
+\hat{x}_i = x_j, 
+\end{equation}
+where $x_j$ is taken from the observed values.  Hot-deck imputation can be
+applied to numerical as wel as categorical data but is only viable when enough
+donor records are available. 
+
+The main question in hot-deck imputation is
+how to choose the replacement value $x_j$ from the observed values.  Here, we
+shortly discuss four well-known flavours.
+
+In \emph{random} hot-deck imputation, a value is chosen randomly, and uniformly
+from the same data set. When meaningfull, random hot deck methods can be
+applied per stratum. For example, one may apply random hot-deck imputation of
+body height for male and female respondents separately. Random hot-deck on a
+single vector can be applied with the \code{impute} function of the
+\code{Hmisc} package.
+<<>>=
+data(women)
+# add some missingess
+height <- women$height
+height[c(6,9)] <- NA
+height
+(height <- impute(height,"random"))
+@
+Note that the outcome of this imputation is very likely tot be different each
+time it is executed. If you want the results to be random, but repeatable (e.g.
+for testing purposes) you can use \code{set.seed(<a number>)} prior to calling
+\code{impute}. 
+
+In \emph{sequential} hot deck imputation, the vector conatining missings is
+sorted according to one or more auxiliary variables so that records that have
+similar auxiliaries occur sequentially in the \code{data.frame}.  Next, each
+missing value is imputed with the value from the first following record that
+has an observed value. There seems to be no package that implements the
+sequential hot deck technique. However, given a vector that is sorted, the
+following function offers some basic functionality.
+<<tidy=FALSE>>=
+# x    :  vector to be imputed
+# last : value to use if last value of x is empty
+seqImpute <- function(x,last){
+  n <- length(x)
+  x <- c(x,last)
+  i <- is.na(x)
+  while(any(i)){
+    x[i] <- x[which(i) + 1]
+    i <- is.na(x)
+  }
+  x[1:n]
+}
+@
+We will use this function in exercise \ref{ex:seqimpute}. 
+
+
+\emph{Predictive mean matching} (pmm) is a form of nearest-neighbour hot-deck
+imputation whith a specific distance function. In predictive mean matching one
+first estimates values for empty fields, for example with a regression method.
+Empty values are then imputed with observed values which are the most similar
+to the predicted values. Predictive mean matching imputation has been
+implemented in several packages (\code{mi}, \code{mice}, \code{BaBoon}) but
+each time either for a specific type of data and/or using a specific prediction
+model (\emph{e.g.} \code{Bayesglm}). Moreover, the packages known to us always
+use pmm as a part of a more elaborata multilpe imputation scheme, which we
+deemed out of scope for this tutorial.
+
+\subsubsection{kNN-imputation}
+In $k$ \emph{nearest neighbour} imputation one defines a distance
+function $d(i,j)$ that computes a measure of dissimilarity between records. A
+missing value is then imputed by finding first the $k$ records nearest to the
+record with one or more missing values. Next, a value is chosen from or
+computed out of the $k$ nearest neighbours. In the case where a value is picked
+from the $k$ nearest neighbours, kNN-imputation is a form of hot-deck imputation.
+
+The \code{VIM} package contains a function called \code{kNN} that uses Gowers
+distance\cite{gower:1971} to determine the $k$ nearest neighbours. Gower's
+distance between two records labeled $i$ and $j$ is defined as
+\begin{equation}
+d_{\sf g}(i,j) \frac{\sum_k w_{ijk} d_k(i,j)}{\sum_{k}w_{ijk}},
+\end{equation}
+where the sum runs over all variables in the record and $d_k(i,j)$
+is the distance between the value of variable $k$ in record $i$ and record $j$.
+For categorical variables, $d_k(i,j) = 0$ when the value for the $k'th$ variable
+is the same in record $i$ and $j$ and $1$ otherwise. For numerical variables
+the distance is given by $1-(x_i-x_j)/(\max(x)-\min(x))$. The weight $w_{ijk}=0$
+when the $k$'th variable is missing in record $i$ or record $j$ and otherwise
+$1$.
+
+Here is an example of \code{kNN}.
+<<message=FALSE>>=
+library(VIM)
+data(iris)
+n <- nrow(iris)
+# provide some empty values (10 in each row, randomly)
+for ( i in 1:ncol(iris) ){
+  iris[sample(1:n,10,replace=FALSE),i] <- NA
+}
+iris2 <- kNN(iris)
+@
+The \code{kNN} function determines the $k$ (default: 5) nearest neighbours of a
+record with missing values. For numerical variables the median of the $k$
+nearest neighbours is used as imputation value, for categorcal variables the
+category that most often occurs in the $k$ nearest neighbours is used. Both the
+these functions may be replaced by the user. Finally, \code{kNN} prints (negatively)
+the time it took to complete the imputation. We encourage the reader to execute
+the above code and experiment further. 
 
 
 
-\subsubsection{Longitudinal imputation}
-\label{sect:logitudinal}
-
-
-
-
-\subsection{Adjusting values with \code{rspa}}
+\subsection{Minimal value adjustment}
 \label{sect:rspa}
+Once missing numerical values have been adequately imputed, there is a good
+chance that the resulting records violate a number of edit rules.  The obvious
+reason is that there are not many methods that can perform imputation under
+arbitrary edit restrictions. One vialble option is therefore to minimally
+adjust imputed values such that after adjustment the record passes every edit
+check within a certain tolerance. 
+
+We need to specify more clearly what \emph{minimal} adjustment means here.
+The \code{rspa} package\cite{loo:2012} is able to take a numerical record
+$\bs{x}^0$ and replace it with a record $\bs{x}$, such that
+the weighted Euclidean distance
+\begin{equation}
+\sum_iw_i(x_i-x_i^{0})^2,
+\end{equation}
+is minimized and $\bs{x}$ obeys a given set of (in)equality restrictions
+\begin{equation}
+\bs{Ax} \leq \bs{b}.
+\end{equation}
+
+As practical example consider the following script.
+<<>>=
+library(editrules)
+library(rspa)
+E <- editmatrix(expression(
+  x + y == z,
+  x >= 0,
+  y >= 0
+))
+d <- data.frame(x = 10, y=10, z=21)
+d1 <- adjustRecords(E,d)
+d1$adjusted
+@
+The function \code{adjustRecords} adjusts every record minimally to obey the restrictions
+in \code{E}. 
+Indeed, we may check that the adjusted data now obeys every rule within \code{adjustRecords}'
+default tolerance of $0.01$.
+<<>>=
+violatedEdits(E,d1$adjusted,tol=0.01)
+@
+By default, all variables in the input \code{data.frame} are adjusted with
+equal amounts. However, suppose that $z$ is an imputed value while $x$ and $y$
+are observed, original values. We can tell \code{adjustRecords} to only adjust
+\code{z} as follows.
+<<>>=
+A <- array(c(x=FALSE,y=FALSE,z=TRUE),dim=c(1,3))
+A
+d2 <- adjustRecords(E,d, adjust=A)
+d2$adjusted
+@
+
+
+
+\subsection*{Exercises}
+\begin{exercise}
+\label{ex:seqimpute}
+
+\end{exercise}
+
 
