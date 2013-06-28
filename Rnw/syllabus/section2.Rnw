@@ -424,9 +424,6 @@ only there for backwards compatibility with \R{}'s precursor language:
 \code{S}. We therefore advise the user to avoid using these functions to
 retrieve or modify an object's type. 
 
-
-\subsection{Recoding \code{factor}s and \code{character}s}
-
 \subsubsection{Recoding factors}
 Often data contains categorical or ordinal data. In \R{} these are stored in a
 \code{factor} or \code{ordered}, which is a special form of a \code{factor}.
@@ -457,13 +454,21 @@ Suppose in our dataset \code{gender} is encoded in \code{1} for female and \code
 unknown. With \code{factor} this can be recoded.
 <<>>=
 gender <- c(2,1,1,2,0,1,1)
+
 #recode
-(gender <- factor(gender, levels=c(2,1), labels=c("M","F")))
+codes <- c("2"="M", "1"="F")
+(gender <- factor(gender, levels=names(codes), labels=codes))
 @
 Note that \code{levels} and \code{labels} need to have the same order.
 
-
 In case we have an ordinal column, we need to specify the order the categories have.
+If we don't it will take the alphabetical order of the \code{levels}, which is in the given example
+just plain wrong.
+<<>>=
+agegroup <- c("elderly", "child", "adult", "child", "elderly")
+(agegroup <- factor(agegroup, levels=c("child", "adult", "elderly"), order=TRUE))
+@
+
 
 In some case you may want manipulate the order of the levels depending on another variable
 This can be done with \code{reorder}
