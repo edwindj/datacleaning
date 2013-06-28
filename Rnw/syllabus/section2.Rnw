@@ -117,7 +117,7 @@ Specifically
 \begin{tabular}{lcl}
   \code{header}           & FALSE & Does the first line contain column names?\\
   \code{na.string}        &  "NA" & Which strings should be considered \code{NA}? \\
-  \code{colClasses}       &  NA   & \code{character} vector with the types of columns. Will coerce the columns to the specified types.
+  \code{colClasses}       &  NA   & \code{character} vector with the types of columns. Will coerce the columns to the specified types.\\
   \code{stringsAsFactors} & TRUE  & If TRUE converts all \code{character} vectors into \code{factor} vectors.
 \end{tabular}
 
@@ -138,7 +138,7 @@ automatically. This works quite will, but in case a numeric column contains a no
 the column is read in as a \code{character} vector. Specifying \code{colClasses} speeds up reading the data considerably.
 By default \code{character} vectors are converted into \code{factors}. With \code{stringsAsFactors=FALSE} 
 this can be switched off.
-Note that since \code{data$height} contains the value \code{5.9*}, $height$ was read in as a character and coerced into a factor.
+Note that since \code{data\$height} contains the value \code{5.9*}, \code{height} was read in as a character and coerced into a factor.
 <<>>=
 str(data)
 summary(data)
@@ -291,7 +291,6 @@ library(parallel)
 cluster <- makeCluster(4)
 standardFields <- parLapply(cl=cluster, fieldList, 
   function(x){
-    length(x) <- nrows
     x
   }
 )
@@ -356,7 +355,8 @@ coercion functions, but as a reference they are listed here.
 Each of these functions takes an \R{} object and tries to convert it to the
 class specified behind the ``\code{as.}''.
 
-Values that cannot be 
+Note that Values that cannot be converted to the specified type will be 
+converted into a \code{NA} value.
 <<>>=
 as.numeric(c("7","7*","7.0","7,0"), )
 @
@@ -425,7 +425,59 @@ only there for backwards compatibility with \R{}'s precursor language:
 retrieve or modify an object's type. 
 
 
+\subsection{Recoding \code{factor}s and \code{character}s}
 
+\subsubsection{Recoding factors}
+Often data contains categorical or ordinal data. In \R{} these are stored in a
+\code{factor} or \code{ordered}, which is a special form of a \code{factor}.
+
+A \code{factor} is a dressed up \code{integer} with an extra attribute \code{levels}.
+Every integer value \code{i} in a \code{factor} corresponds to \code{levels[i]}.
+<<>>=
+f <- factor(c("a","b","a","a","c"))
+levels(f)
+levels(f)[f] # same as as.character(f)
+
+# dirty recoding, don't!
+levels(f) <- c("A","B", NA)
+f
+@
+
+\begin{tip}{Bad practice}
+Allthough it is very easy to manipulate the \code{levels} of a \code{factor}, it is often better and more clear
+to use \code{factor} for this functionality.
+\end{tip}
+
+Categorical data is often stored as text values. If a categorical data column
+is not neatly specified, we will need \code{character} manipulation (see \ref{sssect:charactermanipulation}).
+
+Even when the specification is clear, we might want to recode the used factor into 
+more meaningful codes, with a specific ordering.
+Suppose in our dataset \code{gender} is encoded in \code{1} for female and \code{2} for male and \code{0} for 
+unknown. With \code{factor} this can be recoded.
+<<>>=
+gender <- c(2,1,1,2,0,1,1)
+#recode
+(gender <- factor(gender, levels=c(2,1), labels=c("M","F")))
+@
+Note that \code{levels} and \code{labels} need to have the same order.
+
+
+In case we have an ordinal column, we need to specify the order the categories have.
+
+In some case you may want manipulate the order of the levels depending on another variable
+This can be done with \code{reorder}
+<<>>=
+age <- c(72, 10, 23, 6, 67)
+agegroup <- c("elderly", "child", "adult", "child", "elderly")
+(agegroup <- reorder(agegroup, age, order=TRUE))
+@
+
+Or you might want make one of the levels a reference level, making it the first level.
+<<>>=
+(colors <- factor(c("red","green", "blue", "blue")))
+relevel(colors, ref="green")
+@
 
 \subsubsection{Converting dates}
 The base \R{} installation has three types of objects to store a time instance
@@ -561,7 +613,9 @@ mybirth <- dmy("28 Sep 1976")
 format(mybirth,format="I was born on %B %d, %Y")
 @
 
-\subsection{Recoding strings}
+
+\subsection{\code{character} manipulation}
+\label{sssect:charactermanipulation}
 
 Character data can be notoriously hard to process. For example, consider the
 following excerpt of a data set with a \code{gender} variable.
@@ -585,7 +639,6 @@ following topics are discussed.
 \item Search for strings containing simple patterns (substrings).
 \item Simple approximate matching procedures based on string distances.
 \end{itemize}
-
 
 \subsubsection{String normalisation}
 \label{sect:stringnormalisation}
@@ -749,9 +802,6 @@ stringdist("abc","bac")
 @
 The answer is now 1 (not 2), since the optimal string alignment distance allows
 for transpositions of adjacent characters.
-
-
-
 
 \subsection{Character encoding issues}
 \label{sect:encoding}
