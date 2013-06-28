@@ -9,13 +9,20 @@
 
 \section{From technically correct data to consistent data}
 \label{sect:inputtomicro}
-With \emph{consistent data} 
-we mean that the data obeys all expectations you
-have based on subject matter knowledge. Such expectations are usually expressed
-in terms of rules wich may be interpreted as being obligatory (\emph{hard
-rules}), or indicative (\emph{soft rules}). 
 
+\emph{Consistent data} is \emph{technically correct data} that is fit for statistical analysis.
+This means that it should not contain errors, or have extraordinary values such as 
+infinity or missing that obstruct the analysis.
 
+The checking for glaring errors is based on the knowledge you
+have based on subject matter. For example a persons age cannot be negative.
+Such expectations are usually expressed in terms of rules wich may be interpreted as 
+being obligatory (\emph{hard rules}), or indicative (\emph{soft rules}).
+
+Observations (i.e. rows of a \code{data.frame}) that violate hard rules or have invalid values
+can be left out of your analysis or in some cases be corrected or fill in (\emph{imputed}).
+
+Removing all invalid 
 
 \subsection{Checking record-wise rules with the \code{editrules} package.}
 The \code{editrules} package allows one to define rules on categorical,
