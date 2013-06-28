@@ -16,13 +16,38 @@ infinity or missing that obstruct the analysis.
 
 The checking for glaring errors is based on the knowledge you
 have based on subject matter. For example a persons age cannot be negative.
-Such expectations are usually expressed in terms of rules wich may be interpreted as 
+This knowledge is usually expressed in terms of rules wich may be interpreted as 
 being obligatory (\emph{hard rules}), or indicative (\emph{soft rules}).
 
-Observations (i.e. rows of a \code{data.frame}) that violate hard rules or have invalid values
-can be left out of your analysis or in some cases be corrected or fill in (\emph{imputed}).
+Observations (i.e. rows of a \code{data.frame}) that violate hard rules, have invalid values or are incomplete
+may be left out of your analysis. This may seem to be the right procedure, but can introduce a bias or can result in
+very few data to be analyzed. 
+In many cases an invalid or imcomplete observation can be corrected and imputed, based on subject matter knowledge or 
+the data of the other observations.
 
-Removing all invalid 
+We will first 
+
+\subsection{Checking for invalid values}
+
+Removing observations with
+<<>>=
+na.omit()
+@
+
+
+<<>>=
+is.finite(c(1, Inf, NaN, NA))
+@
+
+<<>>=
+complete.cases
+@
+
+
+is.na
+is.nan
+is.inf
+
 
 \subsection{Checking record-wise rules with the \code{editrules} package.}
 The \code{editrules} package allows one to define rules on categorical,
