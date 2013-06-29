@@ -127,10 +127,10 @@ headers by default. If your heading is missing you should set the names of the \
 
 <<>>=
 # first line is interpreted as column names
-(data <- read.csv("files//unnamed.txt"))
-(data <- read.csv("files//unnamed.txt", header=FALSE))
-colnames(data) <- c("age", "height")
-print(data)
+(person <- read.csv("files//unnamed.txt"))
+(person <- read.csv("files//unnamed.txt", header=FALSE))
+colnames(person) <- c("age", "height")
+print(person)
 @
 
 Without specifying \code{colClasses} \code{read.table} tries to detect the type of the column
@@ -138,10 +138,10 @@ automatically. This works quite will, but in case a numeric column contains a no
 the column is read in as a \code{character} vector. Specifying \code{colClasses} speeds up reading the data considerably.
 By default \code{character} vectors are converted into \code{factors}. With \code{stringsAsFactors=FALSE} 
 this can be switched off.
-Note that since \code{data\$height} contains the value \code{5.9*}, \code{height} was read in as a character and coerced into a factor.
+Note that since \code{person\$height} contains the value \code{5.9*}, \code{height} was read in as a character and coerced into a factor.
 <<>>=
-str(data)
-summary(data)
+str(person)
+summary(person)
 @
 
 Other arguments worth mentioning

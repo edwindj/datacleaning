@@ -10,46 +10,66 @@
 \section{From technically correct data to consistent data}
 \label{sect:inputtomicro}
 
-\emph{Consistent data} is \emph{technically correct data} that is fit for statistical analysis.
-This means that it should not contain errors, or have extraordinary values such as 
-infinity or missing that obstruct the analysis.
+\emph{Consistent data} is \emph{technically correct data} that is fit for 
+statistical analysis. This means that it should not contain obvious errors, 
+or have extraordinary values such as infinity or missing that obstruct s
+tatistical analysis.
 
 The checking for glaring errors is based on the knowledge you
-have based on subject matter. For example a persons age cannot be negative.
-This knowledge is usually expressed in terms of rules wich may be interpreted as 
-being obligatory (\emph{hard rules}), or indicative (\emph{soft rules}).
+have on subject matter. For example a persons age cannot be negative. If the 
+data contains a negative age it will corrupt your age statistics.
+This subject matter knowledge is usually formalized in terms of rules which may 
+be interpreted as being obligatory (\emph{hard rules}), or indicative 
+(\emph{soft rules}).
 
-Observations (i.e. rows of a \code{data.frame}) that violate hard rules, have invalid values or are incomplete
-may be left out of your analysis. This may seem to be the right procedure, but can introduce a bias or can result in
-very few data to be analyzed. 
-In many cases an invalid or imcomplete observation can be corrected and imputed, based on subject matter knowledge or 
-the data of the other observations.
+Observations (i.e. rows of a \code{data.frame}) that violate hard rules, have 
+invalid values or are incomplete can be left out of your analysis. 
+This may seem to be the right procedure, but can introduce a bias or can leave 
+you with very few data to be analyzed. 
 
-We will first 
+In many cases an invalid or imcomplete observation can be corrected and imputed,
+based on background information or using the data of the other observations.
 
-\subsection{Checking for invalid values}
+The detection, correction and imputation of data are all operations that 
+influence the statistical analysis (in a positive sense).
+They should be seen as statistical methods.
+\R{} makes it easy to be explicit on the detection rules, and the corrections on
+ the data. This makes your data cleaning process transparent and reproducible.
 
-Removing observations with
-<<>>=
-na.omit()
-@
+We will first describe detection techniques that you will need to find records 
+and values that are erronous. After that we go into deterministic correction 
+techniques that can repair obvious errors based on formalized or heuristic
+knowledge. We end with an overview of imputation techniques, that can generate
+plausible values for partially missing data.
 
+\subsection{Detection}
+
+\subsubsection{Detecting extraordinary values}
 
 <<>>=
 is.finite(c(1, Inf, NaN, NA))
 @
 
 <<>>=
-complete.cases
+person
+complete.cases(person)
 @
 
 
-is.na
-is.nan
-is.inf
+Removing observations with
+<<>>=
+na.omit(person)
+@
 
 
-\subsection{Checking record-wise rules with the \code{editrules} package.}
+\subsection{Checking record-wise rules with the \code{editrules} package.} 
+With \R{} you can write scripts that do error detection, by writing code that 
+checks each hard rule. However if you have many rules this soon gives many problems
+Rules may interact, so the rules should be not seen als separate rules, but as a
+set of connected rules. Furthermore your \R{} code quickly obscures the rules you 
+try to implement. It would be easier and more clear to define a rule set that all
+records must obey, and to check if a record obeys the rules.
+
 The \code{editrules} package allows one to define rules on categorical,
 numerical or mixed data sets which each record must obey. Restrictions can
 be defined by typing them in a file and reading them into \R{} with
@@ -61,7 +81,10 @@ read_chunk('edits.txt')
 <<rules,eval=FALSE>>=
 @
 
-\subsection{Deterministic and deductive methods}
+\subsubsection{Error localization}
+
+\subsection{Correction}
+\subsubsection{Deterministic and deductive methods}
 In some cases, the cause of errers in data can be determined with enough
 certainty so that the solution is almost automatically known. In recent years,
 several such methods have been developed and implemented in the
