@@ -103,7 +103,8 @@ The \code{editrules} package allows one to define rules on categorical,
 numerical or mixed data sets which each record must obey. Furthermore it can 
 use these rules to check data for errors and find erronous values. It also allows
 for manipulating the rule set, for example checking if the set of rules is 
-consistent or not.
+consistent or not. We will briefly discuss the features of \code{editrules}, it
+has many options and functions, but are not needed in this introduction.  
 
 The rules you specify in \code{editrules} are valid \R{} syntax. They can 
 be specified in a \code{character} vector directly with \code{editset} or stored 
@@ -160,12 +161,33 @@ The result of violatedEdits can be plotted.
 plot(ve)
 @
 
+\code{editrules} makes it easy to specify rules that data must obey. It allows 
+for easy checking if observations/cases/rows contain valid data or not.
+
 \subsubsection{Error localization}
 When using \code{is.finite}, \code{special} and univariate rules, it is clear
-what values are errors. However in case that there are many restrictions, this 
-may not be clear. 
+what values are invalid. However in case that there are many restrictions, this 
+may not be clear. e.g. if an observation has the variables age, aged, status, 
+yearsmarried are all connect.
+\code{editrules} can localize values that need to be adjusted. It takes the 
+Fellig-Holt principle which says: change the values of a minimal (weighted) 
+number of variables so that it complies to the rules specified. The function
+in \code{editrules} that does this, is called \code{localizeErrors}. 
+It takes a set of rules and a \code{data.frame} and returns the found solutions.
+<<>>=
+person[2,]
+le <- localizeErrors(E, person[2,])
+le$status
+le$adapt
+@
 
-When  package \code{editrules} 
+\code{\$adapt} is a \code{logical} that signifies which variables are considired
+erronous. It can be used in the correction and imputation procedures for filling in valid
+values. \code{localizeErrors} can be tuned with various options. It is possible
+to supply confidence weight for variables allowing for fine grained control on
+which values should be adapted. It is also possible to use a mixed integer programming
+solver, which is typically very fast. For more information see the reference manual
+of \code{editrules}.
 
 \subsection{Correction}
 \subsubsection{Deterministic and deductive methods}

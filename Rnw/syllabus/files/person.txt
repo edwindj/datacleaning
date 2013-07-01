@@ -1,6 +1,6 @@
-age, aged, height, status, yearsmarried 
-21, adult, 6.0, single, 0
-2, child, 3, married, 0
-18, adult, 5.7, married, 20
-221, elderly, 5, widowed, 2
-34, child, -7, married, 3
+age,aged,height,status,yearsmarried 
+21,adult,6.0,single, 0
+2,child,3,married, 0
+18,adult,5.7,married, 20
+221,elderly, 5,widowed, 2
+34,child, -7,married, 3
