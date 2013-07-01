@@ -44,12 +44,15 @@ plausible values for partially missing data.
 \subsection{Detection}
 
 \subsubsection{Detecting extraordinary values}
+<<echo=FALSE>>=
+person <- transform(person, height=as.numeric(as.character(height)))
+@
 
 \R{} contains several function to deal with special values. We encountered
 a number of them in section \ref{sec:}.
  
 \begin{tip}{Tip}
-Note that in sometimes a special value in your data may encode an 
+Note that sometimes a special value in your data may encode an 
 actual value. For example for some columns ``empty''(\code{NA}) means \code{0}.
 Always read the meta data of the data!
 \end{tip}
@@ -60,7 +63,7 @@ which returns a \code{logical} with rows having no \code{NA} values.
 The logical can be used to select a \code{data.frame}, but for convenience \R{}
 contains the \code{na.omit} function, which does exactly that.
 <<>>=
-person 
+print(person) 
 complete.cases(person)
 na.omit(person)
 @
@@ -69,7 +72,9 @@ removed, but also contains the names of the removed rows in the attribute
 \code{na.action}.
 
 Numeric columns can have more formalized special values: \code{Inf}, \code{-Inf},
-\code{NA} and \code{NaN}. Checking for these values can be done with \code{is.finite}.
+\code{NA} and \code{NaN}. Checking for these values together can be done with 
+\code{is.finite}.
+
 For example:
 <<>>=
 is.finite(c(1, Inf, NaN, NA))
@@ -79,14 +84,14 @@ that checks a column for the (non)occurrence of special values
 
 <<>>=
 is.special <- function(x){
-  if (is.numeric(x)) is.finite(x) else is.na(x)
+  if (is.numeric(x)) !is.finite(x) else is.na(x)
 }
 person
 sapply(person, is.special)
 @
 
-The result of \code{special} show which data have special values. Note that 
-detecting them is good, but the data should be fixed.
+The result of \code{is.special} shows which data have special values. Note that 
+detecting them is good, but the data should be fixed (see \ref{sec:})
 
 \subsubsection{Outliers?}
 \code{extremevalues}????

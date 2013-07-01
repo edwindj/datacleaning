@@ -318,6 +318,7 @@ Finally, we add column names and coerce the matrix to a \code{data.frame}. We us
 \code{stringsAsFactors=FALSE} since we have not started interpreting the values yet.
 
 \textbf{Step 6. Normalize and coerce to correct types.}
+
 This step consists of preparing the \code{character} columns of our \code{data.frame}
 for coercion and translating numbers into \code{numeric} vectors and possibly
 \code{character} vectors to \code{factor} variables. String normalisation is
@@ -329,15 +330,14 @@ daltons$birth <- as.numeric(daltons$birth)
 daltons$death <- as.numeric(daltons$death)
 daltons
 @
-Or using \code{transform}
-<<keep.source=TRUE>>=
+Or using the underappreciated function \code{transform}:
+<<tidy=FALSE>>=
 daltons = transform( daltons
                    , birth = as.numeric(birth)
                    , death = as.numeric(death)
                    )
-daltons
 @
-
+This last example is a case of converting types in \R{}.
 
 \subsection{Type conversion}
 
@@ -359,7 +359,6 @@ converted into a \code{NA} value.
 <<>>=
 as.numeric(c("7","7*","7.0","7,0"))
 @
-
 
 \begin{tip}{Best practice}
 We advise against \code{as.factor} since \code{factor} give  control over 
@@ -446,9 +445,9 @@ levels(f) <- c("A","B", NA)
 f
 @
 
-Categorical data is often stored as text values. If a categorical data column
+Categorical data are in many data files stored as text values. If a categorical data column
 is not neatly specified, we will need \code{character} manipulation 
-(see \ref{sssect:charactermanipulation}). If you often use data of others, you
+(see \ref{sssect:charactermanipulation}). If you use data of others, you
 will often need to recode factors.
 
 Even when the specification is clear, we might want to recode the used factor into 
@@ -467,19 +466,23 @@ Note that \code{levels} and \code{labels} need to have the same order.
 In case we have an ordinal column, we need to specify the order the categories have.
 If we don't it will take the alphabetical order of the \code{levels}, which is in the given example
 just plain wrong.
-<<>>=
+<<tidy=FALSE>>=
 agegroup <- c("elderly", "child", "adult", "child", "elderly")
-(agegroup <- factor(agegroup, levels=c("child", "adult", "elderly"), order=TRUE))
+(agegroup <- factor( agegroup
+                   , levels=c("child", "adult", "elderly")
+                   , order=TRUE)
+                   )
 @
 
 
-In some case you may want manipulate the order of the levels depending on another variable
-This can be done with \code{reorder}
+In some case you may want calculate the order of the levels depending on another
+variable. This can be done with \code{reorder}:
 <<>>=
 age <- c(72, 10, 23, 6, 67)
 agegroup <- c("elderly", "child", "adult", "child", "elderly")
 (agegroup <- reorder(agegroup, age, order=TRUE))
 @
+\code{reorder} uses the mean of the \code{age} to calculate the order. 
 
 Or you might want make one of the levels a reference level, making it the first level.
 <<>>=
@@ -504,7 +507,7 @@ in \code{POSIXct} format.
 current_time <- Sys.time()
 class(current_time)
 current_time
-@
+@ 
 Here, \code{Sys.time} uses the time zone that is stored in the \code{locale} settings
 of the machine running \R{}. 
 
