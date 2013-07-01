@@ -132,20 +132,23 @@ violatedEdits(E, person)
 
 An example of a more complex set of rules that can
 be defined by typing 
+
 <<cache=FALSE,echo=FALSE>>=
-read_chunk('edits.txt')
 E <- editfile("edits.txt")
+read_chunk('edits.txt')
+@
+<<rules, eval=FALSE>>=
 @
 
 Note that with a more complex rule set restrictions on variables are connected.
 They form a web of interconnected restrictions.
-<<echo=FALSE>>=
+<<width=7>>=
 plot(E)
 @
 Because the restrictions on the variables. the result of \code{violatedEdits} shows
 which rows are invalid according to what rules. Note that if a multivariate rule 
 is violated, it is not clear which variable is erronous.
-<<rules>>=
+<<width=7>>=
 (ve <- violatedEdits(E, person))
 @
 It is also possible to do some statistics on the violated edits. For large 
@@ -158,6 +161,11 @@ plot(ve)
 @
 
 \subsubsection{Error localization}
+When using \code{is.finite}, \code{special} and univariate rules, it is clear
+what values are errors. However in case that there are many restrictions, this 
+may not be clear. 
+
+When  package \code{editrules} 
 
 \subsection{Correction}
 \subsubsection{Deterministic and deductive methods}
