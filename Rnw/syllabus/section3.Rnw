@@ -104,12 +104,16 @@ numerical or mixed data sets which each record must obey. Furthermore it can
 use these rules to check data for errors and find erroneous values. It also allows
 for manipulating the rule set, for example checking if the set of rules is 
 consistent or not. We will briefly discuss the features of \code{editrules}, it
-has many options and functions, but are not needed in this introduction.  
+has many options and functions, but are not needed in this introduction.
+
+
 
 The rules you specify in \code{editrules} are valid \R{} syntax. They can 
 be specified in a \code{character} vector directly with \code{editset} or stored 
 separately in a text file and read in with \code{editfile}. 
 The last option makes it a lot easier to maintain a large set of rules.
+For pure numerical or categorical restrictions \code{editmatrix} and \code{editarray}
+can be used. They are more efficient than the general \code{editset}.
 
 <<echo=FALSE>>=
 library(editrules)
