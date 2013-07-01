@@ -125,14 +125,14 @@ Lets first start with a small example with restrictions on age.
 <<>>=
 (E <- editset(c("age >=0", "age <= 150")))
 @
-The data can be checked with \code{violatedEdits}.
+The data can be checked with \code{violatedEdits}. Record 4 contains an error.
 <<>>=
-violatedEdits(E, person)
+violatedEdits(E, person)[4,]
 @
 \code{violatedEdits} shows for each row of the data, which rule (edit) is violated.
 
-An example of a more complex set of rules that can
-be defined by typing 
+As can be seen from the table, the dataset contains lots of more errors, lets
+find some more using a more complex set of rules 
 
 <<cache=FALSE,echo=FALSE>>=
 E <- editfile("edits.txt")
@@ -143,10 +143,10 @@ read_chunk('edits.txt')
 
 Note that with a more complex rule set restrictions on variables are connected.
 They form a web of interconnected restrictions.
-<<width=7>>=
+<<width=7, fig.cap="Web of restrictions">>=
 plot(E)
 @
-Because the restrictions on the variables. the result of \code{violatedEdits} shows
+The result of \code{violatedEdits} shows
 which rows are invalid according to what rules. Note that if a multivariate rule 
 is violated, it is not clear which variable is erroneous.
 <<width=7>>=
@@ -167,10 +167,10 @@ for easy checking if observations/cases/rows contain valid data or not.
 \subsubsection{Error localization}
 When using \code{is.finite}, \code{special} and univariate rules, it is clear
 what values are invalid. However in case that there are many restrictions, this 
-may not be clear. e.g. if an observation has the variables age, aged, status, 
-yearsmarried are all connect.
+may not be clear. e.g. if an observation has the variables \code{age}, 
+\code{agegroup}, \code{status}, \code{yearsmarried} are all connected.
 \code{editrules} can localize values that need to be adjusted. It takes the 
-Fellig-Holt principle which says: change the values of a minimal (weighted) 
+Felligi-Holt principle which says: change the values of a minimal (weighted) 
 number of variables so that it complies to the rules specified. The function
 in \code{editrules} that does this, is called \code{localizeErrors}. 
 It takes a set of rules and a \code{data.frame} and returns the found solutions.
@@ -188,6 +188,7 @@ to supply confidence weight for variables allowing for fine grained control on
 which values should be adapted. It is also possible to use a mixed integer programming
 solver, which is typically very fast. For more information see the reference manual
 of \code{editrules}.
+
 
 \subsection{Correction}
 \subsubsection{Deterministic and deductive methods}

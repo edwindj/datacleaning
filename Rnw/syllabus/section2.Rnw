@@ -942,7 +942,7 @@ More on type conversions.
 Create a factor variable by extracting the wool type from the \code{warpbreaks}
 data set of the previous exercise.
 <<>>=
-myfac <- warpbreaks$wool
+myfac <- warpbreaks$wool 
 @
 
 \begin{subex}

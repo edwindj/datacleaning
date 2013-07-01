@@ -7,10 +7,10 @@ age > yearsmarried
 
 # categorical rules
 status %in% c("married","single","widowed")
-aged %in% c("child","adult","elderly")
-if ( status == "married" ) aged %in% c("adult","elderly")
+agegroup %in% c("child","adult","elderly")
+if ( status == "married" ) agegroup %in% c("adult","elderly")
 
 # mixed rules
-if ( age > 0 ) height > 0
-if ( status %in% "married" ) age >= 17
-
+if ( yearsmarried > 0 ) age - yearsmarried >= 17
+if ( age <= 18 ) agegroup == "child"
+if ( age >= 65 ) agegroup == "elderly"
