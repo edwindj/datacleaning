@@ -134,7 +134,7 @@ print(person)
 @
 
 Without specifying \code{colClasses} \code{read.table} tries to detect the type of the column
-automatically. This works quite will, but in case a numeric column contains a non numeric value
+automatically. This works quite well, but in case a numeric column contains a non numeric value
 the column is read in as a \code{character} vector. Specifying \code{colClasses} speeds up reading the data considerably.
 By default \code{character} vectors are converted into \code{factors}. With \code{stringsAsFactors=FALSE} 
 this can be switched off.
@@ -152,7 +152,6 @@ indicating how to recognize lines of comment in the file.
 
 \subsubsection{Reading data with \code{scan}}
 
-The \code{scan} function is a lower level text processing that allows you to read in blocks of formatted lines.
 It offers a little more freedom then \code{read.table}, but if your file cannot be processed by \code{read.table}
 you will probably will need  \code{readLines}.
 
@@ -174,7 +173,7 @@ end-of-line). Here's an example (the file can be obtained from our
 \href{https://github.com/edwindj/datacleaning/tree/master/Rnw/syllabus/files}{Github}
 page.
 <<>>=
-(txt <- readLines("files/daltons.txt"))
+(txt <- readLines("files/daltons.txt")) 
 @
 The variable \code{txt} has \Sexpr{length(txt)} elements, equal to the number
 of lines in the textfile.
@@ -358,7 +357,7 @@ class specified behind the ``\code{as.}''.
 Note that Values that cannot be converted to the specified type will be 
 converted into a \code{NA} value.
 <<>>=
-as.numeric(c("7","7*","7.0","7,0"), )
+as.numeric(c("7","7*","7.0","7,0"))
 @
 
 
@@ -434,10 +433,6 @@ Every integer value \code{i} in a \code{factor} corresponds to \code{levels[i]}.
 f <- factor(c("a","b","a","a","c"))
 levels(f)
 levels(f)[f] # same as as.character(f)
-
-# dirty recoding, don't!
-levels(f) <- c("A","B", NA)
-f
 @
 
 \begin{tip}{Bad practice}
@@ -445,12 +440,20 @@ Allthough it is very easy to manipulate the \code{levels} of a \code{factor}, it
 to use \code{factor} for this functionality.
 \end{tip}
 
+<<>>=
+# dirty recoding, avoid it!
+levels(f) <- c("A","B", NA)
+f
+@
+
 Categorical data is often stored as text values. If a categorical data column
-is not neatly specified, we will need \code{character} manipulation (see \ref{sssect:charactermanipulation}).
+is not neatly specified, we will need \code{character} manipulation 
+(see \ref{sssect:charactermanipulation}). If you often use data of others, you
+will often need to recode factors.
 
 Even when the specification is clear, we might want to recode the used factor into 
 more meaningful codes, with a specific ordering.
-Suppose in our dataset \code{gender} is encoded in \code{1} for female and \code{2} for male and \code{0} for 
+Suppose in our dataset \code{gender} is encoded with \code{1} for female, \code{2} for male and \code{0} for 
 unknown. With \code{factor} this can be recoded.
 <<>>=
 gender <- c(2,1,1,2,0,1,1)
@@ -493,7 +496,7 @@ most portable way to store such information.
 
 Under the hood, a \code{POSIXct} object stores the number of seconds that have
 passed since January 1, 1970 \mbox{00:00}. This makes it possible to compute
-durations by simply subtracting two \code{POSIXct} objects. When a \code{POSIXct}
+duration by simply subtracting two \code{POSIXct} objects. When a \code{POSIXct}
 object is printed, \code{R} shows it in a human-readable calender format. For example,
 the command \code{Sys.time} returns the system time provided by the operating system
 in \code{POSIXct} format.
@@ -555,7 +558,7 @@ notation does not convert.
 <<>>=
 dmy("15 Febr. 2013")
 @
-The standard notations that can be recognised by \R{}, either using \code{lubridate}
+The standard notations that can be recognized by \R{}, either using \code{lubridate}
 or \R{}'s built-in functionality are shown in Table \ref{tab:dateformats}.
 %
 \begin{table}
@@ -635,7 +638,7 @@ to \code{male} or \code{female}. In statistical contexts, classifying such
 as \emph{coding}.
 
 Below we discuss two complementary approaches to string coding: \emph{string
-normalisation} and \emph{approximate text matching}. In particular, the
+normalization} and \emph{approximate text matching}. In particular, the
 following topics are discussed.
 \begin{itemize}[itemsep=0pt]
 \item Remove prepending or trailing white spaces.
@@ -645,10 +648,10 @@ following topics are discussed.
 \item Simple approximate matching procedures based on string distances.
 \end{itemize}
 
-\subsubsection{String normalisation}
+\subsubsection{String normalization}
 \label{sect:stringnormalisation}
 %
-String normalisation techniques are aimed at transforming a variety of strings
+String normalization techniques are aimed at transforming a variety of strings
 to a (possibly) smaller set of string values which are more easily processed.
 By default, \R{} comes with extensive string manipulation functionality that is
 based on the two basic string operations: \emph{finding} a pattern in a string
@@ -712,7 +715,7 @@ grep('m',gender)
 @
 Note that the result is case sensitive: the capital \code{M} in the first
 element of \code{gender} does not match the lower case \code{m}. There are
-several ways to circumvent this case sensitivity.  Either by case normalisation
+several ways to circumvent this case sensitivity.  Either by case normalization
 or by the optional argument \code{ignore.case}.
 <<>>=
 grepl('m',gender,ignore.case=TRUE)
@@ -818,7 +821,7 @@ ourselves to computerized character encodings.}. For example, \code{ASCII} is
 an encoding system that prescribes how to translate 127 characters into single
 bytes (where the first bit of each byte is necessarily 0). The \code{ASCII} characters
 include the upper and lower case letters of the Latin alphabet (\code{a-z},
-\code{A-Z}), Arabic numbers (\code{0}-\code{9}), a number of interpunction
+\code{A-Z}), Arabic numbers (\code{0}-\code{9}), a number of punctuation
 characters and a number of invisible so-called control characters such as
 newline and carriage return. 
 

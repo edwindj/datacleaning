@@ -36,7 +36,7 @@ They should be seen as statistical methods.
  the data. This makes your data cleaning process transparent and reproducible.
 
 We will first describe detection techniques that you will need to find records 
-and values that are erronous. After that we go into deterministic correction 
+and values that are erroneous. After that we go into deterministic correction 
 techniques that can repair obvious errors based on formalized or heuristic
 knowledge. We end with an overview of imputation techniques, that can generate
 plausible values for partially missing data.
@@ -47,7 +47,7 @@ plausible values for partially missing data.
 
 \R{} contains several function to deal with special values. We encountered
 a number of them in section \ref{sec:}.
-
+ 
 \begin{tip}{Tip}
 Note that in sometimes a special value in your data may encode an 
 actual value. For example for some columns ``empty''(\code{NA}) means \code{0}.
@@ -56,9 +56,9 @@ Always read the meta data of the data!
 
 Many times data will contain empty values. Rows (cases) containing \code{NA} can be
 detected and removed easily in \R{}, with the functions \code{complete.cases} 
-which returns a \code{logical} of which rows which have no \code{NA}.
+which returns a \code{logical} with rows having no \code{NA} values.
 The logical can be used to select a \code{data.frame}, but for convenience \R{}
-contains the \code{na.omit} function.
+contains the \code{na.omit} function, which does exactly that.
 <<>>=
 person 
 complete.cases(person)
@@ -74,15 +74,15 @@ For example:
 <<>>=
 is.finite(c(1, Inf, NaN, NA))
 @
-\code{is.finite} works on a vector. We can write a utility function \code{special}
-that checks a column for the (non)occurence of special values
+\code{is.finite} works on a vector. We can write a utility function \code{is.special}
+that checks a column for the (non)occurrence of special values
 
 <<>>=
-special <- function(x){
+is.special <- function(x){
   if (is.numeric(x)) is.finite(x) else is.na(x)
 }
 person
-sapply(person, special)
+sapply(person, is.special)
 @
 
 The result of \code{special} show which data have special values. Note that 
@@ -94,14 +94,14 @@ detecting them is good, but the data should be fixed.
 \subsection{Checking record-wise rules with the \code{editrules} package.} 
 With \R{} you can write scripts that do error detection, by writing code that 
 checks each hard rule. However if you have many rules this soon gives many problems
-Rules may interact, so the rules should be not seen als separate rules, but as a
+Rules may interact, so the rules should be not seen as separate rules, but as a
 set of connected rules. Furthermore your \R{} code quickly obscures the rules you 
 try to implement. It would be easier and more clear to define a rule set that all
 records must obey, and to check if a record obeys the rules.
 
 The \code{editrules} package allows one to define rules on categorical,
 numerical or mixed data sets which each record must obey. Furthermore it can 
-use these rules to check data for errors and find erronous values. It also allows
+use these rules to check data for errors and find erroneous values. It also allows
 for manipulating the rule set, for example checking if the set of rules is 
 consistent or not. We will briefly discuss the features of \code{editrules}, it
 has many options and functions, but are not needed in this introduction.  
@@ -148,7 +148,7 @@ plot(E)
 @
 Because the restrictions on the variables. the result of \code{violatedEdits} shows
 which rows are invalid according to what rules. Note that if a multivariate rule 
-is violated, it is not clear which variable is erronous.
+is violated, it is not clear which variable is erroneous.
 <<width=7>>=
 (ve <- violatedEdits(E, person))
 @
@@ -181,8 +181,8 @@ le$status
 le$adapt
 @
 
-\code{\$adapt} is a \code{logical} that signifies which variables are considired
-erronous. It can be used in the correction and imputation procedures for filling in valid
+\code{\$adapt} is a \code{logical} that signifies which variables are considered
+erroneous. It can be used in the correction and imputation procedures for filling in valid
 values. \code{localizeErrors} can be tuned with various options. It is possible
 to supply confidence weight for variables allowing for fine grained control on
 which values should be adapted. It is also possible to use a mixed integer programming
@@ -191,7 +191,7 @@ of \code{editrules}.
 
 \subsection{Correction}
 \subsubsection{Deterministic and deductive methods}
-In some cases, the cause of errers in data can be determined with enough
+In some cases, the cause of errors in data can be determined with enough
 certainty so that the solution is almost automatically known. In recent years,
 several such methods have been developed and implemented in the
 \code{deducorrect} package\cite{loo:2011}. In this section we give a quick
@@ -209,7 +209,7 @@ and derivations of new variables. This may lead to large scripts, where
 you selects parts of the data, change some variables, select another part,
 change some more variables, etc. When such scripts are neatly written and
 commented, they can almost be treated as a log of the actions performed
-by the analist. However, as scripts get longer it is nicer to 
+by the analyst. However, as scripts get longer it is nicer to 
 store the transformation rules separately and log which rule is executed
 on what record. The \code{deducorrect} package offers functionality for 
 this. Consider as an example the following (fantasized) dataset listing
@@ -283,7 +283,7 @@ as follows.
 <<>>=
 getOption('allowedSymbols')
 @
-When the rules are read by \code{correctionRules}, it checks wether any symbol
+When the rules are read by \code{correctionRules}, it checks whether any symbol
 occurs that is not in the list of allowed symbols and returns an error message
 when such a symbol is found. For example.
 <<>>=
@@ -291,7 +291,7 @@ correctionRules(expression(x <- mean(x)))
 @
 %
 Finally, it is currently not possible to add new variables using correctionrules
-although such afeature will likely be added in the future.
+although such a feature will likely be added in the future.
 
 
 \subsubsection{Correction of cases where the cause of error can be deduced}
@@ -394,7 +394,7 @@ with absolute certainty (uniquely) from the rules. In the example, there are
 many possible solutions fo impute the last record and hence \code{deduImpute}
 leaves it untouched.
 
-Similar sitiations exist for categorical data, and purely categorical data
+Similar situations exist for categorical data, and purely categorical data
 is handled by \code{deduImpute} as well.
 <<tidy=FALSE>>=
 E <- editarray(expression(
@@ -411,7 +411,7 @@ cor <- deduImpute(E,dat)
 cor$corrected
 @
 Here, \code{deduImpute} uses automated logic to derive from the conditional
-rules that if someone has a driverslicense, he has to be an adult.
+rules that if someone has a drivers license, he has to be an adult.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Model-based imputation}
@@ -448,8 +448,8 @@ obeyed.  Separately, these methods are available in \R{}.
 \begin{table}[!t]
 \begin{adjustwidth}{-2cm}{}
 \begin{threeparttable}
-\caption{An overview of imputation funcitonality offered by some  \R{} packages.
-reg: regression, rand: random, seq: sequential, NN: nearest neighbour, pmm:
+\caption{An overview of imputation functionality offered by some  \R{} packages.
+reg: regression, rand: random, seq: sequential, NN: nearest neighbor, pmm:
 predictive mean matching, kNN: $k$-nearest-neighbours, int: interpolation,
 lo/no last observation carried forward / next observation carried backward,
 LS: method of Little and Su.
@@ -598,10 +598,10 @@ It should be noted that although \code{Hmisc}, \code{VIM}, \code{mi} and
 \code{mice} all implement imputation methods that ultimately use some form of
 regression, they do not include a simple interface for the case described
 above.  The more advanced methods in those packages are aimed to be more
-precise and/or robust against outliers than stanard (generalized) linear
+precise and/or robust against outliers than standard (generalized) linear
 regression.  Moreover, both \code{mice} and \code{mi} implement methods for
 multiple imputation, which allows for estimation of the imputation variance.
-Such methods are beyond th scope of the current text. The \code{imputation}
+Such methods are beyond the scope of the current text. The \code{imputation}
 package has a function \code{lmImpute} but is uses a the row number as
 auxiliary variable which limits the practical usability.
 
@@ -614,15 +614,15 @@ similar records in the same dataset. Or, in notation:
 \hat{x}_i = x_j, 
 \end{equation}
 where $x_j$ is taken from the observed values.  Hot-deck imputation can be
-applied to numerical as wel as categorical data but is only viable when enough
+applied to numerical as well as categorical data but is only viable when enough
 donor records are available. 
 
 The main question in hot-deck imputation is
 how to choose the replacement value $x_j$ from the observed values.  Here, we
-shortly discuss four well-known flavours.
+shortly discuss four well-known flavors.
 
 In \emph{random} hot-deck imputation, a value is chosen randomly, and uniformly
-from the same data set. When meaningfull, random hot deck methods can be
+from the same data set. When meaningful, random hot deck methods can be
 applied per stratum. For example, one may apply random hot-deck imputation of
 body height for male and female respondents separately. Random hot-deck on a
 single vector can be applied with the \code{impute} function of the
@@ -640,7 +640,7 @@ time it is executed. If you want the results to be random, but repeatable (e.g.
 for testing purposes) you can use \code{set.seed(<a number>)} prior to calling
 \code{impute}. 
 
-In \emph{sequential} hot deck imputation, the vector conatining missings is
+In \emph{sequential} hot deck imputation, the vector containing missing values is
 sorted according to one or more auxiliary variables so that records that have
 similar auxiliaries occur sequentially in the \code{data.frame}.  Next, each
 missing value is imputed with the value from the first following record that
@@ -664,27 +664,27 @@ seqImpute <- function(x,last){
 We will use this function in exercise \ref{ex:seqimpute}. 
 
 
-\emph{Predictive mean matching} (pmm) is a form of nearest-neighbour hot-deck
-imputation whith a specific distance function. In predictive mean matching one
+\emph{Predictive mean matching} (pmm) is a form of nearest-neighbor hot-deck
+imputation with a specific distance function. In predictive mean matching one
 first estimates values for empty fields, for example with a regression method.
 Empty values are then imputed with observed values which are the most similar
 to the predicted values. Predictive mean matching imputation has been
 implemented in several packages (\code{mi}, \code{mice}, \code{BaBoon}) but
 each time either for a specific type of data and/or using a specific prediction
 model (\emph{e.g.} \code{Bayesglm}). Moreover, the packages known to us always
-use pmm as a part of a more elaborata multilpe imputation scheme, which we
+use pmm as a part of a more elaborate multiple imputation scheme, which we
 deemed out of scope for this tutorial.
 
 \subsubsection{kNN-imputation}
-In $k$ \emph{nearest neighbour} imputation one defines a distance
+In $k$ \emph{nearest neighbor} imputation one defines a distance
 function $d(i,j)$ that computes a measure of dissimilarity between records. A
 missing value is then imputed by finding first the $k$ records nearest to the
 record with one or more missing values. Next, a value is chosen from or
-computed out of the $k$ nearest neighbours. In the case where a value is picked
-from the $k$ nearest neighbours, kNN-imputation is a form of hot-deck imputation.
+computed out of the $k$ nearest neighbors. In the case where a value is picked
+from the $k$ nearest neighbors, kNN-imputation is a form of hot-deck imputation.
 
 The \code{VIM} package contains a function called \code{kNN} that uses Gowers
-distance\cite{gower:1971} to determine the $k$ nearest neighbours. Gower's
+distance\cite{gower:1971} to determine the $k$ nearest neighbors. Gower's
 distance between two records labeled $i$ and $j$ is defined as
 \begin{equation}
 d_{\sf g}(i,j) \frac{\sum_k w_{ijk} d_k(i,j)}{\sum_{k}w_{ijk}},
@@ -708,10 +708,10 @@ for ( i in 1:ncol(iris) ){
 }
 iris2 <- kNN(iris)
 @
-The \code{kNN} function determines the $k$ (default: 5) nearest neighbours of a
+The \code{kNN} function determines the $k$ (default: 5) nearest neighbors of a
 record with missing values. For numerical variables the median of the $k$
-nearest neighbours is used as imputation value, for categorcal variables the
-category that most often occurs in the $k$ nearest neighbours is used. Both the
+nearest neighbors is used as imputation value, for categorical variables the
+category that most often occurs in the $k$ nearest neighbors is used. Both the
 these functions may be replaced by the user. Finally, \code{kNN} prints (negatively)
 the time it took to complete the imputation. We encourage the reader to execute
 the above code and experiment further. 
@@ -723,7 +723,7 @@ the above code and experiment further.
 Once missing numerical values have been adequately imputed, there is a good
 chance that the resulting records violate a number of edit rules.  The obvious
 reason is that there are not many methods that can perform imputation under
-arbitrary edit restrictions. One vialble option is therefore to minimally
+arbitrary edit restrictions. One viable option is therefore to minimally
 adjust imputed values such that after adjustment the record passes every edit
 check within a certain tolerance. 
 
