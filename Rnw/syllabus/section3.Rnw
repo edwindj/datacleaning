@@ -12,10 +12,9 @@
 
 \emph{Consistent data} is \emph{technically correct data} that is fit for 
 statistical analysis. This means that it should not contain obvious errors, 
-or have extraordinary values such as infinity or missing that obstruct s
-tatistical analysis.
+or have special values such as infinity or missing that obstruct statistical analysis.
 
-The checking for glaring errors is based on the knowledge you
+The checking for  errors is based on the knowledge you
 have on subject matter. For example a persons age cannot be negative. If the 
 data contains a negative age it will corrupt your age statistics.
 This subject matter knowledge is usually formalized in terms of rules which may 
@@ -27,11 +26,11 @@ invalid values or are incomplete can be left out of your analysis.
 This may seem to be the right procedure, but can introduce a bias or can leave 
 you with very few data to be analyzed. 
 
-In many cases an invalid or imcomplete observation can be corrected and imputed,
+In many cases an invalid or incomplete observation can be corrected and imputed,
 based on background information or using the data of the other observations.
 
 The detection, correction and imputation of data are all operations that 
-influence the statistical analysis (in a positive sense).
+influence the statistical analysis (positively).
 They should be seen as statistical methods.
 \R{} makes it easy to be explicit on the detection rules, and the corrections on
  the data. This makes your data cleaning process transparent and reproducible.
@@ -46,21 +45,48 @@ plausible values for partially missing data.
 
 \subsubsection{Detecting extraordinary values}
 
+\R{} contains several function to deal with special values. We encountered
+a number of them in section \ref{sec:}.
+
+\begin{tip}{Tip}
+Note that in sometimes a special value in your data may encode an 
+actual value. For example for some columns ``empty''(\code{NA}) means \code{0}.
+Always read the meta data of the data!
+\end{tip}
+
+Many times data will contain empty values. Rows (cases) containing \code{NA} can be
+detected and removed easily in \R{}, with the functions \code{complete.cases} 
+which returns a \code{logical} of which rows which have no \code{NA}.
+The logical can be used to select a \code{data.frame}, but for convenience \R{}
+contains the \code{na.omit} function.
+<<>>=
+person 
+complete.cases(person)
+na.omit(person)
+@
+The result of the \code{na.omit} function is a data.frame with the incomplete rows
+removed, but also contains the names of the removed rows in the attribute 
+\code{na.action}.
+
+Numeric columns can have more formalized special values: \code{Inf}, \code{-Inf},
+\code{NA} and \code{NaN}. Checking for these values can be done with \code{is.finite}.
+For example:
 <<>>=
 is.finite(c(1, Inf, NaN, NA))
 @
+\code{is.finite} works on a vector. We can write a utility function \code{special}
+that checks a column for the (non)occurence of special values
 
 <<>>=
+special <- function(x){
+  if (is.numeric(x)) is.finite(x) else is.na(x)
+}
 person
-complete.cases(person)
+sapply(person, special)
 @
 
-
-Removing observations with
-<<>>=
-na.omit(person)
-@
-
+\subsubsection{Outliers?}
+\code{extremevalues}????
 
 \subsection{Checking record-wise rules with the \code{editrules} package.} 
 With \R{} you can write scripts that do error detection, by writing code that 
@@ -71,7 +97,15 @@ try to implement. It would be easier and more clear to define a rule set that al
 records must obey, and to check if a record obeys the rules.
 
 The \code{editrules} package allows one to define rules on categorical,
-numerical or mixed data sets which each record must obey. Restrictions can
+numerical or mixed data sets which each record must obey. Furthermore it can 
+use these rules to check data for errors and find erronous values. It also allows
+for manipulating the rule set, for example checking if the set of rules is 
+consistent or not.
+
+The rules you specify in \code{editrules} are valid \R{} syntax.
+
+
+Restrictions can
 be defined by typing them in a file and reading them into \R{} with
 the \code{editfile} function.
 
@@ -107,7 +141,7 @@ by the analist. However, as scripts get longer it is nicer to
 store the transformation rules separately and log which rule is executed
 on what record. The \code{deducorrect} package offers functionality for 
 this. Consider as an example the following (fantasized) dataset listing
-the body lengtgh of some brothers.
+the body length of some brothers.
 <<>>=
 (marx <- read.csv("files/marx.csv",stringsAsFactors=FALSE))
 @
