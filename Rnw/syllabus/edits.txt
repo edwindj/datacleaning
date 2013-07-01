@@ -1,15 +1,16 @@
 ## @knitr rules
 # numerical rules
-x + y == z
-x >= 0
-y >= 0
+age >= 0
+height > 0
+age <= 150
+age > yearsmarried
 
 # categorical rules
-A %in% letters[1:3]
-B %in% letters[6:8]
-if ( A %in% c('b','c') ) B %in% c('f','h')
+status %in% c("married","single","widowed")
+aged %in% c("child","adult","elderly")
+if ( status == "married" ) aged %in% c("adult","elderly")
 
 # mixed rules
-if ( x > 0 ) y > 0
-if ( A %in% "a" ) 2*x > y
+if ( age > 0 ) height > 0
+if ( status %in% "married" ) age >= 17
 

@@ -85,6 +85,9 @@ person
 sapply(person, special)
 @
 
+The result of \code{special} show which data have special values. Note that 
+detecting them is good, but the data should be fixed.
+
 \subsubsection{Outliers?}
 \code{extremevalues}????
 
@@ -102,17 +105,56 @@ use these rules to check data for errors and find erronous values. It also allow
 for manipulating the rule set, for example checking if the set of rules is 
 consistent or not.
 
-The rules you specify in \code{editrules} are valid \R{} syntax.
+The rules you specify in \code{editrules} are valid \R{} syntax. They can 
+be specified in a \code{character} vector directly with \code{editset} or stored 
+separately in a text file and read in with \code{editfile}. 
+The last option makes it a lot easier to maintain a large set of rules.
 
+<<echo=FALSE>>=
+library(editrules)
+library(xtable)
+person <- read.csv("files/person.txt")
+@
 
-Restrictions can
-be defined by typing them in a file and reading them into \R{} with
-the \code{editfile} function.
+<<echo=FALSE,results="asis">>=
+xtable(person, caption="Person data, with lots of errors")
+@
 
+Lets first start with a small example with restrictions on age.
+<<>>=
+(E <- editset(c("age >=0", "age <= 150")))
+@
+The data can be checked with \code{violatedEdits}.
+<<>>=
+violatedEdits(E, person)
+@
+\code{violatedEdits} shows for each row of the data, which rule (edit) is violated.
+
+An example of a more complex set of rules that can
+be defined by typing 
 <<cache=FALSE,echo=FALSE>>=
 read_chunk('edits.txt')
+E <- editfile("edits.txt")
 @
-<<rules,eval=FALSE>>=
+
+Note that with a more complex rule set restrictions on variables are connected.
+They form a web of interconnected restrictions.
+<<echo=FALSE>>=
+plot(E)
+@
+Because the restrictions on the variables. the result of \code{violatedEdits} shows
+which rows are invalid according to what rules. Note that if a multivariate rule 
+is violated, it is not clear which variable is erronous.
+<<rules>>=
+(ve <- violatedEdits(E, person))
+@
+It is also possible to do some statistics on the violated edits. For large 
+dataset this can be very revealing: it may show problems in the collection 
+of the data. It may also show that some rules are never violated.
+The result of violatedEdits can be plotted.
+
+<<>>=
+plot(ve)
 @
 
 \subsubsection{Error localization}
