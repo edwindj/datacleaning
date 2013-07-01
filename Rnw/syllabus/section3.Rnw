@@ -93,8 +93,9 @@ sapply(person, is.special)
 The result of \code{is.special} shows which data have special values. Note that 
 detecting them is good, but the data should be fixed (see \ref{sec:})
 
-\subsubsection{Outliers?}
-\code{extremevalues}????
+\subsubsection{Outliers}
+Ideally you should check for outliers in the data. However for this tutorial it 
+is out of scope.
 
 \subsection{Checking record-wise rules with the \code{editrules} package.} 
 With \R{} you can write scripts that do error detection, by writing code that 
@@ -110,8 +111,6 @@ use these rules to check data for errors and find erroneous values. It also allo
 for manipulating the rule set, for example checking if the set of rules is 
 consistent or not. We will briefly discuss the features of \code{editrules}, it
 has many options and functions, but are not needed in this introduction.
-
-
 
 The rules you specify in \code{editrules} are valid \R{} syntax. They can 
 be specified in a \code{character} vector directly with \code{editset} or stored 
