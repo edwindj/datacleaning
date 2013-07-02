@@ -223,16 +223,16 @@ read_chunk('edits.txt')
 <<rules, eval=FALSE>>=
 @
 
-The result of \code{violatedEdits} shows
-which rows are invalid according to what rules. Note that if a multivariate rule 
-is violated, it is not clear which variable is erroneous.
+The result of \code{violatedEdits} shows which rows are invalid according to
+what rules. Note that if a multivariate rule is violated, it is not clear which
+variable is erroneous.
 <<width=7>>=
 (ve <- violatedEdits(E, person))
 @
-It is also possible to do some statistics on the violated edits. For large 
-dataset this can be very revealing: it may show problems in the collection 
-of the data. It may also show that some rules are never violated.
-The result of violatedEdits can be plotted.
+It is also possible to do some statistics on the violated edits. For large
+dataset this can be very revealing: it may show problems in the collection of
+the data. It may also show that some rules are never violated.  The result of
+violatedEdits can be plotted.
 %
 <<>>=
 plot(ve)
@@ -258,17 +258,18 @@ plot(E)
 @
 
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Error localization}
+\label{sect:errloc}
 When using \code{is.finite}, \code{special} and univariate rules, it is clear
-what values are invalid. However in case that there are many restrictions, this 
-may not be clear. e.g. if an observation has the variables \code{age}, 
+what values are invalid. However in case that there are many restrictions, this
+may not be clear. e.g. if an observation has the variables \code{age},
 \code{agegroup}, \code{status}, \code{yearsmarried} are all connected.
-\code{editrules} can localize values that need to be adjusted. It takes the 
-Felligi-Holt principle which says: change the values of a minimal (weighted) 
-number of variables so that it complies to the rules specified. The function
-in \code{editrules} that does this, is called \code{localizeErrors}. 
-It takes a set of rules and a \code{data.frame} and returns the found solutions.
+\code{editrules} can localize values that need to be adjusted. It takes the
+Felligi-Holt principle which says: change the values of a minimal (weighted)
+number of variables so that it complies to the rules specified. The function in
+\code{editrules} that does this, is called \code{localizeErrors}.  It takes a
+set of rules and a \code{data.frame} and returns the found solutions.
 <<>>=
 person[2,]
 le <- localizeErrors(E, person[2,])
@@ -869,6 +870,15 @@ d2$adjusted
 
 
 \subsection*{Exercises}
+
+\begin{exercise}
+Download the \code{dirty\_iris} dataset from
+\begin{quote}
+URL
+\end{quote}
+
+\end{exercise}
+
 \begin{exercise}
 \label{ex:seqimpute}
 
