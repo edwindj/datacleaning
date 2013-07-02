@@ -4,31 +4,43 @@
 \subsection{Data analysis}
 
 \begin{quote}
-Analysis of data is a process of inspecting, cleaning, transforming, and modeling data with the goal of highlighting useful information, suggesting conclusions, and supporting decision making.
+Analysis of data is a process of inspecting, cleaning, transforming, and
+modeling data with the goal of highlighting useful information, suggesting
+conclusions, and supporting decision making.
 \begin{flushright}
   \em{Wikipedia}
 \end{flushright}
 \end{quote}
 
-In practice a data analyst spends most of his time on preparing the data for statistical analysis.
-It is very rare that data are in the correct format, are without errors, are complete and have labels and codes that
-are needed for analysis. Data Cleaning is the process of transforming raw data into consistent data that can be analyzed.
+In practice a data analyst spends a lot of time on preparing the data for
+statistical analysis.  It is very rare that data are in the correct format, are
+without errors, are complete and have labels and codes that are needed for
+analysis. Data Cleaning is the process of transforming raw data into consistent
+data that can be analyzed.
 
-Data cleaning sounds like selectively manipulating your data, which is considered bad scientific practice.
-However not cleaning your data makes statistical analysis impossible and may heavily bias the results of your analysis.
-Data cleaning should be seen as a statistical operation that interprets raw data, removes known deficiencies, makes it technically correct and consistent such that it is ready for further statistical analysis. 
-As such, data cleaning methods should be documented and reproducible: When applied on the same raw data, the result should be the same. This has the advantage that when new raw data is available that exactly the same data cleaning steps can be performed, making the analysis of old and new data comparable.
+Data cleaning sounds like selectively manipulating your data, which is
+considered bad scientific practice.  However not cleaning your data makes
+statistical analysis impossible and may heavily bias the results of your
+analysis.  Data cleaning should be seen as a statistical operation that
+interprets raw data, removes known deficiencies, makes it technically correct
+and consistent such that it is ready for further statistical analysis.  As
+such, data cleaning methods should be documented and reproducible: When applied
+on the same raw data, the result should be the same. This has the advantage
+that when new raw data is available that exactly the same data cleaning steps
+can be performed, making the analysis of old and new data comparable.
 
-\R{} provides the right environment for data cleaning. Since \R{} is a programming language all data cleaning steps can be executed in a reproducible and documented manner.
+\R{} provides the right environment for data cleaning. Since \R{} is a
+programming language all data cleaning steps can be executed in a reproducible
+and documented manner.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
 \subsection{Statistical analysis in 5 steps}
-In this paper we describe a typical statistical analysis as
-the result of a number of data processing steps where each step increases the
-``value'' of the data. Figure \ref{fig:steps} shows an overview of a typical
-data analyses project. Here, each rectangle represents a certain state
-of the data and the arrows represent the activities needed to get from
-one state to the other.
+In this paper we describe a typical statistical analysis as the result of a
+number of data processing steps where each step increases the ``value'' of the
+data. Figure \ref{fig:steps} shows an overview of a typical data analyses
+project. Here, each rectangle represents a certain state of the data and the
+arrows represent the activities needed to get from one state to the other.
 
 \begin{wrapfigure}{l}{0.5\textwidth}
 \begin{center}

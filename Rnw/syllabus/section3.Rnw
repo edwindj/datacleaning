@@ -42,14 +42,18 @@ knowledge. We end with an overview of imputation techniques, that can generate
 plausible values for partially missing data.
 
 \subsection{Detection}
+Detecting that something is wrong is the first step in data cleaning.  Below we
+outline several methods for detecting suspicous or erroneous in either
+individual variables or in combinations thereof.
+
 
 \subsubsection{Detecting extraordinary values}
 <<echo=FALSE>>=
 person <- transform(person, height=as.numeric(as.character(height)))
 @
 
-\R{} contains several function to deal with special values. We encountered
-a number of them in section \ref{sec:}.
+\R{} contains several functions to deal with special values. We encountered a
+number of them in section \ref{sec:}.
  
 \begin{tip}{Tip}
 Note that sometimes a special value in your data may encode an 
@@ -94,8 +98,81 @@ The result of \code{is.special} shows which data have special values. Note that
 detecting them is good, but the data should be fixed (see \ref{sec:})
 
 \subsubsection{Outliers}
-Ideally you should check for outliers in the data. However for this tutorial it 
-is out of scope.
+There is a vast body of literature on outlier detection, and several
+definitions of \emph{outlier} exist. A general definition by Barnett and
+Lewis\cite{barnett:1994} defines an outlier in a data set as \emph{an
+observation (or set of observations) that which appear to be inconsistent with
+that set of data}. Although more precise definitions exist (see e.g. the book
+by Hawkins\cite{hawkins:1980}), this definition is sufficient for the current
+tutorial. Below we mention a few fairly common graphical and computational
+techniques for outlier detection in univariate numerical data.
+
+\subsubsection{Univariate outliers}
+For more or less unimodal and symettrically distributed data, Tukey's box-and-whisker
+method\cite{tukey:1977} for outlier detection is often appropriate. In this
+method, an observation is an outlier when it is larger than the so-called
+``whiskers'' of the set of observations.  The upper whisker is computed by
+adding 1.5 times the interquartile range to the third quartile and rounding to
+the nearest lower observation.  The lower whisker is computed likewise.
+
+The base \R{}, installation comes with function \code{boxplot.stats},
+which, amongst other things, list the outliers.
+<<>>=
+x <- c(1:10,20, 30)
+boxplot.stats(x)$out
+@
+Here, $20$ and $50$ are detected as outliers since they are above the uppper
+whisker of the observations in \code{x}. The factor $1.5$ used to compute the
+whisker is to an extent arbitrary and it can be altered by setting the \code{coef}
+option of \code{boxplot.stats}. A higher coefficient means a higher outlier detection
+limit (so for the same dataset, generally less upper or lower outliers will be detected).
+<<>>=
+boxplot.stats(x,coef=2)$out
+@
+%
+\begin{wrapfigure}{l}{0.5\textwidth}
+\begin{center}
+<<>>=
+boxplot(x)
+@
+\caption{A box-and-whisker plot.}
+\end{center}
+\end{wrapfigure}
+%
+Of course, the box-and-whisker method can be visualized with the famous box-and-whisker
+plot, where the box indicates the interquartile range and the median, the whiskers are
+represented at the ends of the box-and-whisker plots and outliers are indicated with
+an asteriks.
+
+The box-and-whisker method fails when data are distributed skewly, as in exponential
+or lognormal distributions for example. I that case one can either transform the data
+for example with a logarithm, or square root transformation. Another option is to
+use method that takes the skewness into account. A particularly easy-to-implement example
+is the method of Hiridoglou and Berthelot\cite{hiridoglou:1986} for positive observations. 
+In this method, an observation is an outlier when
+\begin{equation}
+h(x) = \max\left(
+\frac{x}{x^*},\frac{x^*}{x} 
+\right)
+\geq r,\textrm{ and } x>0.
+\end{equation}
+Here, $r$ is a usr-defined reference value and $x^*$ is usually the the median
+observation, although other measures of centrality may be chosen. Here, the
+score function $h(x)$ grows as $1/x$ as $x$ approaches zero and grows linearly
+wiht $x$ when it is larger than $x^*$. It is therefore appropriate for
+long-tailed distributions. An implementation in of this method in \R{} does not 
+seem available but it is implemented simple enough as the following function.
+<<>>=
+hboutlier <- function(x,r){
+  xref <- median(x, na.rm=TRUE)
+  max(x/xref, xref, x, na.rm=TRUE) > r
+}
+@
+The above function returns a \code{logical} vector indicating which elements of 
+$x$ are outliers.
+
+
+
 
 \subsection{Checking record-wise rules with the \code{editrules} package.} 
 With \R{} you can write scripts that do error detection, by writing code that 
