@@ -15,7 +15,7 @@ statistical analysis. This means that it should not contain obvious errors,
 have special values such as \code{Inf} or \code{NaN}, that obstruct statistical
 analysis. Also, suspicious values like outliers should be identified, so they
 can either be removed, replaced with better values, or treated appropriately in
-the subseqent statistical analyses.
+the subseqent statistical analysis.
 
 With obvious errors, we mean that data violates expectations based on
 knowledge of the subject matter that the data describes. For example, a
@@ -23,7 +23,7 @@ person's age cannot be negative, or a person under say, 18 years, can not have
 a drivers license. 
 
 In practice, simply throwing out the records which violate one or more rules is
-undesirable since it may introduce estimation bias or even leavy you wiht to
+undesirable since it may introduce estimation bias or even leavy you with to
 few data to reliably analyse statistically.  Moreover, in many cases an invalid
 or incomplete observations can be corrected or imputed by leveraging auxiliary
 information either within the same data set or from other sources. 
@@ -66,7 +66,8 @@ print(person)
 complete.cases(person)
 na.omit(person)
 @
-The result of the \code{na.omit} function is a data.frame with the incomplete rows
+The result of the \code{na.omit} function is a \code{data.frame} with the 
+incomplete rows
 removed, but also contains the names of the removed rows in the attribute 
 \code{na.action}.
 
@@ -78,10 +79,11 @@ For example:
 <<>>=
 is.finite(c(1, Inf, NaN, NA))
 @
-\code{is.finite} works on a vector. We can write a utility function \code{is.special}
-that checks a column for the (non)occurrence of special values
+\code{is.finite} works on a vector. We can write a utility 
+function \code{is.special} that checks a column for the
+(non)occurrence of special values
 
-<<>>=
+<<tidy=FALSE>>=
 is.special <- function(x){
   if (is.numeric(x)) !is.finite(x) else is.na(x)
 }
@@ -89,7 +91,7 @@ person
 sapply(person, is.special)
 @
 %
-The result of \code{is.special} shows which data have special values.  Observe
+The result of \code{is.special} shows which data have special values. Observe
 that the \code{height} column is still stored as a \code{character} vector here
 (not \code{numeric}), so only the \code{NA} is detected.
 
@@ -104,7 +106,8 @@ tutorial. Below we mention a few fairly common graphical and computational
 techniques for outlier detection in univariate numerical data.
 
 \subsubsection{Univariate outliers}
-For more or less unimodal and symettrically distributed data, Tukey's box-and-whisker
+For more or less unimodal and symettrically distributed data, 
+Tukey's box-and-whisker
 method\cite{tukey:1977} for outlier detection is often appropriate. In this
 method, an observation is an outlier when it is larger than the so-called
 ``whiskers'' of the set of observations.  The upper whisker is computed by
@@ -153,7 +156,7 @@ h(x) = \max\left(
 \right)
 \geq r,\textrm{ and } x>0.
 \end{equation}
-Here, $r$ is a usr-defined reference value and $x^*$ is usually the the median
+Here, $r$ is a user-defined reference value and $x^*$ is usually the the median
 observation, although other measures of centrality may be chosen. Here, the
 score function $h(x)$ grows as $1/x$ as $x$ approaches zero and grows linearly
 wiht $x$ when it is larger than $x^*$. It is therefore appropriate for
@@ -169,8 +172,6 @@ The above function returns a \code{logical} vector indicating which elements of
 $x$ are outliers.
 
 
-
-
 \subsection{Checking record-wise rules with the \code{editrules} package.} 
 With \R{} you can write scripts that do error detection, by writing code that 
 checks each hard rule. However if you have many rules this soon gives many problems
@@ -184,7 +185,7 @@ numerical or mixed data sets which each record must obey. Furthermore it can
 use these rules to check data for errors and find erroneous values. It also allows
 for manipulating the rule set, for example checking if the set of rules is 
 consistent or not. We will briefly discuss the features of \code{editrules}, it
-has many options and functions, but are not needed in this introduction.
+has many options and functions, but these are not needed in this introduction.
 
 The rules you specify in \code{editrules} are valid \R{} syntax. They can 
 be specified in a \code{character} vector directly with \code{editset} or stored 
@@ -266,7 +267,7 @@ what values are invalid. However in case that there are many restrictions, this
 may not be clear. e.g. if an observation has the variables \code{age},
 \code{agegroup}, \code{status}, \code{yearsmarried} are all connected.
 \code{editrules} can localize values that need to be adjusted. It takes the
-Felligi-Holt principle which says: change the values of a minimal (weighted)
+Fellegi-Holt~\cite{Fellegi1976} principle which says: change the values of a minimal (weighted)
 number of variables so that it complies to the rules specified. The function in
 \code{editrules} that does this, is called \code{localizeErrors}.  It takes a
 set of rules and a \code{data.frame} and returns the found solutions.
@@ -280,11 +281,11 @@ le$adapt
 \code{\$adapt} is a \code{logical} that signifies which variables are considered
 erroneous. It can be used in the correction and imputation procedures for filling in valid
 values. \code{localizeErrors} can be tuned with various options. It is possible
-to supply confidence weight for variables allowing for fine grained control on
+to supply a confidence weight for each variable allowing for 
+fine grained control on
 which values should be adapted. It is also possible to use a mixed integer programming
 solver, which is typically very fast. For more information see the reference manual
 of \code{editrules}.
-
 
 \subsection{Correction}
 \subsubsection{Deterministic and deductive methods}
@@ -299,17 +300,16 @@ To follow the examples load the deducorrect package.
 library(deducorrect)
 @
 
-
 \subsubsection{Automated correction using deterministic rules}
 Data cleaning often involves applying a lot of \emph{ad-hoc} transformations
 and derivations of new variables. This may lead to large scripts, where
-you selects parts of the data, change some variables, select another part,
+you select parts of the data, change some variables, select another part,
 change some more variables, etc. When such scripts are neatly written and
 commented, they can almost be treated as a log of the actions performed
 by the analyst. However, as scripts get longer it is nicer to 
 store the transformation rules separately and log which rule is executed
 on what record. The \code{deducorrect} package offers functionality for 
-this. Consider as an example the following (fantasized) dataset listing
+this. Consider as an example the following (ficticious) dataset listing
 the body length of some brothers.
 <<>>=
 (marx <- read.csv("files/marx.csv",stringsAsFactors=FALSE))
@@ -894,7 +894,7 @@ Reading and checking.
     \end{eqnarray*}
     Define these rules in a separate text file and read them into \R{} using \code{editfile} (package \code{editrules}).
   \item Determine how often each rules is broken (\code{violatedEdits}). Also summarize and plot the result.
-
+  
 \end{subex}
 \end{exercise}
 

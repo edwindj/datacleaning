@@ -17,7 +17,6 @@
 \subsection{Technically correct}
 
 We use the following simple definition for {\em technically correct} in \R{}:
-{\em TODO definition style?}
 \begin{itemize}
 \item The data to be analyzed are stored in a \code{data.frame} with suitable columns names.
 \item Each column of the \code{data.frame} is of correct \R{} type that is needed for analysis.
