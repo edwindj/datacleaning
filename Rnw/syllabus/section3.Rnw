@@ -870,13 +870,32 @@ d2$adjusted
 
 
 \subsection*{Exercises}
-
-\begin{exercise}
-Download the \code{dirty\_iris} dataset from
+In the following exercises we are going to use the \code{dirty\_iris} dataset.
+You can download this dataset from 
 \begin{quote}
 URL
 \end{quote}
 
+
+\begin{exercise}
+Reading and checking.
+\begin{subex}
+  \item View the file in a text-editor to determine its format and read the file into \R{}. 
+    Make sure that strings are not converted to factor.
+  \item The variables in the file have to obey the following Rules:
+    \begin{eqnarray*}
+       \textrm{Species} &\in& \{\mcode{"setosa"}, \mcode{"versicolor"}, \mcode{"virginica"}\}\\
+      \textrm{Sepal.Length} &>& 0\\
+      \textrm{Sepal.Width}  &>& 0\\
+      \textrm{Petal.Length} &>& 0\\
+      \textrm{Petal.Width}  &>& 0\\
+      \textrm{Species}      &>& 0\\
+      \textrm{Sepal.Length} &<& 10\cdot\textrm{Sepal.Width}
+    \end{eqnarray*}
+    Define these rules in a separate text file and read them into \R{} using \code{editfile} (package \code{editrules}).
+  \item Determine how often each rules is broken (\code{violatedEdits}). Also summarize and plot the result.
+
+\end{subex}
 \end{exercise}
 
 \begin{exercise}
