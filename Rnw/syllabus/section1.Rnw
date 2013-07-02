@@ -244,6 +244,7 @@ d[2, ]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Special values}
+\label{sect:specval}
 Like almost
 every other programming language, \R{} has a number of Special values that are
 exceptions to the normal values of a type. These are \code{NA}, \code{NULL},

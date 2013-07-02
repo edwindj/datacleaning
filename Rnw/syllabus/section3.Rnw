@@ -10,36 +10,29 @@
 \section{From technically correct data to consistent data}
 \label{sect:inputtomicro}
 
-\emph{Consistent data} is \emph{technically correct data} that is fit for 
-statistical analysis. This means that it should not contain obvious errors, 
-or have special values such as infinity or missing that obstruct statistical analysis.
+\emph{Consistent data} is \emph{technically correct data} that is fit for
+statistical analysis. This means that it should not contain obvious errors,
+have special values such as \code{Inf} or \code{NaN}, that obstruct statistical
+analysis. Also, suspicious values like outliers should be identified, so they
+can either be removed, replaced with better values, or treated appropriately in
+the subseqent statistical analyses.
 
-The checking for  errors is based on the knowledge you
-have on subject matter. For example a persons age cannot be negative. If the 
-data contains a negative age it will corrupt your age statistics.
-This subject matter knowledge is usually formalized in terms of rules which may 
-be interpreted as being obligatory (\emph{hard rules}), or indicative 
-(\emph{soft rules}).
+With obvious errors, we mean that data violates expectations based on
+knowledge of the subject matter that the data describes. For example, a
+person's age cannot be negative, or a person under say, 18 years, can not have
+a drivers license. 
 
-Observations (i.e. rows of a \code{data.frame}) that violate hard rules, have 
-invalid values or are incomplete can be left out of your analysis. 
-This may seem to be the right procedure, but can introduce a bias or can leave 
-you with very few data to be analyzed. 
+In practice, simply throwing out the records which violate one or more rules is
+undesirable since it may introduce estimation bias or even leavy you wiht to
+few data to reliably analyse statistically.  Moreover, in many cases an invalid
+or incomplete observations can be corrected or imputed by leveraging auxiliary
+information either within the same data set or from other sources. 
 
-In many cases an invalid or incomplete observation can be corrected and imputed,
-based on background information or using the data of the other observations.
-
-The detection, correction and imputation of data are all operations that 
-influence the statistical analysis (positively).
-They should be seen as statistical methods.
-\R{} makes it easy to be explicit on the detection rules, and the corrections on
- the data. This makes your data cleaning process transparent and reproducible.
-
-We will first describe detection techniques that you will need to find records 
-and values that are erroneous. After that we go into deterministic correction 
-techniques that can repair obvious errors based on formalized or heuristic
-knowledge. We end with an overview of imputation techniques, that can generate
-plausible values for partially missing data.
+Below, we first describe detection techniques that will allow you to find
+records and fields in records containing erroneous values. After that we go
+into deterministic correction techniques that can repair obvious errors based
+on formalized or heuristic knowledge. We end with an overview of imputation
+techniques, that can generate plausible values for partially missing data.
 
 \subsection{Detection}
 Detecting that something is wrong is the first step in data cleaning.  Below we
@@ -48,24 +41,26 @@ individual variables or in combinations thereof.
 
 
 \subsubsection{Detecting extraordinary values}
-<<echo=FALSE>>=
-person <- transform(person, height=as.numeric(as.character(height)))
-@
+%<<echo=FALSE>>=
+%person <- transform(person, height=as.numeric(as.character(height)))
+%@
 
-\R{} contains several functions to deal with special values. We encountered a
-number of them in section \ref{sec:}.
+\R{} contains several functions to deal with special values. We have 
+encountered several of them in section \ref{sect:specval}.
  
 \begin{tip}{Tip}
-Note that sometimes a special value in your data may encode an 
-actual value. For example for some columns ``empty''(\code{NA}) means \code{0}.
-Always read the meta data of the data!
+It is important not to confuse empty values with a specific value. For example,
+if an empty value in a numerical column is to be interpreted as $0$, you should
+explicitly impute zeros so this interpretation is at least recorded in the
+code. 
 \end{tip}
 
-Many times data will contain empty values. Rows (cases) containing \code{NA} can be
-detected and removed easily in \R{}, with the functions \code{complete.cases} 
-which returns a \code{logical} with rows having no \code{NA} values.
-The logical can be used to select a \code{data.frame}, but for convenience \R{}
-contains the \code{na.omit} function, which does exactly that.
+Often, data will contain empty values. Rows (cases) containing \code{NA} can be
+detected and removed easily in \R{}, with the functions \code{complete.cases}
+which returns a \code{logical} indicating which rows contain no \code{NA}
+values. By indexing, this may be used to select the complete rows from a
+\code{data.frame}.  However, \R{} also contains the \code{na.omit} function,
+which does exactly that.
 <<>>=
 print(person) 
 complete.cases(person)
@@ -93,15 +88,16 @@ is.special <- function(x){
 person
 sapply(person, is.special)
 @
-
-The result of \code{is.special} shows which data have special values. Note that 
-detecting them is good, but the data should be fixed (see \ref{sec:})
+%
+The result of \code{is.special} shows which data have special values.  Observe
+that the \code{height} column is still stored as a \code{character} vector here
+(not \code{numeric}), so only the \code{NA} is detected.
 
 \subsubsection{Outliers}
 There is a vast body of literature on outlier detection, and several
 definitions of \emph{outlier} exist. A general definition by Barnett and
 Lewis\cite{barnett:1994} defines an outlier in a data set as \emph{an
-observation (or set of observations) that which appear to be inconsistent with
+observation (or set of observations) which appear to be inconsistent with
 that set of data}. Although more precise definitions exist (see e.g. the book
 by Hawkins\cite{hawkins:1980}), this definition is sufficient for the current
 tutorial. Below we mention a few fairly common graphical and computational
@@ -139,17 +135,18 @@ boxplot(x)
 \end{center}
 \end{wrapfigure}
 %
-Of course, the box-and-whisker method can be visualized with the famous box-and-whisker
-plot, where the box indicates the interquartile range and the median, the whiskers are
-represented at the ends of the box-and-whisker plots and outliers are indicated with
-an asteriks.
+The box-and-whisker method can be visualized with the box-and-whisker plot,
+where the box indicates the interquartile range and the median, the whiskers
+are represented at the ends of the box-and-whisker plots and outliers are
+indicated with as separate points above or below the whiskers.
 
-The box-and-whisker method fails when data are distributed skewly, as in exponential
-or lognormal distributions for example. I that case one can either transform the data
-for example with a logarithm, or square root transformation. Another option is to
-use method that takes the skewness into account. A particularly easy-to-implement example
-is the method of Hiridoglou and Berthelot\cite{hiridoglou:1986} for positive observations. 
-In this method, an observation is an outlier when
+The box-and-whisker method fails when data are distributed skewly, as in an
+exponential or lognormal distribution for example. In that case one can either
+transform the data for example with a logarithm, or square root transformation.
+Another option is to use method that takes the skewness into account. A
+particularly easy-to-implement example is the method of Hiridoglou and
+Berthelot\cite{hiridoglou:1986} for positive observations.  In this method, an
+observation is an outlier when
 \begin{equation}
 h(x) = \max\left(
 \frac{x}{x^*},\frac{x^*}{x} 
@@ -227,10 +224,21 @@ read_chunk('edits.txt')
 @
 
 Note that with a more complex rule set restrictions on variables are connected.
-They form a web of interconnected restrictions.
-<<width=7, fig.cap="Web of restrictions">>=
+They form a web of interconnected restrictions which can be visualized as
+follows (See Figure 3).
+<<echo=FALSE>>=
+captxt = paste(
+"A graph plot, showing the interconnection of restrictions.",
+"Blue circles represent varaibles and yellow boxes represent restrictions.",
+"The lines indicate which restrictions pertain to what variables."
+)
+@
+<<width=7, fig.cap=captxt>>=
 plot(E)
 @
+
+
+
 The result of \code{violatedEdits} shows
 which rows are invalid according to what rules. Note that if a multivariate rule 
 is violated, it is not clear which variable is erroneous.
