@@ -223,22 +223,6 @@ read_chunk('edits.txt')
 <<rules, eval=FALSE>>=
 @
 
-Note that with a more complex rule set restrictions on variables are connected.
-They form a web of interconnected restrictions which can be visualized as
-follows (See Figure 3).
-<<echo=FALSE>>=
-captxt = paste(
-"A graph plot, showing the interconnection of restrictions.",
-"Blue circles represent varaibles and yellow boxes represent restrictions.",
-"The lines indicate which restrictions pertain to what variables."
-)
-@
-<<width=7, fig.cap=captxt>>=
-plot(E)
-@
-
-
-
 The result of \code{violatedEdits} shows
 which rows are invalid according to what rules. Note that if a multivariate rule 
 is violated, it is not clear which variable is erroneous.
@@ -249,13 +233,31 @@ It is also possible to do some statistics on the violated edits. For large
 dataset this can be very revealing: it may show problems in the collection 
 of the data. It may also show that some rules are never violated.
 The result of violatedEdits can be plotted.
-
+%
 <<>>=
 plot(ve)
 @
-
+i%
 \code{editrules} makes it easy to specify rules that data must obey. It allows 
 for easy checking if observations/cases/rows contain valid data or not.
+
+Restrictions pertaining to multiple variables introduce dependencies between
+those variables. Also, variables that occur in more than one restriction form a
+connection between those restrictions. These dependencies can be visualized in
+a dependency graph as follows (See Figure 3).
+<<echo=FALSE>>=
+captxt = paste(
+"A graph plot, showing the interconnection of restrictions.",
+"Blue circles represent varaibles and yellow boxes represent restrictions.",
+"The lines indicate which restrictions pertain to what variables."
+)
+set.seed(1)
+@
+<<width=7, fig.cap=captxt>>=
+plot(E)
+@
+
+
 
 \subsubsection{Error localization}
 When using \code{is.finite}, \code{special} and univariate rules, it is clear
