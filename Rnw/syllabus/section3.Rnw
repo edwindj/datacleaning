@@ -896,8 +896,8 @@ Reading and checking.
     
   \item Determine how often each rules is broken (\code{violatedEdits}). Also summarize and plot the result.
   \item What percentage of the data has no errors?
-  \item 
-  
+  \item Find out which observations have too long petals using the result of \code{violatedEdits}. 
+  \item Find outliers in sepal length. Look at the observation. Any ideas what might have happened?
 \end{subex}
 \end{exercise}
 
