@@ -41,13 +41,13 @@ A <- cbind(
 dmp <- apply(A,1,function(ij) dirty_iris[ij[1],ij[2]] <<- 0)
 
 # people make spelling errors and use different cases
-dirty_iris[,5] <- str_trim(format(dirty_iris[,5]))
-I <- which(dirty_iris[,5] == 'setosa')
-dirty_iris$Species[I[1:3]] <- c('Setosa',' setosa','Setaso')
-I <- which(dirty_iris$Species == 'versicolor')
-dirty_iris$Species[I[1:2]] <- 'Versicolor'
-I <- which(dirty_iris$Species == 'virginica')
-dirty_iris$Species[I[1:4]] <- c('Virginica','Virginia','virinica','Virginica')
+# dirty_iris[,5] <- str_trim(format(dirty_iris[,5]))
+# I <- which(dirty_iris[,5] == 'setosa')
+# dirty_iris$Species[I[1:3]] <- c('Setosa',' setosa','Setaso')
+# I <- which(dirty_iris$Species == 'versicolor')
+# dirty_iris$Species[I[1:2]] <- 'Versicolor'
+# I <- which(dirty_iris$Species == 'virginica')
+# dirty_iris$Species[I[1:4]] <- c('Virginica','Virginia','virinica','Virginica')
 
 # random ordering
 dirty_iris <- dirty_iris[sample(nrow(iris)),]
