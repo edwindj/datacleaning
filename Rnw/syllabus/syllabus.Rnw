@@ -138,6 +138,10 @@ shown in separate paragraphs as follows.
 \begin{tip}{Tip}
 To become an \R{} master, you must practice every day.
 \end{tip}
+
+In some of the scripts shown in this tutorial, small data files will be 
+read. You can find these files at \url{http://tinyurl.com/mblhtsg}.
+
 Finally, this document was written for the \textit{useR!2013} conference.
 We'd like to thank the organizers for providing us with the opportunity for
 giving this tutorial. We are happy to receive comments and suggestions of
