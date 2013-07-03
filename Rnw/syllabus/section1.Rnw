@@ -321,9 +321,10 @@ any non-numerical or special values.
 
 
 \subsection*{Exercises}
-
+\addcontentsline{toc}{subsection}{Exercises}
 \begin{exercise}
-Predict the result of the following \R{} statements.
+Predict the result of the following \R{} statements. Explain the reasoning behind the
+results.
 \begin{subex}
 \item \code{exp(-Inf)}
 \item \code{NA == NA}

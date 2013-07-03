@@ -873,8 +873,8 @@ OS-specific character encoding conversion libraries. With \code{iconvlist()}
 you can check what encodings can be translated by your operating system.
 
 
-\section*{Exercises}
-
+\subsection*{Exercises}
+\addcontentsline{toc}{subsection}{Exercises}
 \begin{exercise}
 In this exercise we'll use \code{readLines} to read in an irregular textfile.
 The file looks like this (without numbering).
@@ -892,8 +892,8 @@ page}.
 
 \begin{subex}
   \item Read the complete file using \code{readLines}.
-  \item Separate the \code{list} of lines into a \code{list} containing
-    comments and a \code{list} containing the data.  Hint: use \code{grepl}.
+  \item Separate the \code{vector} of lines into a \code{vector} containing
+    comments and a \code{vector} containing the data.  Hint: use \code{grepl}.
   \item Extract the date from the first comment line.
   \item Read the data into a \code{matrix} as follows.
   \begin{enumerate}
@@ -929,7 +929,7 @@ More on type conversions.
   \begin{subex}
     \item Load the buildtin \code{warpbreaks} data set .
           Find out, in a single command, which columns of \code{warpbreaks} are either \code{numeric} or \code{integer}.
-    \item Is \code{numeric} a logical data type for the columns which are stored as such? Convert to integer when necessary.
+    \item Is \code{numeric} a natural data type for the columns which are stored as such? Convert to integer when necessary.
           (See also \code{?warpbreaks} for an explanation of the data).
     \item Error messages in \R{} sometimes report the underlying \emph{type} of an object rather than the user-level \emph{class}.
           Derive from the following code and error message what the underlying type of an \R{} function is.
@@ -938,23 +938,6 @@ More on type conversions.
           @
     Confirm your answer using \code{typeof}.
 \end{subex}
-\end{exercise}
-
-\begin{exercise}
-Create a factor variable by extracting the wool type from the \code{warpbreaks}
-data set of the previous exercise.
-<<>>=
-myfac <- warpbreaks$wool 
-@
-
-\begin{subex}
-  \item Take a look at the values of \code{myfac}, and convert it to \code{character} using \code{as.character}.
-  \item Investigate the \code{class} and underlying \code{type} of \code{myfac}. Explain what happened in the previous subexercise.
-  \item Now convert \code{myfac} to character, making sure that the labels, not the underlying integers are returned in the character vector.
-        Tip: You can use \code{labels(myfac)} to get the factor labels.
-  \item Use \code{format} to convert \code{myfac} to character vectors (tip: \code{\%s} indicates a text field).
-\end{subex}
-\label{ex:factorconversion}
 \end{exercise}
 
 
