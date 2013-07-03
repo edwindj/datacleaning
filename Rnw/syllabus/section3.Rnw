@@ -15,7 +15,7 @@ statistical analysis. This means that it should not contain obvious errors,
 have special values such as \code{Inf} or \code{NaN}, that obstruct statistical
 analysis. Also, suspicious values like outliers should be identified, so they
 can either be removed, replaced with better values, or treated appropriately in
-the subseqent statistical analysis.
+the subsequent statistical analysis.
 
 With obvious errors, we mean that data violates expectations based on
 knowledge of the subject matter that the data describes. For example, a
@@ -23,7 +23,7 @@ person's age cannot be negative, or a person under say, 18 years, can not have
 a drivers license. 
 
 In practice, simply throwing out the records which violate one or more rules is
-undesirable since it may introduce estimation bias or even leavy you with to
+undesirable since it may introduce estimation bias or even leave you with to
 few data to reliably analyse statistically.  Moreover, in many cases an invalid
 or incomplete observations can be corrected or imputed by leveraging auxiliary
 information either within the same data set or from other sources. 
@@ -36,7 +36,7 @@ techniques, that can generate plausible values for partially missing data.
 
 \subsection{Detection}
 Detecting that something is wrong is the first step in data cleaning.  Below we
-outline several methods for detecting suspicous or erroneous in either
+outline several methods for detecting suspicious or erroneous in either
 individual variables or in combinations thereof.
 
 
@@ -106,7 +106,7 @@ tutorial. Below we mention a few fairly common graphical and computational
 techniques for outlier detection in univariate numerical data.
 
 \subsubsection{Univariate outliers}
-For more or less unimodal and symettrically distributed data, 
+For more or less unimodal and symmetrically distributed data, 
 Tukey's box-and-whisker
 method\cite{tukey:1977} for outlier detection is often appropriate. In this
 method, an observation is an outlier when it is larger than the so-called
@@ -120,7 +120,7 @@ which, amongst other things, list the outliers.
 x <- c(1:10,20, 30)
 boxplot.stats(x)$out
 @
-Here, $20$ and $50$ are detected as outliers since they are above the uppper
+Here, $20$ and $50$ are detected as outliers since they are above the upper
 whisker of the observations in \code{x}. The factor $1.5$ used to compute the
 whisker is to an extent arbitrary and it can be altered by setting the \code{coef}
 option of \code{boxplot.stats}. A higher coefficient means a higher outlier detection
@@ -159,13 +159,13 @@ h(x) = \max\left(
 Here, $r$ is a user-defined reference value and $x^*$ is usually the the median
 observation, although other measures of centrality may be chosen. Here, the
 score function $h(x)$ grows as $1/x$ as $x$ approaches zero and grows linearly
-wiht $x$ when it is larger than $x^*$. It is therefore appropriate for
+with $x$ when it is larger than $x^*$. It is therefore appropriate for
 long-tailed distributions. An implementation in of this method in \R{} does not 
 seem available but it is implemented simple enough as the following function.
 <<>>=
 hboutlier <- function(x,r){
   xref <- median(x, na.rm=TRUE)
-  max(x/xref, xref, x, na.rm=TRUE) > r
+  max(x/xref, xref/x, na.rm=TRUE) > r
 }
 @
 The above function returns a \code{logical} vector indicating which elements of 
@@ -309,7 +309,7 @@ commented, they can almost be treated as a log of the actions performed
 by the analyst. However, as scripts get longer it is nicer to 
 store the transformation rules separately and log which rule is executed
 on what record. The \code{deducorrect} package offers functionality for 
-this. Consider as an example the following (ficticious) dataset listing
+this. Consider as an example the following (fictitious) dataset listing
 the body length of some brothers.
 <<>>=
 (marx <- read.csv("files/marx.csv",stringsAsFactors=FALSE))
@@ -488,7 +488,7 @@ cor$corrected
 @
 Note that \code{deduImpute} only imputes those values that can be derived
 with absolute certainty (uniquely) from the rules. In the example, there are
-many possible solutions fo impute the last record and hence \code{deduImpute}
+many possible solutions to impute the last record and hence \code{deduImpute}
 leaves it untouched.
 
 Similar situations exist for categorical data, and purely categorical data
@@ -547,7 +547,7 @@ obeyed.  Separately, these methods are available in \R{}.
 \begin{threeparttable}
 \caption{An overview of imputation functionality offered by some  \R{} packages.
 reg: regression, rand: random, seq: sequential, NN: nearest neighbor, pmm:
-predictive mean matching, kNN: $k$-nearest-neighbours, int: interpolation,
+predictive mean matching, kNN: $k$-nearest-neighbors, int: interpolation,
 lo/no last observation carried forward / next observation carried backward,
 LS: method of Little and Su.
 }
@@ -877,12 +877,17 @@ You can download this dataset from
 
 
 \begin{exercise}
-Reading and checking.
+Reading and manually checking.
 \begin{subex}
   \item View the file in a text-editor to determine its format and read the file into \R{}. 
     Make sure that strings are not converted to factor.
   \item Calculate the number and percentage of observations that are complete.
   \item Does the data contain other special values? If it does, replace them with \code{NA}
+\end{subex}
+\end{exercise}
+\begin{exercise}
+Checking with rules
+  \begin{subex}
   \item Besides missing values, the data set contains errors. We have the following background knowledge:
   \begin{itemize}
     \item \code{Species} should be one of the following values: \code{setosa}, \code{versicolor} or \code{virginica}.
@@ -897,14 +902,16 @@ Reading and checking.
   \item Determine how often each rules is broken (\code{violatedEdits}). Also summarize and plot the result.
   \item What percentage of the data has no errors?
   \item Find out which observations have too long petals using the result of \code{violatedEdits}. 
-  \item Find outliers in sepal length. Look at the observation. Any ideas what might have happened?
+  \item Find outliers in sepal length using \code{boxplot} and \code{boxplot.stats}. Retrieve the corrosponding observations and
+   look at the other values. Any ideas what might have happened?
 \end{subex}
 \end{exercise}
 
 \begin{exercise}
 \label{ex:seqimpute}
-Correcting and imputing
-
+Imputing
+\begin{subex}
+  \item Use sequential hotdeck imputation to impute \code{Petal.Width} by sorting the dataset on \code{Sepal.Length}.
+  \item Use \code{kNN} imputation (\code{VIM}) to impute all missing values. Compare the imputed \code{Petal.Width} with the sequential hotdeck imputation method.
+\end{subex}
 \end{exercise}
-
-
