@@ -8,16 +8,30 @@ dirty_iris <- iris
 set.seed(1976)
 nNA = 4*nrow(iris)/10
 
-
 A <- cbind(
   sample(1:150, nNA, replace=TRUE), 
   sample(1:4, nNA,replace=TRUE)
 )
 dmp <- apply(A,1,function(ij) dirty_iris[ij[1],ij[2]] <<- NA) 
 
+# throw in a couple of special values
+special <- c(NaN, Inf,-3)
+nSpecial <- length(special)
+A <- cbind(
+  sample(1:150, nSpecial, replace=TRUE), 
+  sample(1:4, nSpecial,replace=TRUE)
+)
+for (i in seq_along(special)){
+  dirty_iris[A[i,1], A[i,2]] <- special[i]
+}
+
 # A number of records were entered in the wrong unit (factor 10).
-i <- sample(1:150,5,replace=FALSE)
+i <- sample(1:150, 2,replace=FALSE)
 dirty_iris[i,1:4] <- dirty_iris[i,1:4]*10
+
+# manipulate the petal length so it is bigger than sepal.length or smaller than Petal.width
+i <- sample(1:150, 3,replace=FALSE)
+dirty_iris[i,3] <- dirty_iris[i,3]/c(0.2, 5, 4) 
 
 # Some fields were not filled in and were automagically converted to 0
 A <- cbind(
