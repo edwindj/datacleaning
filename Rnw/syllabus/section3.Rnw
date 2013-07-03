@@ -873,7 +873,6 @@ d2$adjusted
 In the following exercises we are going to use the \code{dirty\_iris} dataset.
 You can download this dataset from 
 \begin{quote}
-URL
 \end{quote}
 
 
@@ -882,24 +881,29 @@ Reading and checking.
 \begin{subex}
   \item View the file in a text-editor to determine its format and read the file into \R{}. 
     Make sure that strings are not converted to factor.
-  \item The variables in the file have to obey the following Rules:
-    \begin{eqnarray*}
-       \textrm{Species} &\in& \{\mcode{"setosa"}, \mcode{"versicolor"}, \mcode{"virginica"}\}\\
-      \textrm{Sepal.Length} &>& 0\\
-      \textrm{Sepal.Width}  &>& 0\\
-      \textrm{Petal.Length} &>& 0\\
-      \textrm{Petal.Width}  &>& 0\\
-      \textrm{Species}      &>& 0\\
-      \textrm{Sepal.Length} &<& 10\cdot\textrm{Sepal.Width}
-    \end{eqnarray*}
+  \item Calculate the number and percentage of observations that are complete.
+  \item Does the data contain other special values? If it does, replace them with \code{NA}
+  \item Besides missing values, the data set contains errors. We have the following background knowledge:
+  \begin{itemize}
+    \item \code{Species} should be one of the following values: \code{setosa}, \code{versicolor} or \code{virginica}.
+    \item All measured numerical properties of an iris should be positive.
+    \item The petal length of an iris is at least 2 times its petal width
+    \item The sepal length of an iris cannot exceed 30 cm.
+    \item The sepals of an iris are longer than its petals.
+  \end{itemize}
     Define these rules in a separate text file and read them into \R{} using \code{editfile} (package \code{editrules}).
+    Print the resulting constraint object.
+    
   \item Determine how often each rules is broken (\code{violatedEdits}). Also summarize and plot the result.
+  \item What percentage of the data has no errors?
+  \item 
   
 \end{subex}
 \end{exercise}
 
 \begin{exercise}
 \label{ex:seqimpute}
+Correcting and imputing
 
 \end{exercise}
 

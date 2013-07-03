@@ -1,0 +1,11 @@
+# numerical constraints
+Sepal.Length > 0
+Sepal.Width > 0
+Petal.Length > 0
+Petal.Width > 0
+Sepal.Width > Petal.Width
+Sepal.Length <= 30
+Petal.Length >= 2 * Petal.Width
+
+# categorical constraints
+Species %in% c("setosa", "versicolor", "virginica")
