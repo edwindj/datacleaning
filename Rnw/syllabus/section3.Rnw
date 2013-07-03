@@ -903,10 +903,17 @@ Checking with rules
   \item What percentage of the data has no errors?
   \item Find out which observations have too long petals using the result of \code{violatedEdits}. 
   \item Find outliers in sepal length using \code{boxplot} and \code{boxplot.stats}. Retrieve the corrosponding observations and
-   look at the other values. Any ideas what might have happened?
+   look at the other values. Any ideas what might have happened? Set the outliers to \code{NA} (or a value that you may more    appropiate)
 \end{subex}
 \end{exercise}
 
+\begin{exercise}
+\label{ex:seqcorrection}
+Correcting
+\begin{subex}
+  \item 
+\end{subex}
+\end{exercise}
 \begin{exercise}
 \label{ex:seqimpute}
 Imputing
