@@ -1,0 +1,31 @@
+\begin{document}
+ 
+\title{A Minimal Demo of knitr}
+\author{Yihui Xie}
+ 
+\maketitle
+ 
+\begin{frame}[fragile]
+You can test if \textbf{knitr} works with this minimal demo. OK, let's
+get started with some boring random numbers:
+ 
+<<boring-random>>=
+set.seed(1121)
+(x=rnorm(20))
+mean(x);var(x)
+@
+\end{frame}
+ 
+\begin{frame}[fragile]
+The first element of \texttt{x} is \Sexpr{x[1]}. Boring boxplots
+and histograms recorded by the PDF device:
+ 
+<<boring-plots,dev=pdf,fig.width=5,fig.height=5,out.width=.45\linewidth,par=TRUE>>=
+## two plots side by side (option fig.show=hold)
+boxplot(x)
+hist(x,main='')
+@
+\end{frame}
+ 
+\end{document}
+
