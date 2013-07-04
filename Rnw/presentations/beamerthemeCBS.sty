@@ -1,0 +1,74 @@
+\ProvidesPackage{beamerthemeCBS}[2013/02/08, v0.3 (PWOF)]
+
+\RequirePackage{kvoptions}
+
+\SetupKeyvalOptions{
+    family=CBS,
+    prefix=CBS@
+}
+
+\DeclareStringOption[]{year}[]
+\ProcessKeyvalOptions*
+\pgfdeclareimage[height=\paperheight]{CBStitel}{CBStitelachtergrond\expandafter\CBS@year}
+
+\newif{\if@Engels}
+\@Engelsfalse
+\DeclareOptionBeamer{Engels}{\@Engelstrue}
+\ProcessOptionsBeamer
+
+\mode<presentation>
+
+\setbeamerfont{frametitle}{series=\bfseries}
+
+\setbeamertemplate{headline}
+{
+  \begin{beamercolorbox}[wd=\paperwidth,ht=1.2cm,leftskip=0.962cm]{fg=CBSblue,bg=white}
+	  \usebeamerfont{sectionhead}\usebeamercolor[fg]{sectionhead}
+	  \LARGE\insertsectionhead
+  \end{beamercolorbox}
+}
+
+\def\CBStitleframe
+{\bgroup
+\usebackgroundtemplate{\pgfuseimage{CBStitel}}
+\frame[plain]{\titlepage}
+\egroup
+}
+
+\setbeamertemplate{title page}
+{
+  \vskip0pt plus 1.7filll
+%  \begin{center}
+  \usebeamerfont{title}\usebeamercolor[fg]{title}
+   {\bfseries\huge\inserttitle}
+  \usebeamercolor[fg]{normal text}
+  \\[\baselineskip] \insertauthor
+  \\[\baselineskip] \insertdate
+%  \end{center}
+  \vskip0pt plus 1filll
+  \begin{beamercolorbox}[wd=\paperwidth,ht=0.874cm,leftskip=1.159cm,dp=0.194cm]{logo bar}
+  \if@Engels
+    \includegraphics[height=0.68cm]{CBSlogoEn}
+  \else
+	\includegraphics[height=0.68cm]{CBSlogo}
+  \fi
+  \end{beamercolorbox}
+}
+
+\setbeamertemplate{footline}
+{%
+  \leavevmode%
+  \hbox{\begin{beamercolorbox}[wd=\paperwidth,ht=0.674cm,leftskip=0.962cm,dp=0.394cm]{logo bar}
+	  \usebeamerfont{sectionhead}\usebeamercolor[fg]{white}
+	  \normalsize\inserttitle\hfill\insertframenumber\hspace{0.5cm}
+	  \end{beamercolorbox}}
+}
+
+\usefonttheme[onlysmall]{structurebold}
+
+\setbeamertemplate{items}[ball]
+\setbeamertemplate{sections/subsections in toc}[ball unnumbered]
+\setbeamertemplate{navigation symbols}{}
+
+\mode
+<all>
