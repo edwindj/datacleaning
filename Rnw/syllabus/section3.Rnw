@@ -911,14 +911,16 @@ Checking with rules
 \label{ex:seqcorrection}
 Correcting
 \begin{subex}
-  \item 
+  \item Replace non positive values from \code{Petal.Width} with \code{NA} using \code{correctWithRules} from the library \code{deducorrect}.
+  \item Replace all erronous values with \code{NA} using (the result of) \code{localizeErrors}
 \end{subex}
 \end{exercise}
 \begin{exercise}
 \label{ex:seqimpute}
 Imputing
 \begin{subex}
-  \item Use sequential hotdeck imputation to impute \code{Petal.Width} by sorting the dataset on \code{Sepal.Length}.
-  \item Use \code{kNN} imputation (\code{VIM}) to impute all missing values. Compare the imputed \code{Petal.Width} with the sequential hotdeck imputation method.
+  \item Use \code{kNN} imputation (\code{VIM}) to impute all missing values. 
+  \item Use sequential hotdeck imputation to impute \code{Petal.Width} by sorting the dataset on \code{Species}. Compare the imputed \code{Petal.Width} with the sequential hotdeck imputation method. Note the ordering of the data!
+  \item Do the same but now by sorting the dataset on \code{Species} and \code{Sepal.Length}.
 \end{subex}
 \end{exercise}

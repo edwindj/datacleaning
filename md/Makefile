@@ -15,13 +15,13 @@ md: $(MD)
 all: pdf html
 
 %.md: %.rmd
-	R -e "knitr::render_latex();knitr::knit('$<','$@')"
+	R -e "knitr::knit('$<','$@')"
 
 %.pdf: %.md
-	pandoc -t beamer -V theme:Malmoe $< -o $@
+	pandoc -t beamer -V theme:Malmoe --highlight-style=haddock $< -o $@
 
 %.tex: %.md
-	pandoc -t beamer -V theme:Malmoe $< -o $@
+	pandoc -s -t beamer -V theme:Malmoe $< -o $@ 
 
 %.html: %.md
 	pandoc $< -o $@
