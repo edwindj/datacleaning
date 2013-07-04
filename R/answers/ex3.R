@@ -51,7 +51,16 @@ summary(iris)
 boxplot(Sepal.Length ~ Species, data=iris)
 # shows an extra outlier!
 
-# 3.3a
+# 3.3
+
+
+
+# 3.4a
+library(VIM)
+iris_knn <- kNN(iris)
+petal_width_kNN <- iris_knn$Petal.Width
+
+# 3.4b
 seqImpute <- function(x, last=max(x, na.rm=TRUE)){
   n <- length(x)
   x <- c(x, last)
@@ -63,12 +72,15 @@ seqImpute <- function(x, last=max(x, na.rm=TRUE)){
   x[1:n]
 }
 
-o <- order(iris$Sepal.Length)
-iris_hd <- iris[o,]
-seqImpute(iris_hd$Petal.Width)
+o <- order(iris$Species)
+petal_width <- iris$Petal.Width[o]
+petal_width_hd <- seqImpute(petal_width)
 
-# 3.3b
-library(VIM)
-iris <- kNN(iris)
-summary(iris)
-summary(iris[o,]$Petal.Width - iris_hd$Petal.Width)
+summary(petal_width_kNN[o] - petal_width_hd)
+
+# 3.4c
+o <- order(iris$Species,iris$Sepal.Length)
+petal_width <- iris$Petal.Width[o]
+petal_width_hd <- seqImpute(petal_width)
+
+summary(petal_width_kNN[o] - petal_width_hd)
