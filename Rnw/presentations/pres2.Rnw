@@ -43,25 +43,25 @@ opts_chunk$set(size='scriptsize')
 \CBStitleframe
  
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-% \section{Statistical analyses}
-% \begin{frame}[fragile]
-%   \begin{tikzpicture}
-%     \node[statpoint] (raw) {Raw data};
-%     \node[statpoint, below of=raw] (input)   {Technically correct data};
-%     \node[statpoint, below of=input] (micro) {Consistent data};
+\section{Statistical analyses}
+\begin{frame}[fragile]
+   \begin{tikzpicture}
+     \node[statpoint] (raw) {Raw data};
+     \node[statpoint, below of=raw] (input)   {Technically correct data};
+     \node[statpoint, below of=input] (micro) {Consistent data};
 %     \node[statpoint, below of=micro] (stat)  {Statistical results};
-%     \draw[arr] (raw.south) to node[action]   {type checking, normalizing} (input.north);
-%     \draw[arr] (input.south) to node[action] {fix and impute} (micro.north);
+     \draw[arr] (raw.south) to node[action]   {type checking, normalizing} (input.north);
+     \draw[arr] (input.south) to node[action] {fix and impute} (micro.north);
 %     \draw[arr] (micro.south) to node[action] {estimate, analyze} (stat.north);
 %     \draw[arr] (stat.south) to node[action]  {tabulate, plot} (output.north);
-%     \draw[decorate,
-%       decoration={
-%         raise=6pt,
-%         brace,
-%         amplitude=10pt},
-%         thick](micro.west) -- 
-%                 node[sloped,above=0.5cm,font=\scriptsize\sf] {data cleaning}
-%               (raw.west);
+     \draw[decorate,
+       decoration={
+         raise=6pt,
+         brace,
+         amplitude=10pt},
+         thick](micro.west) -- 
+                 node[sloped,above=0.5cm,font=\scriptsize\sf] {data cleaning}
+               (raw.west);
 % 
 %   \only<2->{
 %     \node[file,right of=raw] (pi) {pre-input};
@@ -79,8 +79,8 @@ opts_chunk$set(size='scriptsize')
 %     \node[file,right of=output] (rp) {report};
 %     \draw[store,dotted] (output.east) to node[save]{store} (rp.west);
 %   }
-%   \end{tikzpicture}
-% \end{frame}
+   \end{tikzpicture}
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \section{Consistent data}
@@ -88,8 +88,8 @@ opts_chunk$set(size='scriptsize')
 {\usebackgroundtemplate{
   \hspace{2cm}
   \includegraphics[height=\paperheight]{img/i-love-consistent.jpg}
-  %\setbeamertemplate{footline}{}
   }
+  \setbeamertemplate{footline}{}
   \begin{frame}
     \begin{block}{Consistent data?}<2->
     \em \emph{Consistent data} is \emph{technically correct data} that is fit for
@@ -240,7 +240,8 @@ hboutlier <- function(x,r){
   This value still needs to be fixed!
   \item Or remove the observation.\\
   This may leave you with very few data to analyze...
- \end{itemize}
+ \end{itemize}n
+ 
 \end{frame}
 
 
@@ -250,13 +251,50 @@ hboutlier <- function(x,r){
   }
   \setbeamertemplate{footline}{}
   \begin{frame}
-    \begin{block}{Imputation}<2->
+    \begin{block}{Imputation: Filling in the blanks}<2->
+    Imputation fills in the gaps in your data, so that {\em all} of your
+    observertions can be used for analysis. 
+    Other options are:
+    \begin{itemize}
+      \item Remove all incomplete observations
+      \item Remove \code{NA} per statistical operation.
+    \end{itemize}
     \end{block}
   \end{frame}
 }
 
 \section{Imputation}
 \begin{frame}
+ There is a vast body of literature on imputation methods
+and is goes beyond the scope of this tutorial.
+
+% \code{Amelia}\cite{honaker:2011}       &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
+% \code{BaBoon}\cite{meinfelder:2011}    &\xmark & \xmark &\xmark           &\xmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
+% \code{cat}\cite{harding:2012}          &\xmark & \xmark &\xmark           &\cmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\  
+% \code{deducorrect}\cite{loo:2011}      &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ \hline
+% \code{e1071}\cite{meyer:2012}          &\cmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
+% \code{ForImp}                          &\cmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\cmark$^\ddagger$ &\xmark &\xmark & \xmark \\ 
+% \code{Hmisc}\cite{harrel:2013}         &\cmark & \xmark &\xmark           &\cmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
+% \code{imputation}\cite{wong:2013}      &\cmark & \xmark &\cmark$^\dagger$ &\xmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ \hline
+% \code{impute}\cite{hastie}             &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
+% \code{mi}\cite{su:2011}                &\xmark & \xmark &\cmark$^*$       &\cmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
+% \code{mice}\cite{buren:2011}           &\cmark & \xmark &\cmark$^*$       &\cmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
+% \code{mix}\cite{schafer:2010}          &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ \hline
+% \code{norm}\cite{alvaro:2013}          &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
+% \code{robCompositions}\cite{templ:2011}&\xmark & \xmark &\cmark$^*$       &\cmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
+% \code{rrcovNA}\cite{todorov:2012}      &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
+% \code{StatMatch}\cite{orazio:2012}     &\xmark & \xmark &\xmark           &\cmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ \hline
+% \code{VIM}\cite{templ:2012}            &\xmark & \xmark &\cmark$^*$       &\cmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
+% \code{yaImpute}\cite{crookston:2007}   &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
+% \code{zoo}\cite{zeileis:2005}          &\cmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\cmark &\cmark & \xmark \\ 
+% \hline                                                                                                             
+% \end{tabular}
+% {\scriptsize ${^*}$Methods are ultimately based on some form of regression, but are more involved than simple linear regression.\\
+% ${^\dagger}$Uses a non-informative auxiliary variable (row number).\\
+% ${^\ddagger}$Uses nearest neighbor as part of a more involved imputation scheme.
+% }
+% \end{threeparttable}
+% \end{table}
 \end{frame}
   
 \end{document}
