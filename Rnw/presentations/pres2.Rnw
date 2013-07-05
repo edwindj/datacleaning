@@ -240,8 +240,7 @@ hboutlier <- function(x,r){
   This value still needs to be fixed!
   \item Or remove the observation.\\
   This may leave you with very few data to analyze...
- \end{itemize}n
- 
+ \end{itemize}
 \end{frame}
 
 
@@ -294,8 +293,18 @@ and is goes beyond the scope of this tutorial.
 % ${^\ddagger}$Uses nearest neighbor as part of a more involved imputation scheme.
 % }
 % \end{threeparttable}
-% \end{table}
+% \end{table} 
 \end{frame}
   
+  \section{Sequential hot deck imputation}
+\begin{frame}
+
+\end{frame}
+
+\section{Imputation:kNN}
+\begin{frame}
+\end{frame}
+
+
 \end{document}
 
