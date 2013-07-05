@@ -1,7 +1,20 @@
 \documentclass{beamer}
-
 \usecolortheme{CBS}
 \usetheme{CBS}
+% default settings for file listings
+\usepackage{listings}
+\lstset{
+    basicstyle=\ttfamily\scriptsize,
+    backgroundcolor=\color{yellow!10},
+    emptyilines=1
+}
+
+% fonts for checkmarks
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+
+
 \title{Part I: from raw to technically correct data}
 \author{\hfill Mark van der Loo and Edwin de Jonge}
 \date{\hfill July 09 2013\\ \hfill\emph{useR!2013}}
@@ -99,22 +112,44 @@ corresponding variable.
 
 \section{Getting there}
 \begin{frame}
-\begin{itemize}
+\begin{enumerate}
 \item File conversion to an \R{} readable type (preferably \code{txt}-based).
-\item Read into \R{}
-\item Transform to rectangular format
+\item Read line by line into \R{}
+\item Select lines containing data.
+\item Split lines into fields.
+\item Order fields and recognize gaps.
 \item Transform to \code{data.frame}
-\item  Coerce types
-\end{itemize}
-
-\begin{block}{Best practice}
-\em When importing a file from a foreign software, make that
-software responsible for exporting to an open format.
-\end{block}
+\item Normalize and coerce types.
+\end{enumerate}
+\only<1->{
+  \begin{block}{Best practice}
+      \em When importing a file from a foreign software, make that
+      software responsible for exporting to an open format.
+    \end{block}
+}
 \end{frame}
 
-\section{Reading data}
+\section{Scenarios}
+\begin{frame}
+  \begin{itemize}
+    \item[auto] Read and convert in a single go (\code{read.table}).
+    \item[$\tfrac{1}{2}$auto] Read all columns as \code{character} into \code{data.frame}, coerce and normalize by yourself.
+    \item[DIY] Read line-by-line into \R{}; use text processing and coercion to interpret values.
+  \end{itemize}
+\end{frame}
+
+\section{Tools}
+\begin{frame}
+  \includegraphics[width=\textwidth]{img/surgical_instruments}
+\end{frame}
+
+
+
+\section{\code{read.table}}
 \begin{frame}[fragile]
+  \vspace{-2cm}
+  \hfill\includegraphics[width=2.3cm]{img/swiss_army}
+
 <<eval=FALSE>>=
 read.table(file, header = FALSE, sep = "", quote = "\"'",
      dec = ".", row.names, col.names, as.is = !stringsAsFactors,
@@ -125,21 +160,63 @@ read.table(file, header = FALSE, sep = "", quote = "\"'",
      stringsAsFactors = default.stringsAsFactors(),
      fileEncoding = "", encoding = "unknown", text)
 @
-\begin{center}
-\begin{tabular}{ll}
-\hline
-\code{sep}              & Column separator\\
-\code{header}           & Header present?\\
-\code{na.string}        & Which strings represent \code{NA}?\\
-\code{colClasses}       & Tell \R{} what types to expect\\
-\code{stringsAsFactors} & Convert text columns to factors?\\
-\hline
-\end{tabular}
-\end{center}
 
 \end{frame}
 
 
+\begin{frame}[fragile]
+  \vspace{-2cm}
+  \hfill\includegraphics[width=2.3cm]{img/swiss_army}
+
+  Fully automated when:
+  \begin{itemize}
+    \item Field separator constant over lines and columns.
+    \item Every field is automatically convertible:
+    \begin{itemize}
+      \item Constant decimal character over lines and columns.
+      \item No (non-white) characters in number fields.
+      \item Categories are spelled consistently.
+    \end{itemize}
+    \item Empty values only at end of lines.
+    \item Consistent use of comment characters over lines.
+    \begin{itemize}
+      \item Use \code{flush=TRUE} when comments occur at the end of lines.
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+\section{Examples}
+
+\begin{frame}
+
+\begin{tabular}{lc}
+\only<1->{
+  \lstinputlisting[firstline=1,lastline=2]{ex1.txt}
+} & \only<2->{\cmark}\\
+
+\end{tabular}\\
+\begin{tabular}{lc}
+  \only<3->{
+  \lstinputlisting[firstline=4,lastline=6]{ex1.txt} 
+  }&\only<4->{\xmark}
+\end{tabular}\\
+\begin{tabular}{lc}
+  \only<5->{
+  \lstinputlisting[firstline=8,lastline=10]{ex1.txt} 
+  }&\only<6->{\cmark}
+\end{tabular}\\
+\begin{tabular}{lc}
+  \only<7->{
+  \lstinputlisting[firstline=12,lastline=14]{ex1.txt} 
+  }&\only<8->{\xmark}
+\end{tabular}\\
+\begin{tabular}{lc}
+  \only<9->{
+  \lstinputlisting[firstline=16,lastline=18]{ex1.txt} 
+  }&\only<10->{\xmark}
+\end{tabular}
+\end{frame}
 
 \end{document}
  
