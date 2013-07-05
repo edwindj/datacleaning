@@ -872,6 +872,7 @@ d2$adjusted
 \subsection*{Exercises}
 In the following exercises we are going to use the \code{dirty\_iris} dataset.
 You can download this dataset from 
+\url{https://raw.github.com/edwindj/datacleaning/master/data/dirty_iris.csv}
 \begin{quote}
 \end{quote}
 
