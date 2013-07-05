@@ -2,8 +2,8 @@
 
 \usecolortheme{CBS}
 \usetheme{CBS}
-\title{Part I: from raw to technically correct data}
-\author{\hfill Mark van der Loo and Edwin de Jonge}
+\title{Part II: from technically correct to consistent data}
+\author{\hfill Edwin de Jonge and Mark van der Loo}
 \date{\hfill July 09 2013\\ \hfill\emph{useR!2013}}
 
 \newcommand{\code}[1]{\texttt{#1}}
@@ -35,129 +35,128 @@
 
 \begin{document}
 
-<<setup, include=FALSE, cache=FALSE>>=
+<<setup, echo=FALSE, include=FALSE, cache=FALSE>>=
 library(knitr)
 opts_chunk$set(size='scriptsize')
 @
  
 \CBStitleframe
  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-\section{Statistical analyses}
-\begin{frame}[fragile]
-  \begin{tikzpicture}
-    \node[statpoint] (raw) {Raw data};
-    \node[statpoint, below of=raw] (input)   {Technically correct data};
-    \node[statpoint, below of=input] (micro) {Consistent data};
-    \node[statpoint, below of=micro] (stat)  {Statistical results};
-    \node[statpoint, below of=stat] (output) {Formatted output};
-    \draw[arr] (raw.south) to node[action]   {type checking, normalizing} (input.north);
-    \draw[arr] (input.south) to node[action] {fix and impute} (micro.north);
-    \draw[arr] (micro.south) to node[action] {estimate, analyze} (stat.north);
-    \draw[arr] (stat.south) to node[action]  {tabulate, plot} (output.north);
-    \draw[decorate,
-      decoration={
-        raise=6pt,
-        brace,
-        amplitude=10pt},
-        thick](micro.west) -- 
-                node[sloped,above=0.5cm,font=\scriptsize\sf] {data cleaning}
-              (raw.west);
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% \section{Statistical analyses}
+% \begin{frame}[fragile]
+%   \begin{tikzpicture}
+%     \node[statpoint] (raw) {Raw data};
+%     \node[statpoint, below of=raw] (input)   {Technically correct data};
+%     \node[statpoint, below of=input] (micro) {Consistent data};
+%     \node[statpoint, below of=micro] (stat)  {Statistical results};
+%     \draw[arr] (raw.south) to node[action]   {type checking, normalizing} (input.north);
+%     \draw[arr] (input.south) to node[action] {fix and impute} (micro.north);
+%     \draw[arr] (micro.south) to node[action] {estimate, analyze} (stat.north);
+%     \draw[arr] (stat.south) to node[action]  {tabulate, plot} (output.north);
+%     \draw[decorate,
+%       decoration={
+%         raise=6pt,
+%         brace,
+%         amplitude=10pt},
+%         thick](micro.west) -- 
+%                 node[sloped,above=0.5cm,font=\scriptsize\sf] {data cleaning}
+%               (raw.west);
+% 
+%   \only<2->{
+%     \node[file,right of=raw] (pi) {pre-input};
+%     \draw[store,dotted] (raw.east) to node[save]{store} (pi.west);
+%   }
+%   \only<3->{
+%     \node[file,right of=input] (ip) {input};
+%     \draw[store,dotted] (input.east) to node[save]{store} (ip.west);
+%   }
+%   \only<4->{
+%     \node[file,right of=micro] (mi) {microdata};
+%     \draw[store,dotted] (micro.east) to node[save]{store} (mi.west);
+%     \node[file,right of=stat] (st) {stats};
+%     \draw[store,dotted] (stat.east) to node[save]{store} (st.west);
+%     \node[file,right of=output] (rp) {report};
+%     \draw[store,dotted] (output.east) to node[save]{store} (rp.west);
+%   }
+%   \end{tikzpicture}
+% \end{frame}
 
-  \only<2->{
-    \node[file,right of=raw] (pi) {pre-input};
-    \draw[store,dotted] (raw.east) to node[save]{store} (pi.west);
-  }
-  \only<3->{
-    \node[file,right of=input] (ip) {input};
-    \draw[store,dotted] (input.east) to node[save]{store} (ip.west);
-  }
-  \only<4->{
-    \node[file,right of=micro] (mi) {microdata};
-    \draw[store,dotted] (micro.east) to node[save]{store} (mi.west);
-    \node[file,right of=stat] (st) {stats};
-    \draw[store,dotted] (stat.east) to node[save]{store} (st.west);
-    \node[file,right of=output] (rp) {report};
-    \draw[store,dotted] (output.east) to node[save]{store} (rp.west);
-  }
-  \end{tikzpicture}
-\end{frame}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-\section{Technically correct data}
-\begin{frame}
-\begin{block}{In \R{}}
-\em Data, stored as a \code{data.frame}, with meaningful column names and each
-column of the type that appropriately represents the value domain of the
-corresponding variable.
-\end{block}
-\end{frame}
-\note{
-  That means: categorical as factor, text as character, numbers as numeric, etc.
+\section{Consistent data}
+
+{\usebackgroundtemplate{
+  \hspace{2cm}
+  \includegraphics[height=\paperheight]{img/i-love-consistent.jpg}
+  %\setbeamertemplate{footline}{}
+  }
+  \begin{frame}
+    \begin{block}{Consistent data?}<2->
+    \em \emph{Consistent data} is \emph{technically correct data} that is fit for
+statistical analysis.
+    Data without values that obstruct analysis:
+    \begin{itemize}
+      \item Special values (\code{NA}, \code{NaN}, \code{Inf})
+      \item Obvious errors, inconsistent values
+    \end{itemize}
+    \end{block}  
+  \end{frame}
 }
-
 
 \section{Getting there}
 \begin{frame}
-\begin{itemize}
-\item File conversion to an \R{} readable type (preferably \code{txt}-based).
-\item Read into \R{}
-\item Transform to rectangular format
-\item Transform to \code{data.frame}
-\item  Coerce types
-\end{itemize}
-
-\begin{block}{Best practice}
-\em When importing a file from a foreign software, make that
-software responsible for exporting to an open format.
-\end{block}
+  \begin{itemize}
+    \item {\em Detect} errors and special values
+    \item {\em Remove} or {\em Correct} values.
+    \item {\em Impute} missing values
+  \end{itemize}
+  
+  \begin{block}{Note}
+    \em All these actions have impact on your analysis. 
+    They are data operations and should be scripted for reprodicability.
+  \end{block}
 \end{frame}
 
-\section{Reading data}
-\begin{frame}[fragile]
-<<eval=FALSE>>=
-read.table(file, header = FALSE, sep = "", quote = "\"'",
-     dec = ".", row.names, col.names, as.is = !stringsAsFactors,
-     na.strings = "NA", colClasses = NA, nrows = -1,
-     skip = 0, check.names = TRUE, fill = !blank.lines.skip,
-     strip.white = FALSE, blank.lines.skip = TRUE,
-     comment.char = "#", allowEscapes = FALSE, flush = FALSE,
-     stringsAsFactors = default.stringsAsFactors(),
-     fileEncoding = "", encoding = "unknown", text)
-@
-\begin{center}
-\begin{tabular}{ll}
-\hline
-\code{sep}              & Column separator\\
-\code{header}           & Header present?\\
-\code{na.string}        & Which strings represent \code{NA}?\\
-\code{colClasses}       & Tell \R{} what types to expect\\
-\code{stringsAsFactors} & Convert text columns to factors?\\
-\hline
-\end{tabular}
-\end{center}
+\section{}
+{\usebackgroundtemplate{
+  \includegraphics[width=\paperwidth]{img/detection.jpg}
+  %\setbeamertemplate{footline}{}
+  }
+  \begin{frame}
+  \end{frame}
+}
+% 
+\section{Detection}
+\begin{frame}
+\end{frame}
 
+\section{}
+{
+  \usebackgroundtemplate{
+    \includegraphics[height=\paperheight]{img/correction.jpg}
+  }
+  \setbeamertemplate{footline}{}
+  \begin{frame}
+  \end{frame}
+}
+
+\section{Correction}
+\begin{frame}
 \end{frame}
 
 
+\section{}
+{ \usebackgroundtemplate{
+    \includegraphics[width=\paperwidth]{img/imputation.jpg}
+  }
+  \setbeamertemplate{footline}{}
+  \begin{frame}
+  \end{frame}
+}
 
-\end{document}
- 
-\begin{frame}[fragile]
-<<boring-random, echo=FALSE>>=
-set.seed(1121)
-(x=rnorm(20))
-mean(x);var(x)
-@
-The first element of \texttt{x} is \Sexpr{x[1]}. Boring boxplots
-and histograms recorded by the PDF device:
- 
-<<boring-plots,dev="pdf",fig.width=5,fig.height=5,out.width=".45\\linewidth",par=TRUE>>=
-## two plots side by side (option fig.show=hold)
-boxplot(x)
-hist(x,main='')
-@
+\section{Imputation}
+\begin{frame}
 \end{frame}
- 
+  
 \end{document}
 
