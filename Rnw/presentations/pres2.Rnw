@@ -94,54 +94,153 @@ opts_chunk$set(size='scriptsize')
     \begin{block}{Consistent data?}<2->
     \em \emph{Consistent data} is \emph{technically correct data} that is fit for
 statistical analysis.
-    Data without values that obstruct analysis:
+    so it is data without:
     \begin{itemize}
       \item Special values (\code{NA}, \code{NaN}, \code{Inf})
-      \item Obvious errors, inconsistent values
+      \item Implausible outliers
+      \item Obvious errors
     \end{itemize}
     \end{block}  
   \end{frame}
 }
 
-\section{Getting there}
+\section{Why consistency?}
+\begin{frame}[fragile]
+Special values obstruct most statistics:
+<<>>=
+age <- c(23, 16, Inf, NA)
+income <- c(2000, 2500, 1000, NaN)
+
+# Not a useful output...
+c(mu_income=mean(income), mu_age=mean(age))
+
+# error!
+coef(lm(income ~ age))
+@
+\end{frame}
+
+\begin{frame}[fragile]
+Obvious errors corrupt your statistics:
+<<>>=
+age <- c(23, 36, 2000, 0)
+income <- c(2000, 3000, -100000, 80000)
+
+c(mu_income=mean(income), mu_age=mean(age))
+c1 <- coef(lm(income ~ age))
+c2 <- coef(lm(head(income,2) ~ head(age,2))) # remove last observations
+rbind(c1,c2)
+@
+\end{frame}
+
+\section{Towards consistency}
 \begin{frame}
-  \begin{itemize}
-    \item {\em Detect} errors and special values
-    \item {\em Remove} or {\em Correct} values.
-    \item {\em Impute} missing values
-  \end{itemize}
+  \begin{enumerate}
+    \item {\bf Detect} errors and special values
+    \item {\bf Remove} or {\bf Correct} values.
+    \item {\bf Impute} missing values
+  \end{enumerate}
   
   \begin{block}{Note}
     \em All these actions have impact on your analysis. 
-    They are data operations and should be scripted for reprodicability.
+    They are data operations and should be scripted for reproducability.
+    (Did I hear \R{}?)
   \end{block}
 \end{frame}
 
 \section{}
 {\usebackgroundtemplate{
   \includegraphics[width=\paperwidth]{img/detection.jpg}
-  %\setbeamertemplate{footline}{}
   }
+  \setbeamertemplate{footline}{}
   \begin{frame}
+  \begin{block}{Detect}<2->
+    \begin{itemize}
+      \item Special values
+      \item Outliers
+      \item (Multivariate) rule restrictions
+    \end{itemize}
+  \end{block}
   \end{frame}
 }
 % 
-\section{Detection}
-\begin{frame}
+
+\section{Detection: special values}
+\begin{frame}[fragile]
+For detecting which rows contain \code{NA}, \code{complete.cases} is useful:
+<<>>=
+complete.cases(data.frame(x=c(1,NA,3), y=c(1,1,NA)))
+@
+
+or use \code{is.special} to check for all special values
+<<tidy=FALSE>>=
+is.special <- function(x){
+  if (is.numeric(x)) !is.finite(x) else is.na(x)
+}
+is.special(factor(c(NA, "M","F")))
+@
+\end{frame}
+
+\section{Detection: univariate outliers}
+\begin{frame}[fragile]
+\code{boxplot.stats} lists the outliers.
+<<eval=FALSE>>=
+boxplot.stats(x, coef = 1.5, do.conf = TRUE, do.out = TRUE)
+@
+<<>>=
+(x <- sample(c(rnorm(10), 30)))
+boxplot.stats(x)$out
+@
+\end{frame}
+\begin{frame}[fragile]
+
+<<echo=FALSE,fig.height=4.2>>=
+boxplot(x)
+@
+\end{frame}
+
+\begin{frame}[fragile]
+  For skewed data, with $x^*$ (usually) the median of $x$
+  \begin{equation*}
+    h(x) = \max\left(
+    \frac{x}{x^*},\frac{x^*}{x} 
+    \right)
+    \geq r,\textrm{ with } x>0.\footnote{Hiridoglou and Berthelot}
+  \end{equation*}
+  works better.
+  In \R{}:
+<<eval=FALSE>>=
+hboutlier <- function(x,r){
+  xref <- median(x, na.rm=TRUE)
+  max(x/xref, xref/x, na.rm=TRUE) > r
+}
+@
 \end{frame}
 
 \section{}
 {
   \usebackgroundtemplate{
+    \hspace{2cm}
     \includegraphics[height=\paperheight]{img/correction.jpg}
   }
   \setbeamertemplate{footline}{}
   \begin{frame}
+  \begin{block}{Correction}<2->
+    \begin{itemize}
+      \item Remove invalid values
+      \item Using (correction) rules
+    \end{itemize}
+  \end{block}
   \end{frame}
 }
 
-\section{Correction}
-\begin{frame}
+\section{Correction: removal}
+\begin{frame}[fragile]
+  \begin{itemize}
+  \item Replace invalid values with \code{NA}\\
+  This value still needs to be fixed!
+  \item Or remove the observation.\\
+  This may leave you with very few data to analyze...
+ \end{itemize}
 \end{frame}
 
 
@@ -151,6 +250,8 @@ statistical analysis.
   }
   \setbeamertemplate{footline}{}
   \begin{frame}
+    \begin{block}{Imputation}<2->
+    \end{block}
   \end{frame}
 }
 
