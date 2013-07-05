@@ -91,31 +91,29 @@ opts_chunk$set(size='scriptsize')
   %\setbeamertemplate{footline}{}
   }
   \begin{frame}
-    \begin{block}{Consistent in R?}<2->
-    \em Data, stored as a \code{data.frame}, .
+    \begin{block}{Consistent data?}<2->
+    \em \emph{Consistent data} is \emph{technically correct data} that is fit for
+statistical analysis.
+    Data without values that obstruct analysis:
+    \begin{itemize}
+      \item Special values (\code{NA}, \code{NaN}, \code{Inf})
+      \item Obvious errors, inconsistent values
+    \end{itemize}
     \end{block}  
   \end{frame}
 }
 
-  \begin{frame}
-  \end{frame}
-  \note{
-    That means: categorical as factor, text as character, numbers as numeric, etc.
-  }
-
 \section{Getting there}
 \begin{frame}
   \begin{itemize}
-    \item File conversion to an \R{} readable type (preferably \code{txt}-based).
-    \item Read into \R{}
-    \item Transform to rectangular format
-    \item Transform to \code{data.frame}
-    \item  Coerce types
+    \item {\em Detect} errors and special values
+    \item {\em Remove} or {\em Correct} values.
+    \item {\em Impute} missing values
   \end{itemize}
   
-  \begin{block}{Best practice}
-    \em When importing a file from a foreign software, make that
-    software responsible for exporting to an open format.
+  \begin{block}{Note}
+    \em All these actions have impact on your analysis. 
+    They are data operations and should be scripted for reprodicability.
   \end{block}
 \end{frame}
 
