@@ -52,7 +52,7 @@ dmp <- apply(A,1,function(ij) dirty_iris[ij[1],ij[2]] <<- 0)
 # random ordering
 dirty_iris <- dirty_iris[sample(nrow(iris)),]
 
-write.csv(dirty_iris,file="dirty_iris.csv",row.names=FALSE)
+write.csv(dirty_iris,file="../data/dirty_iris.csv",row.names=FALSE)
 
 
 
