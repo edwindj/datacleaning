@@ -42,99 +42,101 @@ opts_chunk$set(size='scriptsize')
  
 \CBStitleframe
  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-\section{Statistical analyses}
-\begin{frame}[fragile]
-  \begin{tikzpicture}
-    \node[statpoint] (raw) {Raw data};
-    \node[statpoint, below of=raw] (input)   {Technically correct data};
-    \node[statpoint, below of=input] (micro) {Consistent data};
-    \node[statpoint, below of=micro] (stat)  {Statistical results};
-    \draw[arr] (raw.south) to node[action]   {type checking, normalizing} (input.north);
-    \draw[arr] (input.south) to node[action] {fix and impute} (micro.north);
-    \draw[arr] (micro.south) to node[action] {estimate, analyze} (stat.north);
-    \draw[arr] (stat.south) to node[action]  {tabulate, plot} (output.north);
-    \draw[decorate,
-      decoration={
-        raise=6pt,
-        brace,
-        amplitude=10pt},
-        thick](micro.west) -- 
-                node[sloped,above=0.5cm,font=\scriptsize\sf] {data cleaning}
-              (raw.west);
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% \section{Statistical analyses}
+% \begin{frame}[fragile]
+%   \begin{tikzpicture}
+%     \node[statpoint] (raw) {Raw data};
+%     \node[statpoint, below of=raw] (input)   {Technically correct data};
+%     \node[statpoint, below of=input] (micro) {Consistent data};
+%     \node[statpoint, below of=micro] (stat)  {Statistical results};
+%     \draw[arr] (raw.south) to node[action]   {type checking, normalizing} (input.north);
+%     \draw[arr] (input.south) to node[action] {fix and impute} (micro.north);
+%     \draw[arr] (micro.south) to node[action] {estimate, analyze} (stat.north);
+%     \draw[arr] (stat.south) to node[action]  {tabulate, plot} (output.north);
+%     \draw[decorate,
+%       decoration={
+%         raise=6pt,
+%         brace,
+%         amplitude=10pt},
+%         thick](micro.west) -- 
+%                 node[sloped,above=0.5cm,font=\scriptsize\sf] {data cleaning}
+%               (raw.west);
+% 
+%   \only<2->{
+%     \node[file,right of=raw] (pi) {pre-input};
+%     \draw[store,dotted] (raw.east) to node[save]{store} (pi.west);
+%   }
+%   \only<3->{
+%     \node[file,right of=input] (ip) {input};
+%     \draw[store,dotted] (input.east) to node[save]{store} (ip.west);
+%   }
+%   \only<4->{
+%     \node[file,right of=micro] (mi) {microdata};
+%     \draw[store,dotted] (micro.east) to node[save]{store} (mi.west);
+%     \node[file,right of=stat] (st) {stats};
+%     \draw[store,dotted] (stat.east) to node[save]{store} (st.west);
+%     \node[file,right of=output] (rp) {report};
+%     \draw[store,dotted] (output.east) to node[save]{store} (rp.west);
+%   }
+%   \end{tikzpicture}
+% \end{frame}
 
-  \only<2->{
-    \node[file,right of=raw] (pi) {pre-input};
-    \draw[store,dotted] (raw.east) to node[save]{store} (pi.west);
-  }
-  \only<3->{
-    \node[file,right of=input] (ip) {input};
-    \draw[store,dotted] (input.east) to node[save]{store} (ip.west);
-  }
-  \only<4->{
-    \node[file,right of=micro] (mi) {microdata};
-    \draw[store,dotted] (micro.east) to node[save]{store} (mi.west);
-    \node[file,right of=stat] (st) {stats};
-    \draw[store,dotted] (stat.east) to node[save]{store} (st.west);
-    \node[file,right of=output] (rp) {report};
-    \draw[store,dotted] (output.east) to node[save]{store} (rp.west);
-  }
-  \end{tikzpicture}
-\end{frame}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-\section{}
+\section{Consistent data}
+
 {\usebackgroundtemplate{
-  \includegraphics[width=\paperwidth]{img/consistency.png}}
-  \setbeamertemplate{footline}{}
+  \hspace{2cm}
+  \includegraphics[height=\paperheight]{img/i-love-consistent.jpg}
+  %\setbeamertemplate{footline}{}
+  }
   \begin{frame}
+    \begin{block}{Consistent in R?}<2->
+    \em Data, stored as a \code{data.frame}, .
+    \end{block}  
   \end{frame}
 }
-  
-\section{Consistent data}
-\begin{frame}
-\begin{block}{In \R{}}
-\em Data, stored as a \code{data.frame}, with meaningful column names and each
-column of the type that appropriately represents the value domain of the
-corresponding variable.
-\end{block}
-\end{frame}
-\note{
-  That means: categorical as factor, text as character, numbers as numeric, etc.
-}
-}
+
+  \begin{frame}
+  \end{frame}
+  \note{
+    That means: categorical as factor, text as character, numbers as numeric, etc.
+  }
 
 \section{Getting there}
 \begin{frame}
-\begin{itemize}
-\item File conversion to an \R{} readable type (preferably \code{txt}-based).
-\item Read into \R{}
-\item Transform to rectangular format
-\item Transform to \code{data.frame}
-\item  Coerce types
-\end{itemize}
-
-\begin{block}{Best practice}
-\em When importing a file from a foreign software, make that
-software responsible for exporting to an open format.
-\end{block}
+  \begin{itemize}
+    \item File conversion to an \R{} readable type (preferably \code{txt}-based).
+    \item Read into \R{}
+    \item Transform to rectangular format
+    \item Transform to \code{data.frame}
+    \item  Coerce types
+  \end{itemize}
+  
+  \begin{block}{Best practice}
+    \em When importing a file from a foreign software, make that
+    software responsible for exporting to an open format.
+  \end{block}
 \end{frame}
 
 \section{}
 {\usebackgroundtemplate{
-  \includegraphics[width=\paperwidth]{img/detection.jpg}}
-  \setbeamertemplate{footline}{}
+  \includegraphics[width=\paperwidth]{img/detection.jpg}
+  %\setbeamertemplate{footline}{}
+  }
   \begin{frame}
   \end{frame}
 }
-
+% 
 \section{Detection}
 \begin{frame}
 \end{frame}
 
 \section{}
-{\usebackgroundtemplate{
-  \includegraphics[width=\paperwidth]{img/correction.jpg}}
+{
+  \usebackgroundtemplate{
+    \includegraphics[height=\paperheight]{img/correction.jpg}
+  }
   \setbeamertemplate{footline}{}
   \begin{frame}
   \end{frame}
@@ -146,8 +148,9 @@ software responsible for exporting to an open format.
 
 
 \section{}
-{\usebackgroundtemplate{
-  \includegraphics[width=\paperwidth]{img/imputation.jpg}}
+{ \usebackgroundtemplate{
+    \includegraphics[width=\paperwidth]{img/imputation.jpg}
+  }
   \setbeamertemplate{footline}{}
   \begin{frame}
   \end{frame}
@@ -156,9 +159,6 @@ software responsible for exporting to an open format.
 \section{Imputation}
 \begin{frame}
 \end{frame}
-
-
-\end{document}
   
 \end{document}
 
