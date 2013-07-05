@@ -109,7 +109,7 @@ library(editrules)
 \thispagestyle{empty}
 
 \begin{abstract}
-This article is a stub. It may or may not ever be finished.
+These are the draft lecture notes for the tutorial on data cleaning at \emph{useR!2013}.
 \end{abstract}
 
 

@@ -2,17 +2,6 @@
 \section{From raw data to technically correct data}
 \label{sect:rawtoinput}
 
-% Some ideas: [x] = todo,[-]= in progress, [v] = finished, [c] = cancelled. 
-% 
-% -[v]  Character encoding issues
-% -[v]  regels overslaan, gebruiken van readLines
-% -[v]  regels overslaan, gebruiken van scan
-% -[v]  Special values, and how are they stored (NA, NULL,...)
-% -[v]  labels van categoriale variabelen
-% -[v]  spelfouten in tekstvariabelen, normaliseren
-% -[v]  indexing skills
-% -[v]  factors, relevel
-% -[v]  exercises
 
 \subsection{Technically correct}
 With \emph{technically correct} data in \R{}, we mean that
@@ -125,6 +114,7 @@ Each of these functions accept, amongst others, the following arguments.
 \hline
   Argument & default & description\\
   \hline
+  \code{sep}              & \code{""} &Field separator. Deafault is any sequence of whitespaces including \code{space}, \code{tab} and newline\\
   \code{header}           & \code{FALSE} & Does the first line contain column names?\\
   \code{na.string}        & \code{"NA"} & Which strings should be considered \code{NA}? \\
   \code{colClasses}       & \code{NA}   & \code{character} vector with the types of columns. Will coerce the columns to the specified types.\\
@@ -404,7 +394,8 @@ class(1:10)
 class(c(pi,exp(1)))
 class(factor(c("abc","def")))
 @
-%
+
+\newpage
 \begin{tip}{Tip}
 Here's a quick way to retrieve the classes of all columns in a \code{data.frame} called \code{dat}.
 <<eval=FALSE>>=
