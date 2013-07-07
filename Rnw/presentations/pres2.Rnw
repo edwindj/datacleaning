@@ -38,6 +38,7 @@
 <<setup, echo=FALSE, include=FALSE, cache=FALSE>>=
 library(knitr)
 opts_chunk$set(size='scriptsize')
+library(editrules)
 @
  
 \CBStitleframe
@@ -215,6 +216,14 @@ hboutlier <- function(x,r){
 }
 @
 \end{frame}
+\section{Detection using rules}
+\begin{frame}[fragile]
+<<>>=
+library(editrules)
+(E <- editmatrix("profit == turnover - cost"))
+@
+
+\end{frame}
 
 \section{}
 {
@@ -266,52 +275,76 @@ hboutlier <- function(x,r){
 \begin{frame}
  There is a vast body of literature on imputation methods
 and is goes beyond the scope of this tutorial.
+\begin{block}{R packages with imputation methods}
+  \code{Amelia}, \code{BaBoon}, \code{cat}, \code{deducorrect},
+  \code{e1071}, \code{ForImp}, \code{Hmisc}, \code{imputation},
+  \code{impute}, \code{mi}, \code{mice}, \code{mix}, \code{norm},
+  \code{robCompositions}, \code{rrcovNA}, \code{StatMatch}, \code{VIM},
+  \code{yaImpute}, \code{zoo}
+\end{block}
 
-% \code{Amelia}\cite{honaker:2011}       &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
-% \code{BaBoon}\cite{meinfelder:2011}    &\xmark & \xmark &\xmark           &\xmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
-% \code{cat}\cite{harding:2012}          &\xmark & \xmark &\xmark           &\cmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\  
-% \code{deducorrect}\cite{loo:2011}      &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ \hline
-% \code{e1071}\cite{meyer:2012}          &\cmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
-% \code{ForImp}                          &\cmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\cmark$^\ddagger$ &\xmark &\xmark & \xmark \\ 
-% \code{Hmisc}\cite{harrel:2013}         &\cmark & \xmark &\xmark           &\cmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
-% \code{imputation}\cite{wong:2013}      &\cmark & \xmark &\cmark$^\dagger$ &\xmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ \hline
-% \code{impute}\cite{hastie}             &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
-% \code{mi}\cite{su:2011}                &\xmark & \xmark &\cmark$^*$       &\cmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
-% \code{mice}\cite{buren:2011}           &\cmark & \xmark &\cmark$^*$       &\cmark &\xmark &\cmark &\xmark &\xmark &\xmark & \xmark \\ 
-% \code{mix}\cite{schafer:2010}          &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ \hline
-% \code{norm}\cite{alvaro:2013}          &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
-% \code{robCompositions}\cite{templ:2011}&\xmark & \xmark &\cmark$^*$       &\cmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
-% \code{rrcovNA}\cite{todorov:2012}      &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\xmark &\xmark & \xmark \\ 
-% \code{StatMatch}\cite{orazio:2012}     &\xmark & \xmark &\xmark           &\cmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ \hline
-% \code{VIM}\cite{templ:2012}            &\xmark & \xmark &\cmark$^*$       &\cmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
-% \code{yaImpute}\cite{crookston:2007}   &\xmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\cmark &\xmark &\xmark & \xmark \\ 
-% \code{zoo}\cite{zeileis:2005}          &\cmark & \xmark &\xmark           &\xmark &\xmark &\xmark &\xmark &\cmark &\cmark & \xmark \\ 
-% \hline                                                                                                             
-% \end{tabular}
-% {\scriptsize ${^*}$Methods are ultimately based on some form of regression, but are more involved than simple linear regression.\\
-% ${^\dagger}$Uses a non-informative auxiliary variable (row number).\\
-% ${^\ddagger}$Uses nearest neighbor as part of a more involved imputation scheme.
-% }
-% \end{threeparttable}
-% \end{table} 
 \end{frame}
   
 \section{Sequential hot deck imputation}
 \begin{frame}
+  Imputation methods are based on some sort of regression.
+  This can be:
+  \begin{itemize}
+  \item Mean or glm-type regressions
+  \item Multiple Imputation regression
+  \item Local methods, e.g. nearest neighbor methods.
+  \end{itemize}
 \end{frame}
 
-\section{Imputation:kNN}
+\section{Nearest neigbor}
 \begin{frame}
+  Fill missing value using a nearby observation.
+  So needs:
+  \begin{itemize}
+    \item $d$ a measure of distance (e.g. euclidean)
+    \item $k$ the number of neighbors that should be averaged.
+  \end{itemize}
 \end{frame}
 
+\section{Sequential hot deck Imputation}
+\begin{frame}
+   Very simple recipe:
+   \begin{itemize}
+      \item Sort the data set
+      \item Replace each \code{NA} at row \code{i} with value from \code{i+1}
+   \end{itemize}
+   Works when distance can be approximated by one ordered variable.
+   Implementation in syllabus.
+\end{frame}
+
+\section{kNN}
+\begin{frame}
+ k-nearest-neighbor imputation. Implementation in \code{VIM}
+ \begin{itemize}
+    \item Uses Gower's distance
+\begin{equation*}
+d_{\sf g}(i,j) \frac{\sum_k w_{ijk} d_k(i,j)}{\sum_{k}w_{ijk}},
+\end{equation*}
+  \item Uses $k$ neighbors
+ \end{itemize}
+
+\end{frame}
 
 \section{Start analyzing!}
 \begin{frame}
  After data cleaning, the statistical analyzing can begin. 
- However it is not uncommon that during analysis extra ordinary
- values are encountered. It may also be possible that the data
- cleaning process was too thorough. Nice thing about scripting this
- is that you can correct this and rerun the datacleaning process and analysis.
+ However: 
+ \begin{itemize}
+ \item During analysis you may encounter extraordinary
+ values
+ \item May be the data
+ cleaning process was too thorough. 
+ \end{itemize}
+ \begin{block}{R}
+ Nice thing about \R{}
+ you can correct it and rerun the datacleaning process and analysis!
+ \end{block}
 \end{frame}
 \end{document}
+
 
