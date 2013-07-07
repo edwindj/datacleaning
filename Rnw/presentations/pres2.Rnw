@@ -296,9 +296,8 @@ and is goes beyond the scope of this tutorial.
 % \end{table} 
 \end{frame}
   
-  \section{Sequential hot deck imputation}
+\section{Sequential hot deck imputation}
 \begin{frame}
-
 \end{frame}
 
 \section{Imputation:kNN}
@@ -306,5 +305,13 @@ and is goes beyond the scope of this tutorial.
 \end{frame}
 
 
+\section{Start analyzing!}
+\begin{frame}
+ After data cleaning, the statistical analyzing can begin. 
+ However it is not uncommon that during analysis extra ordinary
+ values are encountered. It may also be possible that the data
+ cleaning process was too thorough. Nice thing about scripting this
+ is that you can correct this and rerun the datacleaning process and analysis.
+\end{frame}
 \end{document}
 
