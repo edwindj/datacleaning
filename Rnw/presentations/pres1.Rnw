@@ -14,8 +14,9 @@
 \newcommand{\cmark}{\ding{51}}%
 \newcommand{\xmark}{\ding{55}}%
 
+\usepackage{soul}
 
-\title{Part I: from raw to technically correct data}
+\title{Part I: from Raw to technically correct data}
 \author{\hfill Mark van der Loo and Edwin de Jonge}
 \date{\hfill July 09 2013\\ \hfill\emph{useR!2013}}
 
@@ -110,6 +111,7 @@ corresponding variable.
 }
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \section{Getting there}
 \begin{frame}
 \begin{enumerate}
@@ -129,6 +131,7 @@ corresponding variable.
 }
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \section{Scenarios}
 \begin{frame}
   \begin{itemize}
@@ -138,6 +141,7 @@ corresponding variable.
   \end{itemize}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \section{Tools}
 \begin{frame}
   \includegraphics[width=\textwidth]{img/surgical_instruments}
@@ -145,6 +149,7 @@ corresponding variable.
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \section{\code{read.table}}
 \begin{frame}[fragile]
   \vspace{-2cm}
@@ -164,6 +169,7 @@ read.table(file, header = FALSE, sep = "", quote = "\"'",
 \end{frame}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \begin{frame}[fragile]
   \vspace{-2cm}
   \hfill\includegraphics[width=2.3cm]{img/swiss_army}
@@ -186,14 +192,31 @@ read.table(file, header = FALSE, sep = "", quote = "\"'",
 
 \end{frame}
 
-\section{Examples}
 
+\begin{frame}[fragile]
+A note on the use of \code{colClasses}
+<<>>=
+# not using colClasses may yield character where you want numeric
+read.table(text=
+  "hello 3 \n world x")
+@
+
+<<tidy=FALSE>>=
+# but using colClasses throws an error
+read.table(text="hello 3 \n world x",
+  colClasses=c("character","numeric"))
+@
+$\to$ Using \code{colClasses} makes reading a lot faster.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\section{Examples: t.c. in one go with \code{read.table}?}
 \begin{frame}
 
 \begin{tabular}{lc}
 \only<1->{
   \lstinputlisting[firstline=1,lastline=2]{ex1.txt}
-} & \only<2->{\cmark}\\
+} & \only<2->{\cmark\hspace{1cm}\code{sep=";"}}\\
 
 \end{tabular}\\
 \begin{tabular}{lc}
@@ -204,7 +227,7 @@ read.table(file, header = FALSE, sep = "", quote = "\"'",
 \begin{tabular}{lc}
   \only<5->{
   \lstinputlisting[firstline=8,lastline=10]{ex1.txt} 
-  }&\only<6->{\cmark}
+  }&\only<6->{\cmark \hspace{1cm}\code{na.strings=c("N/A","?")}}
 \end{tabular}\\
 \begin{tabular}{lc}
   \only<7->{
@@ -218,16 +241,141 @@ read.table(file, header = FALSE, sep = "", quote = "\"'",
 \end{tabular}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\section{Type conversion}
+{
+\usebackgroundtemplate{
+  \includegraphics[width=\paperwidth]{img/casting}  
+}
+\begin{frame}[fragile]
+x
+\end{frame}
+
+}
+\begin{frame}[fragile]
+<<eval=TRUE,tidy=FALSE>>=
+read.table(
+  file="ex2.txt",
+  sep=";",
+  colClasses=rep('character',3),
+  col.names=c("name","level","score")
+)
+@
+\end{frame}
+
+\begin{frame}
+  \begin{itemize}
+    \item Normalize, using text-tools, \emph{e.g.}
+    \begin{itemize}
+      \item Remove characters from numerical strings
+      \item Replace decimal period with comma or \emph{vice versa}
+      \item String normalisation: (un)capitalisation, trimming, padding,
+        character replacement (\"e$\to$e, \ss$\to$ss)
+      \item Reduce character vectors to categories\footnote{This overlaps with Part II.}
+    \end{itemize}
+    \item Coerce from \code{character}, using\\
+      \begin{tabular}{ll}
+        \code{as.numeric} & \code{factor}\\
+        \code{as.integer} & \code{ordered}\\
+        \code{as.logical} & 
+      \end{tabular} \\
+    or, for date extraction:\\
+      \begin{tabular}{ll}
+        \code{as.POSIXct} & \code{lubridate::mdy}.
+      \end{tabular}
+  \end{itemize}
+\end{frame}
+
+\section{Text processing}
+\begin{frame}[fragile]
+Simple character replacement with \code{chartr(old,new,x)}
+<<>>=
+# replace a->x and b->y
+chartr("ab","xy",c("abba","AbBa"))
+@
+
+Case switching with \code{toupper(x)}, \code{tolower(x)}
+<<>>=
+toupper(c("Hello","worLd"))
+tolower("hELlo WoRlD")
+@
+\end{frame}
+
+\begin{frame}[fragile]
+Removing characters with \code{gsub(pattern,replacement,x,fixed=TRUE)}
+
+<<>>=
+# remove all asterikses
+gsub("*","",c("8*","8**"),fixed=TRUE)
+@
+\begin{block}{Note}
+\code{fixed=TRUE} forces a literal interpretation of \code{*},
+which has special meaning in \emph{regular expressions}.
+\end{block}
+
+
+\end{frame}
+
+
+\begin{frame}
+\begin{block}{\code{stringr}}
+\em The \code{stringr} package [...] simplifies string operations by
+eliminating options that you don’t need 95\% of the time (the other 5\% of the
+time you can use the base functions).\footnote{H. Wickham, R Journal \textbf{2}
+38-40}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]
+Padding: \code{str\_pad(string,width,side="left",pad=" ")}
+<<>>=
+library(stringr)
+str_pad(c("1-555","01-555"),6,pad="0")
+@
+Trimming: \code{str\_trim(string,side="both")}
+<<>>=
+str_trim("  hello  ")
+str_trim("  hello  ",side="left")
+@
+\end{frame}
+
+\section{Converting to numbers}
+\begin{frame}[fragile]
+<<>>=
+# as.numeric expects decimal points
+as.numeric(c("4.5","4"))
+
+# note: as.integer truncates non-integers:
+as.integer(c("3.2","3.7","3"))
+@
+\end{frame}
+
+\section{Converting to \code{factor}}
+\begin{frame}[fragile]
+Use \code{factor} not as.factor.
+<<>>=
+x <- c("high","low","high","high")
+y <- as.factor(x)
+table(y)
+@
+
+
+<<>>=
+y <- factor(x,levels=c('high','medium','low'))
+table(y)
+@
+
+\end{frame}
+
 \end{document}
  
-\begin{frame}[fragile]
-<<boring-random, echo=FALSE>>=
-set.seed(1121)
-(x=rnorm(20))
-mean(x);var(x)
+With base \R{}
+<<>>=
+x <- c("1-555","01-555")
+x <- paste("000000",x,sep="")
+substr(x,nchar(x)-5,nchar(x))
 @
-The first element of \texttt{x} is \Sexpr{x[1]}. Boring boxplots
-and histograms recorded by the PDF device:
  
 <<boring-plots,dev="pdf",fig.width=5,fig.height=5,out.width=".45\\linewidth",par=TRUE>>=
 ## two plots side by side (option fig.show=hold)

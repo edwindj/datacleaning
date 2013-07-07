@@ -2,16 +2,16 @@ johhny;5.2
 jack;5.7
 
 Joe;medium;7
-Annie;high;8
+Annie;high;8*
 Harry;Medium;10
 
 Joe;medium;7
-Annie;high;
-Harry;medium
+Annie;high;"?"
+Harry;N/A;"?"
 
 Joe;medium;7
-Annie;;8
-Harry;medium;10
+Annie;8
+Harry; medium;10
 
 Joe;medium;7.0
 Annie;high,8.2

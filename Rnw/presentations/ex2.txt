@@ -1,0 +1,3 @@
+Joe;medium;7
+Annie;high;8*
+Harry;Medium;10
