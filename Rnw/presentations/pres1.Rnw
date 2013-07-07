@@ -248,7 +248,6 @@ $\to$ Using \code{colClasses} makes reading a lot faster.
   \includegraphics[width=\paperwidth]{img/casting}  
 }
 \begin{frame}[fragile]
-x
 \end{frame}
 
 }
@@ -340,6 +339,7 @@ str_trim("  hello  ",side="left")
 @
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \section{Converting to numbers}
 \begin{frame}[fragile]
 <<>>=
@@ -351,6 +351,9 @@ as.integer(c("3.2","3.7","3"))
 @
 \end{frame}
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \section{Converting to \code{factor}}
 \begin{frame}[fragile]
 Use \code{factor} not as.factor.
@@ -360,14 +363,90 @@ y <- as.factor(x)
 table(y)
 @
 
-
 <<>>=
 y <- factor(x,levels=c('high','medium','low'))
 table(y)
 @
-
 \end{frame}
 
+\section{Converting dates}
+\begin{frame}[fragile]
+Using \code{lubrdidate}
+
+<<>>=
+library(lubridate)
+dmy("I was born on 28 September 1976")
+@
+\uncover<2->{
+\code{dmy} stands for day-month-year, others:
+\begin{center}
+  \begin{tabular}{lll}
+    \code{dmy} & \code{myd} &\code{ydm}\\
+    \code{mdy} & \code{dym} &\code{ymd}
+  \end{tabular}
+\end{center}
+}
+\end{frame}
+
+\begin{frame}[fragile]
+Caveats:
+<<>>=
+# multiple dates in a single string yields NA
+dmy("28/09/76 16/09/77")
+@
+
+<<>>=
+# Only certain substrings are recognized
+dmy(c(
+  "12 Sep 1974",
+  "12 Sept 1974"
+))
+@
+\end{frame}
+
+
+\begin{frame}
+Recognizable substrings
+  \begin{tabular}{lll}
+    \hline
+    Code$^\dagger$       & description                             & Example  \\
+    \hline
+    \code{\%a} & Abbreviated weekday$^*$      & \code{Mon}  \\
+    \code{\%A} & Full weekday$^*$             & \code{Monday}\\
+    \code{\%b} & Abbreviated month$^*$        & \code{Sep} \\
+    \code{\%B} & Full month$^*$               & \code{September}\\
+    \code{\%m} & Month number (01-12)                           & \code{09}\\
+    \code{\%d} & Day of the month (01-31).    & \code{28} \\
+    \code{\%y} & Year without century (00-99)                   & \code{13}\\
+    \code{\%Y} & Year including century.                        & \code{2013}\\
+    \hline
+  \end{tabular}\\
+  {\scriptsize $^*$In current locale}\\
+  {\scriptsize $^\dagger$When using \code{as.POSIXct}}
+\end{frame}
+
+\begin{frame}[fragile]
+<<>>=
+# you can specify the timezone
+ymd("2013-07-09",tz="Europe/Madrid")
+@
+\begin{block}{Timezones}
+\begin{itemize}
+  \item Are an OS service (on Windows, a 3rd-party db is used)
+  \begin{itemize}
+    \item On \code{*ix} OS's look for \code{zone.tab}
+    \item On \code{Windows} do \code{\$>tzutil /l}
+  \end{itemize}
+\item Are not constant: think of changing DST policies, etc.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{block}{\code{POSIXct}}
+  \item Stores a time/date point as 
+  \item 
+\end{block}
 \end{document}
  
 With base \R{}
