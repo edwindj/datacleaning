@@ -565,7 +565,7 @@ dat$level[I] <- "medium"
 @
 \begin{block}{\code{agrep}}
   \begin{itemize}
-    \item Uses deletion, instertion and substitution
+    \item Uses deletion, insertion and substitution
     \item Returns index of matching elements.
   \end{itemize}
 \end{block}

@@ -88,7 +88,7 @@ library(deducorrect)
 
 {\usebackgroundtemplate{
   \hspace{2cm}
-  \includegraphics[height=\paperheight]{img/i-love-consistent.jpg}
+  \includegraphics[height=\paperheight]{img/I-love-consistent.jpg}
   }
   \setbeamertemplate{footline}{}
   \begin{frame}
