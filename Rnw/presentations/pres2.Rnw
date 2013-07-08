@@ -38,6 +38,7 @@
 library(knitr)
 opts_chunk$set(size='scriptsize')
 library(editrules)
+library(deducorrect)
 @
  
 \CBStitleframe
@@ -207,7 +208,7 @@ What are the outliers?
 
 \begin{frame}[fragile]
 
-<<fig.height=3>>=
+<<fig.height=3, dev.args="par(om=c(0,0,0,0))">>=
 boxplot(x, horizontal=T)
 @
 
@@ -247,7 +248,7 @@ hboutlier <- function(x,r){
   
   \begin{block}{Hard rules}
     A rule that must be obeyed by a record, is a {\em hard rule}.
-    If not it is a {\em soft rule}. Soft rule may indicate suspicious data
+    If not it is a {\em soft rule}. Soft rules may indicate suspicious data
   \end{block}
 \end{frame}
 
@@ -259,8 +260,8 @@ hboutlier <- function(x,r){
     \item Find out which values are the cause.
     \item Replace this value with \code{NA}, so it can be corrected or imputed.
   \end{itemize}
-  Rule checking can be done straight in \R{}, but for set of rules this is problematic.
-  Rules interact and it may be difficult to find the causing value.
+  Rule checking can be done straight in \R{}, but for a set of rules this is problematic.
+  Rules interact and it may be difficult to find the causing value(s).
 \end{frame}
 
 \section{Detection: \code{editrules}}
@@ -280,7 +281,7 @@ hboutlier <- function(x,r){
 library(editrules)
 (E <- editset(c( "profit == turnover - cost"
                , "driverlicence %in% c(TRUE,FALSE)"
-               , "if (driverlicence) age > 15")
+               , "if (driverlicence) age >= 16")
                )
 )
 @
@@ -291,7 +292,7 @@ library(editrules)
 \code{violatedEdits} finds out which records violate which constraints.
 <<tidy=FALSE>>=
 E <- editset(c( "driverlicence %in% c(TRUE,FALSE)"
-              , "if (driverlicence) age > 15"))
+              , "if (driverlicence) age >= 16"))
 x <- data.frame(driverlicence=c(TRUE), age=c(12,18))
 violatedEdits(E, x)
 @  
@@ -329,13 +330,37 @@ localizeErrors(E, x, method="mip")$adapt
 \begin{frame}[fragile]
   \begin{itemize}
   \item Replace invalid values with \code{NA}\\
-  This value still needs to be fixed!
-  \item Or remove the observation.\\
+  This value will be imputed!
+  \item Or remove the observation/record.\\
+  Note that the record is partially missing and its removal 
+  removes information.
   This may leave you with very few data to analyze...
  \end{itemize}
 \end{frame}
 
-
+\section{Correction: correction rules}
+\begin{frame}
+  Replace an invalid value with automatically with an ad hoc rule. 
+  \code{deducorrect} (van der Loo, de Jonge, 2012) contains several methods for automatic, determistic correction under constraints. 
+  This includes:
+  \begin{itemize}
+  \item Typo's: \code{correctTypos}
+  \item Sign errors: \code{correctSigns}
+  \item Rounding errors: \code{correctRounding}
+  \item But also ad hoc rules: \code{correctionRules} and \code{correctWithRules}
+  \end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+<<tidy=FALSE>>=
+library(deducorrect)
+cr <- correctionRules(expression(
+         if (is.na(items)) items=0,
+         if (items == 0) amount=0 )
+)
+dat <- data.frame(items=c(0,NA,1), amount=c(10,NA,10))
+correctWithRules(cr, dat)
+@
+\end{frame}
 \section{}
 { \usebackgroundtemplate{
     \includegraphics[width=\paperwidth]{img/imputation.jpg}
