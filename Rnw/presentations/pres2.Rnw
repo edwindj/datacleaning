@@ -267,8 +267,9 @@ library(editrules)
 @
 \end{frame}
 
-\section{\code{violatedEdits}}
+\section{\code{editrules::violatedEdits}}
 \begin{frame}[fragile]
+\code{violatedEdits} finds out which records violate which constraints.
 <<tidy=FALSE>>=
 E <- editset(c( "driverlicence %in% c(TRUE,FALSE)"
               , "if (driverlicence) age > 15"))
@@ -277,6 +278,16 @@ violatedEdits(E, x)
 @  
 \end{frame}
 
+\section{\code{editrules::localizeErrors}}
+\begin{frame}[fragile]
+\code{localizeErrors} look for the minimum number of values that should be changed.
+<<tidy=FALSE>>=
+E <- editset(c( "driverlicence %in% c(TRUE,FALSE)"
+              , "if (driverlicence) age > 15"))
+x <- data.frame(driverlicence=c(TRUE), age=c(12,18))
+localizeErrors(E, x, method="mip")$adapt
+@  
+\end{frame}
 
 \section{}
 {
