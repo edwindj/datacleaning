@@ -303,7 +303,7 @@ violatedEdits(E, x)
 \code{localizeErrors} looks for the minimum number of values that should be changed.
 <<tidy=FALSE>>=
 E <- editset(c( "driverlicence %in% c(TRUE,FALSE)"
-              , "if (driverlicence) age > 15"))
+              , "if (driverlicence) age >= 16"))
 x <- data.frame(driverlicence=c(TRUE), age=c(12,18))
 localizeErrors(E, x, method="mip")$adapt
 @  
@@ -320,7 +320,7 @@ localizeErrors(E, x, method="mip")$adapt
   \begin{block}{Correction}<2->
     \begin{itemize}
       \item Remove invalid values
-      \item Using (correction) rules
+      \item Using rule corrections
     \end{itemize}
   \end{block}
   \end{frame}
@@ -330,7 +330,7 @@ localizeErrors(E, x, method="mip")$adapt
 \begin{frame}[fragile]
   \begin{itemize}
   \item Replace invalid values with \code{NA}\\
-  This value will be imputed!
+  These values need to be imputed in the next step!
   \item Or remove the observation/record.\\
   Note that the record is partially missing and its removal 
   removes information.
@@ -340,7 +340,6 @@ localizeErrors(E, x, method="mip")$adapt
 
 \section{Correction: correction rules}
 \begin{frame}
-  Replace an invalid value with automatically with an ad hoc rule. 
   \code{deducorrect} (van der Loo, de Jonge, 2012) contains several methods for automatic, determistic correction under constraints. 
   This includes:
   \begin{itemize}
@@ -354,8 +353,8 @@ localizeErrors(E, x, method="mip")$adapt
 <<tidy=FALSE>>=
 library(deducorrect)
 cr <- correctionRules(expression(
-         if (is.na(items)) items=0,
-         if (items == 0) amount=0 )
+         if (is.na(items)) items <- 0,
+         if (items == 0) amount <- 0 )
 )
 dat <- data.frame(items=c(0,NA,1), amount=c(10,NA,10))
 correctWithRules(cr, dat)
@@ -368,7 +367,7 @@ correctWithRules(cr, dat)
   \setbeamertemplate{footline}{}
   \begin{frame}
     \begin{block}{Imputation: Filling in the blanks}<2->
-    Imputation fills in the gaps in your data, so that {\em all} of your
+    Imputation fills in the gaps in your data, so that {\em all} 
     observations can be used for analysis. 
     Other options are:
     \begin{itemize}
@@ -393,7 +392,6 @@ and it is beyond the scope of this tutorial to name them all:
 
 \end{frame}
   
-\section{Sequential hot deck imputation}
 \begin{frame}
   Imputation methods are based on some sort of regression.
   This can be:
@@ -406,7 +404,7 @@ and it is beyond the scope of this tutorial to name them all:
 
 \section{Nearest neighbor}
 \begin{frame}
-  Fill missing value using a nearby observation.
+  Fill/replace missing value using a nearby observation.
   So needs:
   \begin{itemize}
     \item $d$ a measure of distance (e.g. euclidean)
@@ -444,7 +442,7 @@ seqImpute <- function(x,last){
  \begin{itemize}
     \item Uses Gower's distance
 \begin{equation*}
-d_{\sf g}(i,j) \frac{\sum_k w_{ijk} d_k(i,j)}{\sum_{k}w_{ijk}},
+d_{\sf g}(i,j) = \frac{\sum_k w_{ijk} d_k(i,j)}{\sum_{k}w_{ijk}},
 \end{equation*}
   \item Uses $k$ neighbors
  \end{itemize}
