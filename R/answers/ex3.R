@@ -51,11 +51,18 @@ summary(iris)
 boxplot(Sepal.Length ~ Species, data=iris)
 # shows an extra outlier!
 
-# 3.3
+# 3.3a
 library(deducorrect)
+cr <- correctionRules(expression(
+  if (!is.na(Sepal.Width) && Sepal.Width <=0 ) Sepal.Width = NA
+  ))
+correctWithRules(cr, iris)
 # correctWithRules
 
-
+#3.3b
+iris[localizeErrors(E, iris)$adapt] <- NA
+# anything violated?
+any(violatedEdits(E,iris), na.rm=TRUE)
 # 3.4a
 library(VIM)
 iris_knn <- kNN(iris)

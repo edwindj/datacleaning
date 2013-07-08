@@ -373,7 +373,7 @@ correctWithRules(cr, dat)
     Other options are:
     \begin{itemize}
       \item Remove all incomplete observations
-      \item Remove \code{NA} per statistical operation.
+      \item Remove \code{NA} in each statistical operation (complicates your analysis...)
     \end{itemize}
     \end{block}
   \end{frame}
@@ -382,8 +382,8 @@ correctWithRules(cr, dat)
 \section{Imputation}
 \begin{frame}
  There is a vast body of literature on imputation methods
-and is goes beyond the scope of this tutorial.
-\begin{block}{R packages with imputation methods}
+and it is beyond the scope of this tutorial to name them all:
+\begin{block}{Some R packages with imputation methods}
   \code{Amelia}, \code{BaBoon}, \code{cat}, \code{deducorrect},
   \code{e1071}, \code{ForImp}, \code{Hmisc}, \code{imputation},
   \code{impute}, \code{mi}, \code{mice}, \code{mix}, \code{norm},
