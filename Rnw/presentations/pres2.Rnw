@@ -415,14 +415,27 @@ and it is beyond the scope of this tutorial to name them all:
 \end{frame}
 
 \section{Sequential hot deck Imputation}
-\begin{frame}
+\begin{frame}[fragile]
    Very simple recipe:
    \begin{itemize}
       \item Sort the data set
       \item Replace each \code{NA} at row \code{i} with value from \code{i+1}
    \end{itemize}
-   Works when distance can be approximated by one ordered variable.
-   Implementation in syllabus.
+<<tidy=FALSE>>=
+# x    :  vector to be imputed
+# last : value to use if last value of x is empty
+seqImpute <- function(x,last){
+  n <- length(x)
+  x <- c(x, last)
+  i <- is.na(x)
+  while(any(i)){
+    x[i] <- x[which(i) + 1]
+    i <- is.na(x)
+  }
+  x[1:n]
+}
+@
+   Works when distance can be approximated by ranking a variable.
 \end{frame}
 
 \section{kNN}
