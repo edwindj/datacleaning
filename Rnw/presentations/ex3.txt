@@ -1,0 +1,4 @@
+% my file
+Joe;medium;7.0
+Annie;high,8.2
+Harry;meidum;10,7

@@ -369,7 +369,31 @@ table(y)
 @
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \section{Converting dates}
+\begin{frame}[fragile]
+\begin{block}{\code{POSIXct} time/date format}
+\begin{itemize}
+  \item Stores a time/date point as nr seconds since 01-01-1970.
+  \item Alows for meaningful sorting, subtraction.
+  \item Conversion to calendar time/date depends on
+  \begin{itemize}
+    \item Calendar system
+    \item Time zone
+    \item Daylight saving times (DST)
+    \item Leap days, leap seconds
+  \end{itemize}
+  \item Conversion from \code{character}
+  \begin{itemize}
+    \item Base \R{}: \code{as.POSIXct}
+    \item \code{lubridate} package
+  \end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
 \begin{frame}[fragile]
 Using \code{lubrdidate}
 
@@ -411,8 +435,8 @@ Recognizable substrings
     \hline
     Code$^\dagger$       & description                             & Example  \\
     \hline
-    \code{\%a} & Abbreviated weekday$^*$      & \code{Mon}  \\
-    \code{\%A} & Full weekday$^*$             & \code{Monday}\\
+%    \code{\%a} & Abbreviated weekday$^*$      & \code{Mon}  \\
+%    \code{\%A} & Full weekday$^*$             & \code{Monday}\\
     \code{\%b} & Abbreviated month$^*$        & \code{Sep} \\
     \code{\%B} & Full month$^*$               & \code{September}\\
     \code{\%m} & Month number (01-12)                           & \code{09}\\
@@ -442,13 +466,131 @@ ymd("2013-07-09",tz="Europe/Madrid")
 \end{block}
 \end{frame}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Digging deeper}
+\begin{frame}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Do It Yourself conversion}
+\begin{frame}
+
+\begin{tabular}{lp{5cm}}
+ Read the file line by line as \code{text} & \code{readLines} \\
+ Select lines containing data              & \code{grepl}     \\
+ Split fields                              & \code{strsplit}\\
+ Transform to \code{data.frame}            & \code{unlist, as.matrix, as.data.frame}\\
+ Normalize field by field and coerce       & \code{agrep}, \code{stringdist}\\
+\end{tabular}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Reading a file line by line}
 \begin{frame}[fragile]
-\begin{block}{\code{POSIXct}}
-  \item Stores a time/date point as 
-  \item 
+<<>>=
+(v <- readLines("ex3.txt"))
+@
+
+\begin{block}{\code{readLines}}
+\begin{itemize}
+\item Returns a \code{character} vector.
+\item Use $n=<number>$ to load only some test data.
+\end{itemize}
 \end{block}
+
+\end{frame}
+
+\section{Selecting lines}
+\begin{frame}[fragile]
+<<>>=
+(I <- grepl("%",v))
+(v <- v[!I])
+@
+\begin{block}{\code{grepl}}
+  \begin{itemize}
+    \item Use \code{fixed=TRUE} to ignore special characters.
+    \item Special characters are \verb" . \ | ( ) [ {  ^ $ * + ?"
+  \end{itemize}
+\end{block}
+\end{frame}
+
+
+\section{Splitting fields}
+\begin{frame}[fragile]
+<<>>=
+(L <- strsplit(v,split=c(";","[;,]",";")))
+@
+\begin{block}{\code{strsplit}}
+\begin{itemize}
+  \item Output is always a \code{list}.
+  \item you may define different field splitters for elements of \code{v}.
+  \item Use \code{fixed=TRUE} to ignore special characters.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\section{Coerce to \code{data.frame}}
+\begin{frame}[fragile]
+<<>>=
+M <- matrix(unlist(L), nrow=3, byrow=TRUE)
+dat <- as.data.frame(M,stringsAsFactors=FALSE)
+names(dat) <- c("name","level","value")
+dat
+@
+\end{frame}
+
+\section{Fuzzy text matching}
+\begin{frame}[fragile]
+\begin{block}{fuzzy matching}
+\begin{itemize}
+\item Count nr of basic operations turning string $s$ into $t$.
+\item Basic operations include
+\begin{itemize}
+  \item deletion
+  \item insertion
+  \item substitution
+  \item transposition\footnote{not in \code{agrep}}
+\end{itemize}
+\item Example: distance between \code{abc} and \code{bac} equals 1.
+\end{itemize}
+
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+<<>>=
+(I <- agrep("medium",dat$level,max.distance=2))
+dat$level[I] <- "medium"
+@
+\begin{block}{\code{agrep}}
+  \begin{itemize}
+    \item Uses deletion, instertion and substitution
+    \item Returns index of matching elements.
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+<<message=FALSE>>=
+library(stringdist)
+(I <- stringdist("medium",dat$level) <= 1)
+dat$level[I] <- "medium"
+@
+\begin{block}{\code{stringdist}}
+  \begin{itemize}
+    \item Uses deletion, instertion, substitution and transposition
+    \item Returns string distance value
+    \item Offers several string distance algorithms
+  \end{itemize}
+\end{block}
+\end{frame}
+
+
 \end{document}
  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 With base \R{}
 <<>>=
 x <- c("1-555","01-555")
