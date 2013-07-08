@@ -16,7 +16,7 @@
             fill=blue!10,
             draw, rectangle,
             rounded corners,
-            text width=2.3cm,
+            text width=3cm,
             font=\scriptsize\bf\sf,
             node distance=1.4cm,
             align=center]
@@ -217,13 +217,66 @@ hboutlier <- function(x,r){
 @
 \end{frame}
 \section{Detection using rules}
-\begin{frame}[fragile]
-<<>>=
-library(editrules)
-(E <- editmatrix("profit == turnover - cost"))
-@
-
+\begin{frame}
+  Often you have background knowledge on data:
+\begin{itemize}
+  \item A person having a drivers license is at least 16 years old
+  \item Age cannot be negative
+  \item Profit = turnover - cost
+\end{itemize}
+  This knowledge can be expressed in constraints / rules / edits.
+  
+  \begin{block}{Hard rules}
+    A rule that must be obeyed by a record, is a {\em hard rule}.
+    If not it is a {\em soft rule}. Soft rule may indicate suspicious data
+  \end{block}
 \end{frame}
+
+\begin{frame}
+  Often data is dirty: it violates hard rules.
+  So first:
+  \begin{itemize}
+    \item Check which records violate hard rules.
+    \item Find out which values are the cause.
+    \item Replace this value with \code{NA}, so it can be corrected or imputed.
+  \end{itemize}
+  Rule checking straight in \R{}, but for set of rules this is problematic.
+  Rules interact and it may be difficult to find the causing value.
+\end{frame}
+
+\section{Detection: \code{editrules}}
+\begin{frame}
+  \code{editrules} (de Jonge, van der Loo) is a toolbox to specify, maintain and check constraints/rules on data.
+  It allows:
+  \begin{itemize}
+  \item Specifying rules in \R{} syntax
+  \item Store rules in a separate file (using \code{editfile})
+  \item Check for violations: \code{violatedEdits}
+  \item Find erronous values: \code{localizeErrors}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+<<tidy=FALSE>>=
+library(editrules)
+(E <- editset(c( "profit == turnover - cost"
+               , "driverlicence %in% c(TRUE,FALSE)"
+               , "if (driverlicence) age > 15")
+               )
+)
+@
+\end{frame}
+
+\section{\code{violatedEdits}}
+\begin{frame}[fragile]
+<<tidy=FALSE>>=
+E <- editset(c( "driverlicence %in% c(TRUE,FALSE)"
+              , "if (driverlicence) age > 15"))
+x <- data.frame(driverlicence=c(TRUE), age=c(12,18))
+violatedEdits(E, x)
+@  
+\end{frame}
+
 
 \section{}
 {
@@ -261,7 +314,7 @@ library(editrules)
   \begin{frame}
     \begin{block}{Imputation: Filling in the blanks}<2->
     Imputation fills in the gaps in your data, so that {\em all} of your
-    observertions can be used for analysis. 
+    observations can be used for analysis. 
     Other options are:
     \begin{itemize}
       \item Remove all incomplete observations
@@ -296,7 +349,7 @@ and is goes beyond the scope of this tutorial.
   \end{itemize}
 \end{frame}
 
-\section{Nearest neigbor}
+\section{Nearest neighbor}
 \begin{frame}
   Fill missing value using a nearby observation.
   So needs:
@@ -327,6 +380,13 @@ d_{\sf g}(i,j) \frac{\sum_k w_{ijk} d_k(i,j)}{\sum_{k}w_{ijk}},
 \end{equation*}
   \item Uses $k$ neighbors
  \end{itemize}
+ 
+Usage is simple 
+<<eval=FALSE>>=
+library(VIM)
+
+kNN(data, variable = colnames(data), k = 5)
+@
 
 \end{frame}
 
@@ -342,7 +402,7 @@ d_{\sf g}(i,j) \frac{\sum_k w_{ijk} d_k(i,j)}{\sum_{k}w_{ijk}},
  \end{itemize}
  \begin{block}{R}
  Nice thing about \R{}
- you can correct it and rerun the datacleaning process and analysis!
+ you can correct it and rerun the data cleaning process and analysis!
  \end{block}
 \end{frame}
 \end{document}
