@@ -52,7 +52,8 @@ boxplot(Sepal.Length ~ Species, data=iris)
 # shows an extra outlier!
 
 # 3.3
-
+library(deducorrect)
+# correctWithRules
 
 
 # 3.4a

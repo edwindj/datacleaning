@@ -9,7 +9,6 @@
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\R}{\code{R}} %% call as \R{} to avoid extra spaces.
 
-
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows,decorations.pathreplacing}
   \tikzstyle{statpoint}=[
@@ -165,37 +164,57 @@ rbind(c1,c2)
 }
 % 
 
-\section{Detection: special values}
+\section{Detection: \code{NA}}
 \begin{frame}[fragile]
 For detecting which rows contain \code{NA}, \code{complete.cases} is useful:
 <<>>=
 complete.cases(data.frame(x=c(1,NA,3), y=c(1,1,NA)))
 @
 
-or use \code{is.special} to check for all special values
+Of course the same can be done with \code{is.na}
+
+<<>>=
+sapply(data.frame(x=c(1,NA,3), y=c(1,1,NA)), is.na)
+@
+\end{frame}
+
+\section{Detection: all special values}
+\begin{frame}[fragile]
+\code{NA} is not enough. You should check all values:
+\code{NA},\code{NaN}, \code{Inf} and \code{-Inf}.
+
+To do this write a utility function \code{is.special}:
 <<tidy=FALSE>>=
 is.special <- function(x){
   if (is.numeric(x)) !is.finite(x) else is.na(x)
 }
-is.special(factor(c(NA, "M","F")))
+dat <- data.frame(x=factor(c(NA, "M","F")), y=c(1,NaN, Inf))
+sapply(dat, is.special)
 @
 \end{frame}
 
 \section{Detection: univariate outliers}
 \begin{frame}[fragile]
-\code{boxplot.stats} lists the outliers.
-<<eval=FALSE>>=
-boxplot.stats(x, coef = 1.5, do.conf = TRUE, do.out = TRUE)
+Outliers can heavily influence the statistical outcome, so they 
+should be detected.\footnote{Note that outliers are not necessarily errors}
+
+<<echo=FALSE>>=
+(x <- sample(c(rnorm(10), 40.232)))
 @
-<<>>=
-(x <- sample(c(rnorm(10), 30)))
-boxplot.stats(x)$out
-@
+
+What are the outliers?
 \end{frame}
+
 \begin{frame}[fragile]
 
-<<echo=FALSE,fig.height=4.2>>=
-boxplot(x)
+<<fig.height=3>>=
+boxplot(x, horizontal=T)
+@
+
+Or better use \code{boxplot.stats}:
+\code{boxplot.stats} lists the outliers.
+<<fig.height=2>>=
+boxplot.stats(x)$out
 @
 \end{frame}
 
@@ -240,13 +259,13 @@ hboutlier <- function(x,r){
     \item Find out which values are the cause.
     \item Replace this value with \code{NA}, so it can be corrected or imputed.
   \end{itemize}
-  Rule checking straight in \R{}, but for set of rules this is problematic.
+  Rule checking can be done straight in \R{}, but for set of rules this is problematic.
   Rules interact and it may be difficult to find the causing value.
 \end{frame}
 
 \section{Detection: \code{editrules}}
 \begin{frame}
-  \code{editrules} (de Jonge, van der Loo) is a toolbox to specify, maintain and check constraints/rules on data.
+  \code{editrules} (de Jonge, van der Loo, 2012) is a toolbox to specify, maintain and check constraints/rules on data.
   It allows:
   \begin{itemize}
   \item Specifying rules in \R{} syntax
@@ -280,7 +299,7 @@ violatedEdits(E, x)
 
 \section{\code{editrules::localizeErrors}}
 \begin{frame}[fragile]
-\code{localizeErrors} look for the minimum number of values that should be changed.
+\code{localizeErrors} looks for the minimum number of values that should be changed.
 <<tidy=FALSE>>=
 E <- editset(c( "driverlicence %in% c(TRUE,FALSE)"
               , "if (driverlicence) age > 15"))
