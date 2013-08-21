@@ -1,4 +1,4 @@
-\documentclass[a4paper, 11pt, fleqn]{article}
+\documentclass[rapport, english]{cbsreport}
 \usepackage[english]{babel}
 \usepackage{amsmath,amssymb}
 \usepackage{threeparttable}
@@ -20,10 +20,6 @@
 % nicer bold symbols in math mode:
 \newcommand{\bs}[1]{\boldsymbol{#1}}
 
-% nicer fonts
-\usepackage[T1]{fontenc}
-\usepackage{palatino}
-\usepackage{inconsolata}
 
 % Footnote symbols to avoid confusion with superscript references.
 \renewcommand*{\thefootnote}{\fnsymbol{footnote}}
@@ -31,7 +27,7 @@
 %%% Code commands
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\R}{\code{R}} %% call as \R{} to avoid extra spaces.
-\newcommand{\C}{\code{C}} %% call as \C{} to avoid extra spaces.
+\newcommand{\Clang}{\code{C}} %% call as \Clang{} to avoid extra spaces.
 \newcommand{\mcode}[1]{\textrm{\code{#1}}}
 
 %%% listings from external files
@@ -64,8 +60,6 @@
 % the always handy-dandy argmin operator
 \DeclareMathOperator*{\argmin}{\arg\min}
 
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{1ex}
 
 \usepackage{wrapfig}
 
@@ -88,6 +82,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% preamble stuff
 \title{An introduction to data cleaning with R}
+\Projectnummer{208911}
+\Keywords{methodology, data editing, statistical software}
 
 \author{Edwin de Jonge and Mark van der Loo}
 \date{\today}

@@ -405,9 +405,9 @@ sapply(dat,class)
 \end{tip}
 
 For the user of \R{} these class labels are usually enough to handle \R{} objects
-in \R{} scripts. Under the hood, the basic \R{} objects are stored as \C{}
-structures as \C{} is the language in which \R{} itself has been written. The type
-of \C{} structure that is used to store a basic type can be found with the
+in \R{} scripts. Under the hood, the basic \R{} objects are stored as Clang{}
+structures as Clang{} is the language in which \R{} itself has been written. The type
+of Clang{} structure that is used to store a basic type can be found with the
 \code{typeof} function. Compare the results below with those in the previous
 code snippet.
 <<>>=
@@ -418,7 +418,7 @@ typeof(factor(c("abc","def")))
 @
 Note that the \code{type} of an \R{} object of class \code{numeric} is \code{double}.
 The term \code{double} refers to \code{double precision}, which is a standard
-way for lower-level computer languages such as \C{} to store approximations of real numbers. 
+way for lower-level computer languages such as Clang{} to store approximations of real numbers. 
 
 Summarizing, one can regard the \emph{class} of an object the object's type from
 the user's point of view while the \emph{type} of an object is the way \R{} looks
