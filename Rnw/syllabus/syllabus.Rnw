@@ -105,7 +105,19 @@ library(editrules)
 \thispagestyle{empty}
 
 \begin{abstract}
-These are the draft lecture notes for the tutorial on data cleaning at \emph{useR!2013}.
+More often than not, data analyses consists for a large part of data cleaning
+to make the actual statistical analyses possible. These introductory lecture
+notes cover a range of techniques, implementend in the \R{} statistical
+environment, allowing the reader to read raw (textual) data into \R{} and
+prepare it for statistical analyses.  The process of data analyses is viewed as
+a value chain where data cleaning involves the first two steps: first,
+improving the data so that it can be read into a rectangular format into \R{}
+and secondly, the removal of inconsistencies and empty values so that the data
+can be analysed with ease.
+
+
+These lecture notes are based on a tutorial given by the authors at the
+\emph{useR!2013} concerence in Albacete, Spain.  
 \end{abstract}
 
 
