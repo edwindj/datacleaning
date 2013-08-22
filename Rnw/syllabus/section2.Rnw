@@ -1,149 +1,158 @@
 
 \section{From raw data to technically correct data}
 \label{sect:rawtoinput}
+A data set is a collection of data that describes attribute values (variables)
+of a number of real-world objects (units). With data that is \emph{technically
+correct}, we understand a data set that is suitable for automated processing
+such that for each unit, the attribute values should be correctly recognized
+and read by the same set of computer instructions. Specifically, we demand that
+each attribute value is stored in a data type that is suitable to describe the
+value domain of the attribute and that the type is constant over units.  In
+short: for each unit, a text variable should be stored as text, numeric
+variables as numbers, and so on, and all this in a format that is consistent
+accross the data set.
 
 
-\subsection{Technically correct}
-With \emph{technically correct} data in \R{}, we mean that
+\subsection{Technically correct data in \R{}}
+The \R{} environment is capable of reading and processing several file and data
+formats.  For this tutorial we will limit ourselves to `rectangular'
+data sets that are to be read from a text-based format.
+In the case of \R{}, we define \emph{technically correct} data as a data set that
 \begin{itemize}
-\item the data to be analyzed are stored in a \code{data.frame} with suitable columns names, and
+\item is stored in a \code{data.frame} with suitable columns names, and
 \item each column of the \code{data.frame} is of the \R{} type that adequately represents the
 value domain of the variable in the column.
 \end{itemize}
 %
-When the data for your statistical analyses has been stored in a sufficiently
-well-structured format (either binary/database or \code{text}/\code{XML}) one
-of \R{}'s native import functions allows you to read the data into a correctly
-typed \code{data.frame}. But even when raw data arrives as a neatly structured
-\code{csv}-file you may have to take care that factor variables have the
-appropriate levels.  
+The second demand implies that numeric data should be stored
+as \code{numeric} or \code{integer}, textual data should be stored as \code{character}
+and categorical data should be stored as a \code{factor} or \code{ordered} vector,
+with the appropriate levels.
 
-When you're less lucky, you'll get badly structured data and more work needs to
-be done to transform the data into the desired format. Fortunately, \R{} has
-many low-level tools available to finetune how data read into \R{} is to be
-manipulated or interpreted.
-%Data collected for statistical analysis usually come in {\em raw} format, which is typically not
-%a \R{} data.frame. 
-
-%If your data are stored in a database or an other binary structured form, 
-%retrieving the data within R does give you a \code{data.frame}. However even in these cases it is advisable to
-%store your data in an open text format (e.g. Comma Separated Values) to make your analysis
-%reproducible. Furthermore, many times your imported data contains (text) values that need to be processed
-%into the right \R{} type: for {\em technically correct} data the columns of the data.frame need to have the right types.
-
-%Typically raw data are in a text file, which has several favorable properties:
-
-In this tutorial we assume that the data that needs to be read is in a text-format, which
-already has several favorable properties over binary formats:
+Limiting ourselves to textual data formats for this tutorial may have its
+drawbacks, but there are several several favorable properties of textual
+formats over binary formats:
 \begin{itemize}
-\item It is a format that can be read by human beings. When you inspect a text-file, make sure
-to use a text-reader (\code{more}, \code{less}) or editor (\code{Notepad}, \code{vim}) using
-a fixed-width format. Do not use an office-application since their typesetting clutters the
-data's structure (e.g. by replacing two characters by a ligature).
+\item It is human-readable. When you inspect a text-file, make sure to use a
+text-reader (\code{more}, \code{less}) or editor (\code{Notepad}, \code{vim})
+that uses a fixed-width font. Never use an office application for this purpose 
+typesetting clutters the data's structure, for example by  the use of ligature.
 \item Text is very permissive in the types values that are stored, allowing for
 comments and annotations.
 \end{itemize}
 %
-Our task then, is to find ways to read a textfile into \R{} and have it
-transformed to a well-typed \code{data.frame}. 
+The task then, is to find ways to read a textfile into \R{} and have it
+transformed to a well-typed \code{data.frame} with suitable column names. 
 
 \begin{tip}{Best practice}
-Whenever you need to read data from a foreign file format, like a spreadsheet or
-commercial statistical software, make that software responsible for exporting the 
-data to an open format that can be read by \R{}.
+Whenever you need to read data from a foreign file format, like a spreadsheet
+or proprietary statistical software that uses undisclosed file formats, make
+that software responsible for exporting the data to an open format that can be
+read by \R{}.
 \end{tip}
 
 
-\subsection{Reading data into a \R{} \code{data.frame}}
+\subsection{Reading text data into a \R{} \code{data.frame}}
+In the following, we assume that the text-files we are reading contain at data
+of at most one unit per line. The number of attributes, their format and
+separation symbols in lines containing data may differ over the lines. This
+includes files in fixed-width or \code{csv}-like format, but excludes
+\code{XML}-like storage formats.
 
-If the data you are trying to read into \R{} is formatted nicely, for example
-as a \code{csv} or \code{tab}-delimited file, getting data into a \code{data.frame} 
-is fairly simple. One only needs to take care that exceptional values such
-as \code{NA} or comment lines are interpreted correctly.
-
-Things become more difficult when the storage format is not constant over the
-file. For example, some numbers may have a period (\code{.}) as decimal
-separator while others have a comma (\code{,}) and the number of columns may
-vary accross lines. In such cases \R{}'s high-level data-reading functions such
-as \code{read.table} are not always capable of reading the data correctly in a
-single go.
-
-Below we point out techniques to read normal and badly formatted text files
-into \R{}. This tutorial is limited to rectangular data sets, although some of
-the techniques mentioned here will be more broadly applicable.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{\code{read.table} and its cousins}
-If you are able to read in your data with any of the following functions
+The following high-level \R{} functions allow you to read in data that is technically
+correct, or close to it.
 \begin{center}
 \begin{tabular}{ll}
 \code{read.delim} & \code{read.delim2}\\
 \code{read.csv}   & \code{read.csv2}\\
-\code{read.table}
+\code{read.table} & \code{read.fwf}
 \end{tabular}
 \end{center}
-
-the result of these functions is a \code{data.frame}. If your are lucky the
-data is ``technically correct'' However, there are some tips and tricks we'll
-point out here to help you read those almost-standard files.
+%
+the return type of all these functions is a \code{data.frame}. If the column names are
+stored in the first line, they can automatically be assigned to the \code{names} attribute
+of the resulting \code{data.frame}.
 
 \begin{tip}{Best practice}
-Whenever you need to read data into \R{}, the resulting \code{data.frame} can quickly
-be inspected with functions like \code{head}, \code{str}, and \code{summary}.
+A freshly read \code{data.frame} should always be inspected with functions like
+\code{head}, \code{str}, and \code{summary}.
 \end{tip}
 
 The \code{read.table} function is the most flexible function to read tabular
-data that is stored in a textual format. In fact the other
-\code{read}-functions mentioned earlier are just calls to \code{read.table}
-with some arguments already fixed.  Specifically
+data that is stored in a textual format. In fact, the other
+\code{read}-functions mentioned above all eventually use \code{read.table}
+with some fixed parameters and possibly after some preprocessing. Specifically
 \begin{center}
 \begin{tabular}{lp{0.7\textwidth}}
 \code{read.csv}  & for comma separated values with period as decimal separator.\\
 \code{read.csv2} & for semicolon separated values with comma as decimal separator.\\
 \code{read.delim}& tab-delimited files with period as decimal separator. \\
-\code{read.delim2}& tab-delimited files with comma as decimal separator.
+\code{read.delim2}& tab-delimited files with comma as decimal separator. \\
+\code{read.fwf}   & data with a predetermined number of bytes per column.
 \end{tabular}
 \end{center}
 %
 %
 
-Each of these functions accept, amongst others, the following arguments.
+Each of these functions accept, amongst others, the following optional arguments.
 %
 \begin{center}
-\begin{tabular}{llp{0.5\textwidth}}
+\begin{tabular}{lp{0.5\textwidth}}
 \hline
-  Argument & default & description\\
+  Argument & description\\
   \hline
-  \code{sep}              & \code{""} &Field separator. Deafault is any sequence of whitespaces including \code{space}, \code{tab} and newline\\
-  \code{header}           & \code{FALSE} & Does the first line contain column names?\\
-  \code{na.string}        & \code{"NA"} & Which strings should be considered \code{NA}? \\
-  \code{colClasses}       & \code{NA}   & \code{character} vector with the types of columns. Will coerce the columns to the specified types.\\
-  \code{stringsAsFactors} & \code{TRUE}  & If \code{TRUE}, converts all \code{character} vectors into \code{factor} vectors.\\
+  \code{header}                 & Does the first line contain column names?\\
+  \code{col.names}              & \code{character} vector with column names.\\
+  \code{na.string}              & Which strings should be considered \code{NA}? \\
+  \code{colClasses}             & \code{character} vector with the types of columns. Will coerce the columns to the specified types.\\
+  \code{stringsAsFactors}       & If \code{TRUE}, converts all \code{character} vectors into \code{factor} vectors.\\
+  \code{sep}$^\mathrm{\dagger}$ & Field separator. \\
 \hline
-\end{tabular}
+\end{tabular}\\
+${^\mathrm{\dagger}}${\small Used only internally by \code{read.fwf}}\hfill
 \end{center}
-Except for \code{read.table} each of the above functions assumes by 
-default that the first line in the text file contains column headers,
-as demonstrated in the following srcipt.
-<<>>=
+%
+Except for \code{read.table} and \code{read.fwf}, each of the above functions assumes by 
+default that the first line in the text file contains column headers. To demonstrate
+this, we assume that we have a the following text file stored under \code{files/unnamed.txt}.
+\begin{center}
+\lstinputlisting[
+    xleftmargin=1cm,
+    numbers=left,
+    basicstyle=\ttfamily\small
+  ]{files/unnamed.txt}
+\end{center}
+Now consider the following script.
+<<tidy=FALSE>>=
 # first line is erroneously interpreted as column names
 (person <- read.csv("files/unnamed.txt"))
 # so we better do the following
-(person <- read.csv("files/unnamed.txt", header=FALSE))
-colnames(person) <- c("age", "height")
-print(person)
+person <- read.csv(
+  file        = "files/unnamed.txt"
+  , header    = FALSE
+  , col.names = c("age","height") )
+person
 @
+In the first attempt, \code{read.csv} interprets the first line as column
+headers and fixes the numeric data to meet \R{}'s variable naming standards by
+prepending an \code{X}.
 
-If \code{colClasses} is not specified by the user, \code{read.table} tries to
-detect the type of the column automatically. This may yield unexpected results.
-For example, in the above script, one of the rows contains a misformed
-numerical variable (\code{5.9*}), causing \R{} to interpret the whole
-column as a text variable. Moreover, by default text variables are converted
-to \code{charater}, so we are now stuck with an \emph{height} variable expressed
-as levels in a categorical variable:
+
+If \code{colClasses} is not specified by the user, \code{read.table} will try
+to determine the column types. Although this may seem convenient, it is
+noticably slower for larger files (say, larger than a few MB) and it may yield
+unexpected results. For example, in the above script, one of the rows contains
+a misformed numerical variable (\code{5.9*}), causing \R{} to interpret the
+whole column as a text variable. Moreover, by default text variables are
+converted to \code{factor}, so we are now stuck with an \emph{height} variable
+expressed as levels in a categorical variable:
 <<>>=
 str(person)
 @
+%
 Using \code{colClasses}, we can force \R{} to either interpret the columns
 in the way we want or throw an error.
 <<tidy=FALSE>>=
@@ -151,20 +160,29 @@ read.csv("files/unnamed.txt",
   header=FALSE,
   colClasses=c('numeric','numeric'))
 @
-This behaviour may be desirable if you need to be strict about how
-data is offered to your \R{} script. An added benefit is that
-specifying \code{colClasses} significantly speeds up the reading process
-since \R{} does not need to detect the column types experimentally.
+This behaviour is desirable if you need to be strict about how
+data is offered to your \R{} script. However, unless you are prepared
+to write \code{tryCatch} constructions, a script containing the above
+case will stop executing completely.
 
-A thirt option is to specify \code{stringsAsFactors=FALSE} so text
-columns are read in as \code{character} vector, and conversion to
-the desired format can be done within \R{}.
+As an alternative, columns can be read in as \code{character} by setting
+\code{stringsAsFactors=FALSE}. Next, one of the \code{as.}-functions can
+be applied to convert to the desired type, as shown below. 
 <<tidy=FALSE>>=
-str( read.csv("files/unnamed.txt",
-  header = FALSE,
-  stringsAsFactors=FALSE) )
+dat <- read.csv(
+  file              = "files/unnamed.txt"
+  , header          = FALSE
+  , col.names       = c("age","height")
+  , stringsAsFactors=FALSE)
+dat$height <- as.numeric(dat$height)
+dat
 @
-
+Now, everything is read in and the \code{height} column is translated to
+numeric, with the exception of the row containing \code{5.7*}. Moreover, since
+we now get a warning in stead of an error, a script containing this statement
+will continue to run, albeit with less data to analyse then it was supposed to.
+It is of course up to the programmer to check for these extra
+\code{NA}'s and handle them appropriately.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Reading data with \code{readLines}}
 When the rows in a data file are not uniformly formatted you can consider
@@ -188,26 +206,6 @@ page.
 @
 The variable \code{txt} has \Sexpr{length(txt)} elements, equal to the number
 of lines in the textfile.
-%
-\begin{table}
-\begin{threeparttable}
-\caption{Steps to take when converting lines in a raw text file to a \code{data.frame}
-with correctly typed columns.}
-\label{tab:transform}
-\begin{tabular}{lll}
-\hline
-& \textbf{Step} & \textbf{result} \\
-\hline
-1 & Read the data with \code{readLines} & \code{character}\\
-2 & Select lines containing data        & \code{character}\\
-3 & Split lines into separate fields    & \code{list} of \code{character} vectors     \\
-4 & Standardize rows                    & \code{list} of equivalent vectors      \\
-5 & Transform to \code{data.frame}      & \code{data.frame}\\
-6 & Normalize and coerce to correct type& \code{data.frame}\\
-\hline
-\end{tabular}
-\end{threeparttable}
-\end{table}
 
 \textbf{Step 2. Selecting lines containing data.} This is generally done by
 throwing out lines containing comments or otherwise lines that do not contain
@@ -291,6 +289,27 @@ standardFields
 @
 Note that here, it is not necessary to first define a \code{standardFields}
 list to assign values to.
+%
+\begin{table}
+\begin{threeparttable}
+\caption{Steps to take when converting lines in a raw text file to a \code{data.frame}
+with correctly typed columns.}
+\label{tab:transform}
+\begin{tabular}{lll}
+\hline
+& \textbf{Step} & \textbf{result} \\
+\hline
+1 & Read the data with \code{readLines} & \code{character}\\
+2 & Select lines containing data        & \code{character}\\
+3 & Split lines into separate fields    & \code{list} of \code{character} vectors     \\
+4 & Standardize rows                    & \code{list} of equivalent vectors      \\
+5 & Transform to \code{data.frame}      & \code{data.frame}\\
+6 & Normalize and coerce to correct type& \code{data.frame}\\
+\hline
+\end{tabular}
+\end{threeparttable}
+\end{table}
+
 
 \begin{tip}{Tip}
 Another advantage of \code{lapply} is that it is really easy to parallelize
@@ -371,16 +390,13 @@ converted into a \code{NA} value.
 as.numeric(c("7","7*","7.0","7,0"))
 @
 
-%\begin{tip}{Best practice}
-%t \code{as.factor} since \code{factor} give  control over 
-%creating a factor, while \code{as.factor} does not.
-%\end{tip}
 
 Converting a \code{factor} or \code{ordered} with \code{as.numeric} however is
 counterintuitive. The reason for this has to do with differences between
-\emph{classes} and \emph{types} in \R{}. For an example, see Exercise \ref{ex:factorconversion}. Below, we  introduce \R{}'s typing and
-storage system and explain, amongst others, the difference between \R{}
-\emph{types} and \emph{classes}. After that we discuss date conversion.
+\emph{classes} and \emph{types} in \R{}. For an example, see Exercise
+\ref{ex:factorconversion}. Below, we  introduce \R{}'s typing and storage
+system and explain, amongst others, the difference between \R{} \emph{types}
+and \emph{classes}. After that we discuss date conversion.
 
 \subsubsection{Introduction to \R{}'s typing system}
 Everything in \R{} is an object\cite{chambers:2008}. An object is a container
@@ -395,7 +411,6 @@ class(c(pi,exp(1)))
 class(factor(c("abc","def")))
 @
 
-\newpage
 \begin{tip}{Tip}
 Here's a quick way to retrieve the classes of all columns in a \code{data.frame} called \code{dat}.
 <<eval=FALSE>>=
@@ -581,7 +596,7 @@ or \R{}'s built-in functionality are shown in Table \ref{tab:dateformats}.
   \label{tab:dateformats}
   \begin{tabular}{lll}
     \hline
-    Code       & description\cite{}                             & Example  \\
+    Code       & description                                    & Example  \\
     \hline
     \code{\%a} & Abbreviated weekday name in the current locale.& \code{Mon}  \\
     \code{\%A} & Full weekday name in the current locale.       & \code{Monday}\\

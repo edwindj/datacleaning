@@ -11,6 +11,4 @@ clean:
 	R -e "knitr:::knit('$*.Rnw')"
 	xelatex $*.tex
 	bibtex  $*
-	xelatex $*.tex
-	xelatex $*.tex
 
