@@ -128,7 +128,7 @@ These lecture notes are based on a tutorial given by the authors at the
 \newpage
 \subsection*{Notes to the reader}
 \addcontentsline{toc}{subsection}{Notes to the reader}
-This tutorial is aimed at users who have some \R{} experience.  That is, we
+This tutorial is aimed at users who have some \R{} programming experience.  That is, we
 expect the reader to be familiar with concepts like variable assignment,
 \code{vector}, \code{list}, and \code{data.frame}; writing simple loops, and
 perhaps writing simple functions. More complicated constructs, when used, will
