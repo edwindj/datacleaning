@@ -147,27 +147,27 @@ noticably slower for larger files (say, larger than a few MB) and it may yield
 unexpected results. For example, in the above script, one of the rows contains
 a misformed numerical variable (\code{5.9*}), causing \R{} to interpret the
 whole column as a text variable. Moreover, by default text variables are
-converted to \code{factor}, so we are now stuck with an \emph{height} variable
+converted to \code{factor}, so we are now stuck with a \emph{height} variable
 expressed as levels in a categorical variable:
 <<>>=
 str(person)
 @
 %
 Using \code{colClasses}, we can force \R{} to either interpret the columns
-in the way we want or throw an error.
+in the way we want or throw an error when this is not possible.
 <<tidy=FALSE>>=
 read.csv("files/unnamed.txt",
   header=FALSE,
   colClasses=c('numeric','numeric'))
 @
-This behaviour is desirable if you need to be strict about how
-data is offered to your \R{} script. However, unless you are prepared
-to write \code{tryCatch} constructions, a script containing the above
-case will stop executing completely.
+This behaviour is desirable if you need to be strict about how data is offered
+to your \R{} script. However, unless you are prepared to write \code{tryCatch}
+constructions, a script containing the above code will stop executing
+completely when an error is encountered.
 
 As an alternative, columns can be read in as \code{character} by setting
-\code{stringsAsFactors=FALSE}. Next, one of the \code{as.}-functions can
-be applied to convert to the desired type, as shown below. 
+\code{stringsAsFactors=FALSE}. Next, one of the \code{as.}-functions can be
+applied to convert to the desired type, as shown below. 
 <<tidy=FALSE>>=
 dat <- read.csv(
   file              = "files/unnamed.txt"
@@ -183,6 +183,7 @@ we now get a warning in stead of an error, a script containing this statement
 will continue to run, albeit with less data to analyse then it was supposed to.
 It is of course up to the programmer to check for these extra
 \code{NA}'s and handle them appropriately.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Reading data with \code{readLines}}
 When the rows in a data file are not uniformly formatted you can consider
@@ -190,17 +191,43 @@ reading in the text line-by-line and transforming the data to a rectangular set
 yourself.  With \code{readLines} you can exercise precise control over how each
 line is interpreted and transformed into fields in a rectangular data set.
 Table \ref{tab:transform} gives an overview of the steps to be taken. Below,
-each step is discussed in more detail.
+each step is discussed in more detail. As an example we will use a file called
+\code{daltons.txt}. Below, we show the  contents of the file and the actual table
+with data as it should appear in \R{}.
 
-\textbf{Step 1. Reading data.} Reading in data with \code{readLines} is simple
-enough. It accepts filename as argument and returns a \code{character} vector
-containing one element for each line in the file.  \code{readLines} detects
-both the end-of-line and carriage return characters so lines are detected
-regardless of whether the file was created under \code{DOS}, \code{UNIX} or
-\code{MAC} (each OS has traditionally had different ways of marking an
-end-of-line). Here's an example (the file can be obtained from our
-\href{https://github.com/edwindj/datacleaning/tree/master/Rnw/syllabus/files}{Github}
-page.
+\vspace{1ex}
+\begin{minipage}{0.5\textwidth}
+\emph{Data file:}
+\lstinputlisting[
+    xleftmargin=1cm,
+    numbers=left,
+    basicstyle=\ttfamily\small
+  ]{files/daltons.txt}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+\hspace{0.5cm}\emph{Actual table:}\\
+
+\hspace{0.5cm}\begin{tabular}{lll}
+Name  & Birth     & Death\\
+\hline
+Gratt & 1861      & 1892\\ 
+Bob   & \code{NA} & 1892\\
+Emmet & 1871      & 1937\\
+\end{tabular}
+\end{minipage}
+%
+
+The file has comments on several lines (starting with a \code{\%} sign) and a
+missing value in the second row.  Moreover, in the third row the name and birth
+date have been swapped.
+
+
+\textbf{Step 1. Reading data.} The \code{readLines} function accepts filename
+as argument and returns a \code{character} vector containing one element for
+each line in the file.  \code{readLines} detects both the end-of-line and
+carriage return characters so lines are detected regardless of whether the file
+was created under \code{DOS}, \code{UNIX} or \code{MAC} (each OS has
+traditionally had different ways of marking an end-of-line). Reading in the
+Daltons file yields the following.
 <<>>=
 (txt <- readLines("files/daltons.txt")) 
 @
@@ -210,15 +237,22 @@ of lines in the textfile.
 \textbf{Step 2. Selecting lines containing data.} This is generally done by
 throwing out lines containing comments or otherwise lines that do not contain
 any data fields. You can use \code{grep} or \code{grepl}
-to detect such lines. \code{grep} and \code{grepl} are discussed in more detail in
-section \ref{sect:appstringmatching}), but below is an example of how to remove
-lines that start with a \code{\%}-sign.
+to detect such lines. 
+
+
 <<>>=
 # detect lines starting with a percentage sign..
 I <- grepl("^%",txt)
 # and throw them out
 (dat <- txt[!I])
 @
+Here, the first argument of \code{grepl} is a search pattern, where the caret
+(\code{\^}) indicates a start-of-line. The result of \code{grepl} is a
+\code{logical} vector that indicates which elements of \code{txt} contain the
+pattern 'start-of-line' followed by a percent-sign.  The functionality of
+\code{grep} and \code{grepl} will be discussed in more detail in section
+\ref{sect:appstringmatching}. 
+
 
 \textbf{Step 3. Split lines into separate fields.} This can be done with
 \code{strsplit}. This function accepts a \code{character} vector and a \code{split}
@@ -232,63 +266,7 @@ interpreted as field separators. By default, \code{split} is interpreted as a
 regular expression (see Section \ref{sect:appstringmatching}) which means you
 need to be careful when the split argument contains any of the special characters
 listed on page \pageref{lab:regexp}. The meaning of these special characters can
-be ignored by passing \code{fixed=TRUE} as extra parameter. Compare as an example
-the following results.
-<<>>=
-strsplit("a.b",split=".")
-strsplit("a.b",split=".",fixed=TRUE)
-@
-The reason for the first result is that the period (\code{.}) is used as a
-wild card character in regular expressions.
-
-Note that str
-
-
-\textbf{Step 4. Standardize rows.} The goal of this step is to make sure that
-1) every row has the same number of fields and 2) the fields are in the right
-order. This step involves a loop over all elements of \code{fieldList}. You
-can either use a \code{for}-loop or the \code{lapply} function to treat
-all elements of a \code{list}. In the running example we need to 
-replace every vector that is shorter than the number of columns in the data file
-with a vector with the correct length. Extra fields should be set to \code{NA}.
-<<>>=
-standardFields <- list(length(fieldList))
-for ( i in 1:length(fieldList)){
-  x <- fieldList[[i]]
-  length(x) <- 3
-  standardFields[[i]] <- x
-}
-standardFields
-@
-By setting the \code{length} of each element to 3, every element with less 
-elements is concatenated with enough \code{NA}'s to reach length 3. 
-
-The above code snippet does the job, but we can do a little better than that.
-The \R{} function \code{lapply} offers a convenient way to loop over all
-elements in a list. \code{lapply} accepts as arguments a \code{list} and a
-function. The function will be fed the elements of the \code{list} one-by-one
-and the results are gathered in a \code{list} again (optionally, extra
-parameters to the function can be passed as extra named arguments). The
-function \code{sapply} does exactly the same as \code{lapply}, but it tries to
-simplify the results to a simpler structure than a list. We'll use
-\code{sapply} to get the maximum number of fields in \code{fieldList}.
-<<>>=
-nrows = max(sapply(fieldList,length))
-@
-Here, \code{sapply} applies \code{length} to each vector in \code{fieldList} and gathers
-the result in a \code{numeric} vector. \code{max} returns its largest value. We now
-use \code{lapply} to change the length of each field.
-<<tidy=FALSE>>=
-standardFields <- lapply(fieldList,
-  function(x){
-    length(x) <- nrows
-    x
-  }
-)
-standardFields
-@
-Note that here, it is not necessary to first define a \code{standardFields}
-list to assign values to.
+be ignored by passing \code{fixed=TRUE} as extra parameter. 
 %
 \begin{table}
 \begin{threeparttable}
@@ -311,18 +289,62 @@ with correctly typed columns.}
 \end{table}
 
 
+
+\textbf{Step 4. Standardize rows.} The goal of this step is to make sure that
+1) every row has the same number of fields and 2) the fields are in the right
+order. In \code{read.table}, lines that contain less fields than the maximum
+number of fields detected are appended with \code{NA}. One advantage of the
+do-it-yourself approach shown here is that we do not have to make this assumption.
+The easiest way to standardize rows is to write a function that takes a single
+\code{character} vector as input and assigns the values in the right order.
+%
+<<tidy=FALSE>>=
+assignFields <- function(x){
+  out <- character(3)
+  # get names
+  i <- grepl("[[:alpha:]]",x)
+  out[1] <- x[i]
+  # get birth date (if any)
+  i <- which(as.numeric(x) < 1890)
+  out[2] <- ifelse(length(i)>0, x[i], NA)
+  # get death date (if any)
+  i <- which(as.numeric(x) > 1890)
+  out[3] <- ifelse(length(i)>0, x[i], NA)
+  out
+}
+@
+The above function accepts a character vector and assigns three values to an
+output vector of class \code{character}. The \code{grepl} statement detects
+fields containing alphabetical values \code{a-z} or \code{A-Z}. To assign year
+of birth and year of death, we use the knowledge that all Dalton brothers were
+born before and died after 1890. To retrieve the fields for each row in the example, 
+we need to apply this function to every element of \code{fieldList}. 
+<<warning=FALSE>>=
+standardFields <- lapply(fieldList, assignFields)
+standardFields
+@
+Here, we suppressed the warnings about failed conversions that \R{} generates
+in the output.
+
+The advantage of this approach is having greater flexibility than
+\code{read.table} offers.  However, since we are interpreting the value of
+fields here, it is unavoidable to know about the contents of the dataset which
+makes it hard to generalize the field assigner function. Furthermore,
+\code{assignFields} function we wrote is still relatively fragile. That is:
+it crashes for example when the input vector contains two or more text-fields
+or when it contains  more than one numeric value larger than 1890. Again, no
+one but the data analyst is probably in a better position to choose how safe
+and general the field assigner should be.
+
+
 \begin{tip}{Tip}
-Another advantage of \code{lapply} is that it is really easy to parallelize
-list-wise operations using the \code{parallel} package. For example, on a quadcore
-computer you can do the following.
+Element-wise operations over lists are easy to parallelize with the
+\code{parallel} package that comes with the standard \R{} installation. For
+example, on a quadcore computer you can do the following.
 <<eval=FALSE,tidy=FALSE>>=
 library(parallel)
 cluster <- makeCluster(4)
-standardFields <- parLapply(cl=cluster, fieldList, 
-  function(x){
-    x
-  }
-)
+standardFields <- parLapply(cl=cluster, fieldList, assignFields)
 stopCluster(cl)
 @
 Of course, parallelization only makes sense when you have a fairly long list to process,
@@ -333,10 +355,13 @@ since there is some overhead in setting up and running the cluster.
 
 \textbf{Step 5. Transform to \code{data.frame}.}
 There are several ways to transform a list to a \code{data.frame} object.
-Here we first copy all our elements in a \code{matrix} which we'll then coerce
+Here, first all elements are copied into a \code{matrix} which is then coerced
 into a \code{data.frame}.
-<<>>=
-(M <- matrix(unlist(standardFields),nrow=nrows,byrow=TRUE))
+<<tidy=FALSE>>=
+(M <- matrix(
+  unlist(standardFields)
+  , nrow=length(standardFields)
+  , byrow=TRUE))
 colnames(M) <- c("name","birth","death")
 (daltons <- as.data.frame(M, stringsAsFactors=FALSE))
 @
@@ -360,14 +385,14 @@ daltons$birth <- as.numeric(daltons$birth)
 daltons$death <- as.numeric(daltons$death)
 daltons
 @
-Or using the underappreciated function \code{transform}:
+Or, using \code{transform}:
 <<tidy=FALSE>>=
 daltons = transform( daltons
                    , birth = as.numeric(birth)
                    , death = as.numeric(death)
                    )
 @
-This last example is a case of converting types in \R{}.
+
 
 \subsection{Type conversion}
 
@@ -383,20 +408,14 @@ coercion functions, but as a reference they are listed here.
 \end{center}
 Each of these functions takes an \R{} object and tries to convert it to the
 class specified behind the ``\code{as.}''.
-
-Note that Values that cannot be converted to the specified type will be 
-converted into a \code{NA} value.
+By default, values that cannot be converted to the specified type will be 
+converted to a \code{NA} value while a warning is issued.
 <<>>=
 as.numeric(c("7","7*","7.0","7,0"))
 @
-
-
-Converting a \code{factor} or \code{ordered} with \code{as.numeric} however is
-counterintuitive. The reason for this has to do with differences between
-\emph{classes} and \emph{types} in \R{}. For an example, see Exercise
-\ref{ex:factorconversion}. Below, we  introduce \R{}'s typing and storage
-system and explain, amongst others, the difference between \R{} \emph{types}
-and \emph{classes}. After that we discuss date conversion.
+In the remainder of this section we  introduce \R{}'s typing and storage system
+and explain the difference between \R{} \emph{types} and \emph{classes}. After
+that we discuss date conversion.
 
 \subsubsection{Introduction to \R{}'s typing system}
 Everything in \R{} is an object\cite{chambers:2008}. An object is a container
@@ -420,9 +439,9 @@ sapply(dat,class)
 \end{tip}
 
 For the user of \R{} these class labels are usually enough to handle \R{} objects
-in \R{} scripts. Under the hood, the basic \R{} objects are stored as Clang{}
-structures as Clang{} is the language in which \R{} itself has been written. The type
-of Clang{} structure that is used to store a basic type can be found with the
+in \R{} scripts. Under the hood, the basic \R{} objects are stored as \Clang{}
+structures as \Clang{} is the language in which \R{} itself has been written. The type
+of \Clang{} structure that is used to store a basic type can be found with the
 \code{typeof} function. Compare the results below with those in the previous
 code snippet.
 <<>>=
@@ -431,11 +450,17 @@ typeof(1:10)
 typeof(c(pi,exp(1)))
 typeof(factor(c("abc","def")))
 @
-Note that the \code{type} of an \R{} object of class \code{numeric} is \code{double}.
-The term \code{double} refers to \code{double precision}, which is a standard
-way for lower-level computer languages such as Clang{} to store approximations of real numbers. 
+Note that the \code{type} of an \R{} object of class \code{numeric} is
+\code{double}.  The term \code{double} refers to \code{double precision}, which
+is a standard way for lower-level computer languages such as \Clang{} to store
+approximations of real numbers.  Also, the \code{type} of an object of class
+\code{factor} is \code{integer}. The reason is that \R{} saves memory (and
+computational time!) by storing factor values as integers, while a translation
+table between factor and integers are kept in memory. Normally, a user should not
+have to worry about these subtleties, but there are exceptions. An example of this is 
+the subject of Exercise \ref{ex:factor}.
 
-Summarizing, one can regard the \emph{class} of an object the object's type from
+In short, one may regard the \emph{class} of an object the object's type from
 the user's point of view while the \emph{type} of an object is the way \R{} looks
 at the object. It is important to realize that \R{}'s coercion functions are fundamentally
 functions that change the underlying \code{type} of an object and that class changes
@@ -922,6 +947,7 @@ Type conversions.
 \end{exercise}
 
 \begin{exercise}
+\label{ex:factor}
 Type the following code in your \R{} terminal.
 <<>>=
 v <- factor(c("2","3","5","7","11"))
