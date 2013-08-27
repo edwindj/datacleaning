@@ -1,6 +1,6 @@
 \documentclass[rapport, english]{cbsreport}
 \usepackage[english]{babel}
-\usepackage{amsmath,amssymb}
+\usepackage{amsmath}
 \usepackage{threeparttable}
 \usepackage{rotating}
 \usepackage{natbib}
@@ -24,7 +24,7 @@
 \newcommand{\xmark}{$\cdot$}%
 
 % nicer bold symbols in math mode:
-\newcommand{\bs}[1]{\boldsymbol{#1}}
+\newcommand{\bs}[1]{\mathbf{#1}}
 
 
 % Footnote symbols to avoid confusion with superscript references.
