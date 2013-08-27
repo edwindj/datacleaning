@@ -461,10 +461,10 @@ have to worry about these subtleties, but there are exceptions. An example of th
 the subject of Exercise \ref{ex:factor}.
 
 In short, one may regard the \emph{class} of an object the object's type from
-the user's point of view while the \emph{type} of an object is the way \R{} looks
-at the object. It is important to realize that \R{}'s coercion functions are fundamentally
-functions that change the underlying \code{type} of an object and that class changes
-are a consequence of the type changes. 
+the user's point of view while the \emph{type} of an object is the way \R{}
+looks at the object. It is important to realize that \R{}'s coercion functions
+are fundamentally functions that change the underlying \code{type} of an object
+and that class changes are a consequence of the type changes. 
 
 Confusingly, \R{} objects also have a \emph{mode} (and \emph{storage.mode})
 which can be retrieved or set using functions of the same name. Both
@@ -473,87 +473,81 @@ only there for backwards compatibility with \R{}'s precursor language:
 \code{S}. We therefore advise the user to avoid using these functions to
 retrieve or modify an object's type. 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Recoding factors}
-Often data contains categorical or ordinal data. In \R{} these are stored in a
-\code{factor} or \code{ordered}, which is a special form of a \code{factor}.
+In \R{}, the value of categorical variables is stored in \code{factor} variables.
 
-A \code{factor} is a dressed up \code{integer} with an extra attribute \code{levels}.
-Every integer value \code{i} in a \code{factor} corresponds to \code{levels[i]}.
+A \code{factor} basically an integer vector endowed with a table specifying what integer 
+value corresponds to what \code{level}. The values in this translation table can be requested
+with the \code{levels} function.
 <<>>=
 f <- factor(c("a","b","a","a","c"))
 levels(f)
-levels(f)[f] # same as as.character(f)
 @
-
-\begin{tip}{Bad practice}
-Allthough it is very easy to manipulate the \code{levels} of a \code{factor}, it is often better and more clear
-to use \code{factor} for this functionality.
-\end{tip}
-
+The use of integers combined with a translation table is not uncommon in statistical sofware,
+so chances are that you eventually have to make such a translation by hand. For example,
+suppose we read in a vector where 1 stands for `male', 2 stands for `female' and 0 stands for unknown.
+Conversion to a factor variable can be done as in the example below. 
 <<>>=
-# dirty recoding, avoid it!
-levels(f) <- c("A","B", NA)
-f
-@
-
-Categorical data are in many data files stored as text values. If a categorical data column
-is not neatly specified, we will need \code{character} manipulation 
-(see \ref{sssect:charactermanipulation}). If you use data of others, you
-will often need to recode factors.
-
-Even when the specification is clear, we might want to recode the used factor into 
-more meaningful codes, with a specific ordering.
-Suppose in our dataset \code{gender} is encoded with \code{1} for female, \code{2} for male and \code{0} for 
-unknown. With \code{factor} this can be recoded.
-<<>>=
+# example:
 gender <- c(2,1,1,2,0,1,1)
-
-#recode
-codes <- c("2"="M", "1"="F")
-(gender <- factor(gender, levels=names(codes), labels=codes))
-@
-Note that \code{levels} and \code{labels} need to have the same order.
-
-In case we have an ordinal column, we need to specify the order the categories have.
-If we don't it will take the alphabetical order of the \code{levels}, which is in the given example
-just plain wrong.
-<<tidy=FALSE>>=
-agegroup <- c("elderly", "child", "adult", "child", "elderly")
-(agegroup <- factor( agegroup
-                   , levels=c("child", "adult", "elderly")
-                   , order=TRUE)
-                   )
-@
+# recoding table, stored in a simple vector
+recode <- c(male=1, female=2)
+(gender <- factor(gender,levels=recode, labels=names(recode)) )
+@ 
+Note that we do not explicitly need to set \code{NA} as a label.  Every integer
+value that is encountered in the first argument, but not in the \code{levels}
+argument will be regarded missing.
 
 
-In some case you may want calculate the order of the levels depending on another
-variable. This can be done with \code{reorder}:
+Levels in a factor variable have no natural ordering. However in multivariate (regression) analyses
+it can be beneficial to fix one of the levels as the reference level. \R{}'s standard multivariate
+routines (\code{lm}, \code{glm}) use the first level as reference level. The \code{relevel} function
+allows you to determine which level comes first.
+%
 <<>>=
-age <- c(72, 10, 23, 6, 67)
-agegroup <- c("elderly", "child", "adult", "child", "elderly")
-(agegroup <- reorder(agegroup, age, order=TRUE))
+(gender <- relevel(gender, ref='female'))
 @
-\code{reorder} uses the mean of the \code{age} to calculate the order. 
-
-Or you might want make one of the levels a reference level, making it the first level.
+Levels can also be reordered, depending on the mean value of another variable, for example:
 <<>>=
-(colors <- factor(c("red","green", "blue", "blue")))
-relevel(colors, ref="green")
+age <- c(27, 52, 65, 34, 89, 45, 68)
+(gender <- reorder(gender, age))
+@
+Here, the means are added as a named vector attribute to \code{gender}. It can be removed
+by setting that attribute to \code{NULL}.
+<<>>=
+attr(gender,'scores') <- NULL
+gender
 @
 
+
+%\begin{tip}{Bad practice}
+%\marginpar{Ik begrijp uit de tekst niet waarom?}
+%Although it is very easy to manipulate the \code{levels} of a \code{factor}, it is often better and more clear
+%to use \code{factor} for this functionality.
+%<<>>=
+%# dirty recoding, avoid it!
+%levels(f) <- c("A","B", NA)
+%f
+%@
+%\end{tip}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Converting dates}
-The base \R{} installation has three types of objects to store a time instance
+The base \R{} installation has three types of objects to store a time instance:
 \code{Date}, \code{POSIXlt} and \code{POSIXct}. The \code{Date} object
 can only be used to store dates, the other two store date and/or time. Here, we
-focus on converting text to \code{POSIXct} objects since this is probably the
+focus on converting text to \code{POSIXct} objects since this is the
 most portable way to store such information.
 
 Under the hood, a \code{POSIXct} object stores the number of seconds that have
-passed since January 1, 1970 \mbox{00:00}. This makes it possible to compute
-duration by simply subtracting two \code{POSIXct} objects. When a \code{POSIXct}
-object is printed, \code{R} shows it in a human-readable calender format. For example,
-the command \code{Sys.time} returns the system time provided by the operating system
-in \code{POSIXct} format.
+passed since January 1, 1970 \mbox{00:00}. Such a storage format facilitates the calculation of
+durations by subtraction of two \code{POSIXct} objects. 
+
+When a \code{POSIXct} object is printed, \code{R} shows it in a human-readable
+calender format. For example, the command \code{Sys.time} returns the system
+time provided by the operating system in \code{POSIXct} format.
 <<>>=
 current_time <- Sys.time()
 class(current_time)
@@ -563,21 +557,18 @@ Here, \code{Sys.time} uses the time zone that is stored in the \code{locale} set
 of the machine running \R{}. 
 
 Converting from a calender time to \code{POSIXct} and back is not entirely
-trivial, since there are many idiosyncrasies to handle in calender systems like
-leap days, leap seconds, daylight saving times, time zones and so on.  It is
-possible to add information on time zone to a \code{POSIXct} object when it is
-created. 
-%
-Converting from text to \code{POSIXct} is further complicated by the many
+trivial, since there are many idiosyncrasies to handle in calender systems.
+These include leap days, leap seconds, daylight saving times, time zones and so
+on.  Converting from text to \code{POSIXct} is further complicated by the many
 textual conventions of time/date denotation. For example, both \code{28
-September 1976} and \code{1976/09/28} both indicate the same day of the same
-year. Moreover, the name of the month (or weekday) is language-dependent. In
-this section we will not go into problems caused by leap days and seconds but
-we will limit ourselves to converting the textual representation of a date to a
-\code{POSIXct} object.
+September 1976} and \code{1976/09/28} indicate the same day of the same year.
+Moreover, the name of the month (or weekday) is language-dependent, where the
+language is again defined in the operating system's locale settings.
+
 
 The \code{lubridate} package\cite{grolemund:2011} contains a number of
 functions facilitating the conversion of text to \code{POSIXct} dates.
+As an example, consider the following code.
 %
 <<message=FALSE>>=
 library(lubridate)
@@ -585,7 +576,13 @@ dates <- c("15/02/2013","15 Feb  13","It happened on 15 02 '13")
 dmy(dates)
 @
 Here, the function \code{dmy} assumes that dates are denoted in the order
-day-month-year and tries to extract valid dates. There are similar functions
+day-month-year and tries to extract valid dates. Note that the code above
+will only work properly in locale settings where the name of the second month
+is abbreviated to \emph{Feb}. 
+This holds for English or Dutch locales, but fails
+for example in a French locale (\emph{F\'evrier}).
+
+There are similar functions
 for all permutations of \code{d}, \code{m} and \code{y}. Explicitly, all of the
 following functions exist.
 \begin{center}
@@ -598,11 +595,14 @@ So once it is known in what order days, months and years are denoted,
 extraction is very easy. 
 
 \begin{tip}{Note}
-Years, indicated with two numbers are always interpreted as years in the 21st century.
+It is not uncommon to indicate years with two numbers, leaving out the indication
+of century. In \R{}, 00-68 are interpreted as 2000-2068 and 69-99 as 1969-1999.
 <<>>=
-dmy("01 01 13")
+dmy("01 01 68")
+dmy("01 01 69")
 @
-\vspace{-1cm}
+This behaviour is according to the 2008 POSIX standard, but one should expect that this
+interpretation changes over time.
 \end{tip}
 
 
@@ -679,8 +679,9 @@ format(mybirth,format="I was born on %B %d, %Y")
 \subsection{\code{character} manipulation}
 \label{sssect:charactermanipulation}
 
-Character data can be notoriously hard to process. For example, consider the
-following excerpt of a data set with a \code{gender} variable.
+Because of the many ways people can write the same things down, character data
+can be difficult to process.  For example, consider the following excerpt of a
+data set with a \code{gender} variable.
 <<echo=2>>=
 data.frame(gender=c("M","male ","Female","fem."))
 @
@@ -699,22 +700,24 @@ following topics are discussed.
 \item Pad strings to a certain width.
 \item Transform to upper/lower case.
 \item Search for strings containing simple patterns (substrings).
-\item Simple approximate matching procedures based on string distances.
+\item Approximate matching procedures based on string distances.
 \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{String normalization}
 \label{sect:stringnormalisation}
 %
 String normalization techniques are aimed at transforming a variety of strings
-to a (possibly) smaller set of string values which are more easily processed.
+to a smaller set of string values which are more easily processed.
 By default, \R{} comes with extensive string manipulation functionality that is
 based on the two basic string operations: \emph{finding} a pattern in a string
-and \emph{replacing} one patterns with another. We will deal with \R{}'s
+and \emph{replacing} one pattern with another. We will deal with \R{}'s
 generic functions below but start by pointing out some common string cleaning
 operations.
   
 The \code{stringr} package\cite{wickham:2009} offers a number of functions that
-make a some string manipulation tasks a lot easier. For example, extra white
+make some some string manipulation tasks a lot easier than they would be with
+\R{}'s base functions. For example, extra white
 spaces at the beginning or end of a string can be removed using
 \code{str\_trim}.
 <<>>=
@@ -723,32 +726,32 @@ str_trim("  hello world ")
 str_trim("  hello world ",side="left")
 str_trim("  hello world ",side="right")
 @
-Conversely, strings can be padded with spaces or other characters with \code{str\_pad} to
-a certain width. For example, numerical codes are often represented with prepending zeros.
+Conversely, strings can be padded with spaces or other characters with
+\code{str\_pad} to a certain width. For example, numerical codes are often
+represented with prepending zeros.
 <<>>=
 str_pad(112,width=6,side='left', pad=0)
 @
-Both \code{str\_trim} and \code{str\_pad} accept a \code{side} argument to indicate whether
-trimming or padding should occur at the beginning (\code{left}), end (\code{right}) or both
-sides of the string. 
+Both \code{str\_trim} and \code{str\_pad} accept a \code{side} argument to
+indicate whether trimming or padding should occur at the beginning
+(\code{left}), end (\code{right}) or both sides of the string. 
 
-Converting strings to complete upper or lower case can be done with \R{}'s built-in
-\code{toupper} and \code{tolower} functions.
+Converting strings to complete upper or lower case can be done with \R{}'s
+built-in \code{toupper} and \code{tolower} functions.
 <<>>=
 toupper("Hello world")
 tolower("Hello World")
 @
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Approximate string matching}
 \label{sect:appstringmatching}
 There are two forms of string matching. The first consists of determining
 whether a (range of) substring(s) occurs within another string. In this case
 one needs to specify a range of substrings (called a \emph{pattern}) to search
 for in another string. In the second form one defines a distance metric between
-strings that measures how ``different'' two strings are.  Below we will discuss
+strings that measures how ``different'' two strings are.  Below we will give
 a short introduction to pattern matching and string distances with \R{}.
-
 
 There are several pattern matching functions that come with base \R{}. The most
 used are probably \code{grep} and \code{grepl}. Both functions take a pattern
@@ -761,7 +764,7 @@ numerical index. You may think of \code{grep(...)} as \code{which(grepl(...))}.
 %
 In the most simple case, the pattern to look for is a simple substring. For
 example, using the data of the example on page
-\pageref{sect:stringnormalisation}.
+\pageref{sect:stringnormalisation}, we get the following.
 <<>>=
 gender <- c("M","male ","Female","fem.")
 grepl('m',gender)
@@ -799,7 +802,8 @@ option \code{fixed=TRUE}.
 <<>>=
 grepl('^',gender,fixed=TRUE)
 @
-This will make \code{grepl} ignore any meta-characters in the search string.
+This will make \code{grepl} or \code{grep} ignore any meta-characters in the
+search string.
 
 Search patterns using meta-characters are called \emph{regular expressions}.
 Regular expressions offer powerful and flexible ways to search (and alter)
@@ -824,8 +828,14 @@ character\cite{levenshtein:1966}.  For example
 adist("abc","bac")
 @
 The result equals two since turning \code{"abc"} into \code{"bac"} involves two
-character substitutions. Using \code{adist}, we can compare fuzzy text strings
+character substitutions: 
+\begin{center}
+\code{abc}$\to$\code{bbc}$\to$\code{bac}.
+\end{center}
+
+Using \code{adist}, we can compare fuzzy text strings
 to a list of known codes. For example:
+\label{example:gendercode}
 <<>>=
 codes <- c('male','female')
 D <- adist(gender,codes)
@@ -846,38 +856,61 @@ data.frame(
 )
 @
 We use \code{apply} to apply \code{which.min} to every row of \code{D}. Note
-that in the case of multiple minima, the first match will be returned.
+that in the case of multiple minima, the first match will be returned. At the
+end of this subsection we show how this code can be simplified with the
+\code{stringdist} package.
 
-Finally, we mention two more functions based on string distances. First, the
+Finally, we mention three more functions based on string distances. First, the
 \R{}-built-in function \code{agrep} is similar to grep, but it allows one to
 specify a maximum Levenshtein distance between the input pattern and the found
-substring. 
+substring. The \code{agrep} function allows for searching for regular
+expression patterns, which makes it very flexible.
 
-Secondly, the functions \code{stringdist} and \code{stringdistmatrix} of the
-\code{stringdist} package\cite{loo:2013} offer an interfaces to a variety of
-string distance metrics. For example, \code{agrep} does not allow for character
-transpositions, which is quite common in typing errors. Using the \emph{optimal
-string alignment distance} (the default choice for \code{stringdist}) we get
+Secondly, \code{stringdist} package\cite{loo:2013} offers a function called
+\code{stringdist} which can compute a variety of string distance metrics, some
+of which are likely to provide results that are better than \code{adist}'s.
+Most importantly, the distance function used by \code{adist} does not allow for
+character transpositions, which is a common typographical error. Using the
+\emph{optimal string alignment distance} (the default choice for
+\code{stringdist}) we get
 <<message=FALSE>>=
 library(stringdist)
 stringdist("abc","bac")
 @
-The answer is now 1 (not 2), since the optimal string alignment distance allows
-for transpositions of adjacent characters.
+The answer is now 1 (not 2 as with \code{adist}), since the optimal string
+alignment distance allows for transpositions of adjacent characters:
+\begin{center}
+\code{abc}$\to$ \code{bac}.
+\end{center}
 
+Thirdly, the \code{stringdist} package provides a function called
+\code{amatch}, which mimics the behaviour of \R{}'s \code{match} function:
+it returns the an index to the closest match within a maximum distance.
+Recall the \code{gender} and \code{code} example of page \pageref{example:gendercode}.
+<<tidy=FALSE>>=
+# this yields the closest match of 'gender' in 'codes' (within a distance of 4)
+(i <- amatch(gender,codes,maxDist=4))
+
+# store results in a data.frame
+data.frame(
+  rawtext = gender
+  , code = codes[i]
+  )
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Character encoding issues}
 \label{sect:encoding}
 A \emph{character encoding system} is a system that defines how to translate
 each character of a given alphabet into a computer byte or sequence of
 bytes\footnote{In fact, the definition can be more general, for example to
-include Morse code. However for this tutorial it is sufficient to limit
-ourselves to computerized character encodings.}. For example, \code{ASCII} is
-an encoding system that prescribes how to translate 127 characters into single
-bytes (where the first bit of each byte is necessarily 0). The \code{ASCII} characters
-include the upper and lower case letters of the Latin alphabet (\code{a-z},
-\code{A-Z}), Arabic numbers (\code{0}-\code{9}), a number of punctuation
-characters and a number of invisible so-called control characters such as
-newline and carriage return. 
+include Morse code. However, we limit ourselves to computerized character
+encodings.}. For example, \code{ASCII} is an encoding system that prescribes
+how to translate 127 characters into single bytes (where the first bit of each
+byte is necessarily 0). The \code{ASCII} characters include the upper and lower
+case letters of the Latin alphabet (\code{a-z}, \code{A-Z}), Arabic numbers
+(\code{0}-\code{9}), a number of punctuation characters and a number of
+invisible so-called control characters such as newline and carriage return. 
 
 
 Although it is widely used, \code{ASCII} is obviously incapable of encoding
@@ -887,9 +920,17 @@ For this reason, a number of character encoding systems have been developed
 that extend \code{ASCII} or replace it all together. Some well-known schemes
 include \code{UTF-8} and \code{latin1}. The character encoding scheme that is
 used by default by your operating system is defined in your \code{locale}
-settings. Most Unix-alikes use \code{UTF-8} by default while \code{Windows}
-often uses (a \code{Windows}-specific variant of) \code{latin1}. The
-\code{UTF-8} encoding standard is also widely used on the web.
+settings. Most Unix-alikes use \code{UTF-8} by default while older
+\code{Windows} applications, including the \code{Windows} version of \code{R}
+use \code{Windows-1252} (a superset of \code{latin1}). The \code{UTF-8}
+encoding standard is widely used to encode web pages: according to a frequently
+repeated survey of \code{w3techs}\cite{w3techs:2013}, about 75\% of the 10
+million most visited web pages are encoded in \code{utf-8}. You can find out
+the characer encoding of your system by typing
+<<eval=FALSE>>=
+Sys.getlocale("LC_CTYPE")
+@
+at the \R{} commandline.
 
 For \R{} to be able to correctly read in a textfile, it must understand which
 character encoding scheme was used to store it. By default, \R{} assumes that a
