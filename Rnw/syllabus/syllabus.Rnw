@@ -1,10 +1,16 @@
 \documentclass[rapport, english]{cbsreport}
 \usepackage[english]{babel}
-\usepackage{amsmath,amssymb}
+\usepackage{amsmath}
 \usepackage{threeparttable}
 \usepackage{rotating}
 \usepackage{natbib}
-\usepackage{hyperref}
+\usepackage[ % geen kaders, linkkleuren zwart.
+  colorlinks=true
+  , linkcolor = black
+  , citecolor = black
+  , filecolor = black
+  , urlcolor  = black
+]{hyperref}
 \bibliographystyle{plain}
 \bibpunct{}{}{,}{s}{}{}
 
@@ -18,7 +24,7 @@
 \newcommand{\xmark}{$\cdot$}%
 
 % nicer bold symbols in math mode:
-\newcommand{\bs}[1]{\boldsymbol{#1}}
+\newcommand{\bs}[1]{\mathbf{#1}}
 
 
 % Footnote symbols to avoid confusion with superscript references.
@@ -132,7 +138,9 @@ This tutorial is aimed at users who have some \R{} programming experience.  That
 expect the reader to be familiar with concepts like variable assignment,
 \code{vector}, \code{list}, and \code{data.frame}; writing simple loops, and
 perhaps writing simple functions. More complicated constructs, when used, will
-be explained in the text. All code examples in this tutorial can be executed,
+be explained in the text. We have adopted the following conventions in this text.
+
+\textbf{Code.} All code examples in this tutorial can be executed,
 unless otherwise indicated. Code examples are shown in gray boxes, like this:
 <<>>=
 1 + 1
@@ -140,20 +148,28 @@ unless otherwise indicated. Code examples are shown in gray boxes, like this:
 where output is preceded by a double hash sign \code{\#\#}. 
 When we use inline code or function names, these are typeset
 in \code{fixed width} font, just like the code in gray boxes.
-Occasionally we have tips, best practices, or other remarks that
-are relevant but not part of the main text. These are
-shown in separate paragraphs as follows.
+
+\textbf{Tips.} Occasionally we have tips, best practices, or other remarks that
+are relevant but not part of the main text. These are shown in separate
+paragraphs as follows.
 \begin{tip}{Tip}
 To become an \R{} master, you must practice every day.
 \end{tip}
 
+\textbf{Filenames} As is usual in \code{R}, we use the forward slash (\code{/}) as
+file name separator. Under windows, one may replace each forward slash with a double
+backslash \code{$\backslash\backslash$}.
+
+
 In some of the scripts shown in this tutorial, small data files will be 
 read. You can find these files at \url{http://tinyurl.com/mblhtsg}.
 
+
+
+
 Finally, this document was written for the \textit{useR!2013} conference.
 We'd like to thank the organizers for providing us with the opportunity for
-giving this tutorial. We are happy to receive comments and suggestions of
-readers.
+giving this tutorial. 
 
 \hfill {EdJ and MvdL}
 
