@@ -13,14 +13,15 @@ conclusions, and supporting decision making.
 \end{quote}
 
 Most text books on statistics focus on modeling data and using these data 
-in prediction or inferencing. They assume the data is in the correct state.
-In practice a data analyst spends most of his time on preparing the data for
-statistical analysis.  It is very rare that data are in the correct format, are
+in prediction or inferencing. They assume the data is in the correct state for 
+data analysis.
+In practice a data analyst spends most of his time on preparing the data before
+doing any statistical operation.  It is very rare that data are in the correct format, are
 without errors, are complete and have all the correct labels and codes that 
 are needed for analysis. Data Cleaning is the process of transforming raw data
 into consistent data that can be analyzed.
 
-Data cleaning may sound as selectively manipulating your data, which is
+Data cleaning may sound as manipulating your data, which is
 considered bad scientific practice.  However not cleaning your data makes
 statistical analysis impossible. Incomplete and incorrect cleaning can 
 heavily bias the results of your analysis.  

@@ -11,16 +11,19 @@
 \label{sect:inputtomicro}
 
 \emph{Consistent data} is \emph{technically correct data} that is fit for
-statistical analysis. This means that it should not contain obvious errors,
+statistical analysis. 
+This means that it should not contain obvious errors,
 have special values such as \code{Inf} or \code{NaN}, that obstruct statistical
-analysis. Also, suspicious values like outliers should be identified, so they
+analysis. Also, suspicious values such as outliers should be identified, so they
 can either be removed, replaced with better values, or treated appropriately in
 the subsequent statistical analysis.
 
 With obvious errors, we mean that data violates expectations based on
 knowledge of the subject matter that the data describes. For example, a
-person's age cannot be negative, or a person under say, 18 years, can not have
+person's age cannot be negative, or a person of 10 years old can not have
 a drivers license. 
+
+\subsection{Consistent data in R}
 
 In practice, simply throwing out the records which violate one or more rules is
 undesirable since it may introduce estimation bias or even leave you with to
