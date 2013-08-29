@@ -77,7 +77,7 @@
             rounded corners,
             text width=2.3cm,
             font=\scriptsize\bf\sf,
-            node distance=2cm,
+            node distance=1.5cm,
             align=center]
   \tikzstyle{arr}=[->,thick,>=stealth',color=black]
   \tikzstyle{action}=[right, font=\scriptsize\sf]
@@ -113,7 +113,7 @@ library(editrules)
 \begin{abstract}
 More often than not, data analyses consists for a large part of data cleaning
 to make the actual statistical analyses possible. These introductory lecture
-notes cover a range of techniques, implementend in the \R{} statistical
+notes cover a range of techniques, implemented in the \R{} statistical
 environment, allowing the reader to read raw (textual) data into \R{} and
 prepare it for statistical analyses.  The process of data analyses is viewed as
 a value chain where data cleaning involves the first two steps: first,
@@ -123,7 +123,7 @@ can be analysed with ease.
 
 
 These lecture notes are based on a tutorial given by the authors at the
-\emph{useR!2013} concerence in Albacete, Spain.  
+\emph{useR!2013} conference in Albacete, Spain.  
 \end{abstract}
 
 

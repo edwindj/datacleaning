@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-\subsection{Data analysis}
+%\subsection{Data analysis}
 
 \begin{quote}
 Analysis of data is a process of inspecting, cleaning, transforming, and
@@ -12,45 +12,34 @@ conclusions, and supporting decision making.
 \end{flushright}
 \end{quote}
 
-Most text books on statistics focus on modeling data and using these data 
-in prediction or inferencing. They assume the data is in the correct state for 
-data analysis.
-In practice a data analyst spends most of his time on preparing the data before
-doing any statistical operation.  It is very rare that data are in the correct format, are
-without errors, are complete and have all the correct labels and codes that 
-are needed for analysis. Data Cleaning is the process of transforming raw data
-into consistent data that can be analyzed.
+Most statistical theory focuses on data modeling, prediction and
+statistical inference while it is usually assumed that data is in the correct
+state for data analysis. In practice, a data analyst spends much if not most of
+his time on preparing the data before doing any statistical operation.  It is
+very rare that the raw data one works with are in the correct format, are
+without errors, are complete and have all the correct labels and codes that are
+needed for analysis. Data Cleaning is the process of transforming raw data into
+consistent data that can be analyzed. It is aimed at improving the content of 
+statistical statements based on the data as well as their reliability.
 
-Data cleaning may sound as manipulating your data, which is
-considered bad scientific practice.  However not cleaning your data makes
-statistical analysis impossible. Incomplete and incorrect cleaning can 
-heavily bias the results of your analysis.  
-Data cleaning should therefore be seen as a statistical operation that
-interprets raw data, removes known and obvious deficiencies and 
-makes them technically correct
-and consistent such that they are ready for further statistical analysis.
+Data cleaning may profoundly influence the statistical statements
+based on the data. Typical actions like imputation or outlier handling
+obviously influence the results of a statistical analyses. For this reason,
+data cleaning should be considered a statistical operation, to be performed in
+a reproducible manner. The \R{} statistical environment provides a good 
+environment for reproducible data cleaning since all cleaning actions can be
+scripted and therefore reproduced.
 
-It is tempting and common practice to do manual data cleaning. 
-However being a statistical operation data cleaning methods should be scripted, 
-documented and reproducible: 
-When applied
-on the same raw data, the result should be the same. Scripting has the advantage
-that when new raw data is available that exactly the same data cleaning steps
-can be performed, making the analysis of old and new data comparable.
 
-\R{} provides the right environment for data cleaning. Since \R{} is a
-programming language all data cleaning steps can be executed in a scripted, 
-reproducible and documented manner.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
-\subsection{Statistical analysis in 5 steps}
-In this paper we describe a typical statistical analysis as the result of a
-number of data processing steps where each step increases the ``value'' of the
-data. Figure \ref{fig:steps} shows an overview of a typical data analysis
-project. Here, each rectangle represents a certain          
-arrows represent the activities needed to get from one state to the other.
 
+\subsection{Statistical analysis in 5 steps}
+In this tutorial a statistical analysis is viewed as the result of a
+number of data processing steps where each step increases the ``value'' of the
+data. 
+
+%
 \begin{wrapfigure}{l}{0.5\textwidth}
 \begin{center}
   \begin{tikzpicture}
@@ -73,12 +62,15 @@ arrows represent the activities needed to get from one state to the other.
               (raw.west);
   \end{tikzpicture}
 \end{center}
-\caption{Steps involved in a typical statistical analysis. With \textsl{data cleaning}
-we understand all the activities necessary to get data in an analyzable format.}
+\caption{Statistical analysis value chain}
 \label{fig:steps}
 \end{wrapfigure}
-The first state (\textsl{Raw data}) is the data as it comes in. Often raw data
-files contain no or faulty headers, wrong data types (\textsl{e.g.} numbers
+%
+Figure \ref{fig:steps} shows an overview of a typical data analysis
+project. Each rectangle represents data in a certain state while each          
+arrow represents the activities needed to get from one state to the other.
+The first state (\textsl{Raw data}) is the data as it comes in. Raw data
+files may lack headers, contain wrong data types (\textsl{e.g.} numbers
 stored as strings), wrong category labels, unknown or unexpected character
 encoding and so on. In short, reading such files into an \R{}
 \code{data.frame}  directly is either difficult or impossible without some sort
@@ -88,37 +80,34 @@ Once this preprocessing has taken place, data can be deemed \textsl{Technically
 correct}.  That is, in this state data can be read into an \R{}
 \code{data.frame}, with correct names, types and labels, without further
 trouble. However, that does not mean that the values are error-free or complete.
-For
-example, an \emph{age} variable may be reported negative, an under-aged person
+For example, an \emph{age} variable may be reported negative, an under-aged person
 may be registered to possess a driver's license, or  data may simply be missing.
 Such inconsistencies obviously depend on the subject matter that the data
 pertains to, and they should be ironed out before valid statistical inference
 from such data can be produced.
 
-\textsl{Consistent data} is the stage where data is ready for
- statistical inference. It is the data that many statistics text
-books use as a starting point. So ideally, this can be done without taking
-previous data cleaning steps into account. 
-However, data cleaning methods like imputation of missing values will 
-influence statistical inference based on the consistent data.
+\textsl{Consistent data} is the stage where data is ready for statistical
+inference. It is the data that most statistical theories use as a starting
+point. Ideally, such theories can still be applied done without taking previous
+data cleaning steps into account. In practice however, data cleaning methods
+like imputation of missing values will influence statistical results and so
+must be accounted for in the following analyses or interpretation thereof.
 
-Once your \textsl{Statistical results} are produced you can store them for
+Once \textsl{Statistical results} have been produced they can be stored for
 reuse and finally, results can be \textsl{Formatted} to include in statistical
 reports or publications.
 
-\begin{tip}{Tip}
-Store the input data for each stage (raw, technically correct,
-consistent, aggregated and formatted) separately.  Each step
-between the stages should be performed by a separate \code{R} script. This makes your
-data analysis project reproducible.
+\begin{tip}{Best practice}
+Store the input data for each stage (raw, technically correct, consistent,
+aggregated and formatted) separately for reuse.  Each step between the stages
+may be performed by a separate \code{R} script for reproducibility.
 \end{tip}
 
 Summarizing, a statistical analyses can be separated in five stages, from raw
 data to formatted output, where the quality of the data improves in every step
-towards the final result. Data cleaning is related to the first two stages in a
-statistical analysis, and in Sections \ref{sect:rawtoinput} and
-\ref{sect:inputtomicro} we will define more clearly which quality aspect are improved
-in which stage, and we show how to do this with \R{}.
+towards the final result. Data cleaning is encompasses two of the five stages
+in a statistical analysis, which again emphasizes its importance in statistical
+practice.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,7 +124,7 @@ If you had to choose to be proficient in just one \R{}-skill, it should be
 indexing. By indexing we mean all the methods and tricks in \R{} that allow you
 to select and manipulate data using \code{logical}, \code{integer} or named
 indices. Since indexing skills are important for data cleaning, we quickly
-review \code{vectors}, \code{data.frames} and things you can do with indices below.
+review \code{vectors}, \code{data.frames} and indexing techniques.
 
 The most basic variable in \R{} is a \code{vector}. An \R{} vector is a
 sequence of ordered values of the same type. All basic operations in \R{} act
@@ -183,9 +172,8 @@ Obviously the second version is much more suggestive of its meaning.
 The names of a vector need not be unique, but in most applications
 you'll want unique names (if any).
 
-Elements of a vector can be selected or replaced using the square bracket operators
-\code{[ ]} (more precisely, the \code{`[`} operator, but we'll skip technical
-details).  The square brackets accept either a vector of names, index numbers,
+Elements of a vector can be selected or replaced using the square bracket operator
+\code{[ ]}.  The square brackets accept either a vector of names, index numbers,
 or a logical.  In the case of a logical, the index is recycled if it is shorter
 than the indexed vector. In the case of numerical indices, negative indices
 omit, in stead of select elements. Negative and positive indices are not 
@@ -212,11 +200,11 @@ x[c(TRUE,FALSE)] <- 1
 every other value of \code{x} is replaced with \code{1}.
 
 A \code{list} is a generalization of a vector in that it can contain objects of
-different types, even other lists. There are two ways to index a \code{list}.
+different types, including other lists. There are two ways to index a \code{list}.
 The single bracket operator always returns a \code{sublist} of the indexed
 \code{list}.  That is, the resulting type is again a \code{list}. The
 \code{double bracket} operator (\code{[[ ]]}) may only result in a single
-\code{list} item, and it returns the object in the list itself. Besides
+item, and it returns the object in the list itself. Besides
 indexing, the dollar operator \code{\$} can be used to retrieve a single
 element. To understand the above, check the results of the following
 statements.
@@ -258,8 +246,7 @@ d[2, ]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Special values}
 \label{sect:specval}
-Like almost
-every other programming language, \R{} has a number of Special values that are
+Like most programming languages, \R{} has a number of Special values that are
 exceptions to the normal values of a type. These are \code{NA}, \code{NULL},
 \code{$\pm$Inf} and \code{NaN}. Below, we quickly illustrate the meaning and
 differences between them.
@@ -281,7 +268,7 @@ TRUE | NA
 @
 The function \code{is.na} can be used to detect \code{NA}'s.
 
-\item[\code{NULL}] You may think \code{NULL} as the empty set from
+\item[\code{NULL}] You may think of \code{NULL} as the empty set from
 mathematics.  \code{NULL} is special since it has no \code{class} (its class
 is \code{NULL}) and has length 0 so it does not take up any space in a vector.
 In particular, if you understand \code{NULL}, the result of the following
