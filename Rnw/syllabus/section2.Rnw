@@ -922,12 +922,20 @@ include \code{UTF-8} and \code{latin1}. The character encoding scheme that is
 used by default by your operating system is defined in your \code{locale}
 settings. Most Unix-alikes use \code{UTF-8} by default while older
 \code{Windows} applications, including the \code{Windows} version of \code{R}
-use \code{Windows-1252} (a superset of \code{latin1}). The \code{UTF-8}
-encoding standard is widely used to encode web pages: according to a frequently
-repeated survey of \code{w3techs}\cite{w3techs:2013}, about 75\% of the 10
-million most visited web pages are encoded in \code{utf-8}. You can find out
-the characer encoding of your system by typing
-<<eval=FALSE>>=
+use \code{latin1}. The \code{UTF-8} encoding standard is widely used to encode
+web pages: according to a frequently repeated survey of
+\code{w3techs}\cite{w3techs:2013}, about 75\% of the 10 million most visited
+web pages are encoded in \code{UTF-8}. 
+
+You can find out the characer encoding of your system by typing (not
+copy-pasting!) a non-\code{ASCII} character and ask for the encoding scheme,
+like so.
+<<eval=TRUE>>=
+Encoding("Queensrÿche")
+@
+If the answer is \code{"unkown"}, this means that the local native encoding
+is used. The default encoding used by your OS can be reqested by typing
+<<>>=
 Sys.getlocale("LC_CTYPE")
 @
 at the \R{} commandline.
@@ -936,12 +944,12 @@ For \R{} to be able to correctly read in a textfile, it must understand which
 character encoding scheme was used to store it. By default, \R{} assumes that a
 textfile is stored in the encoding scheme defined by the operating system's
 \code{locale} setting.  This may fail when the file was not generated on the
-same computer that \R{} is running on but was obtained from the web, for
+same computer that \R{} is running on but was obtained from the web for
 example.  To make things worse, it is impossible to determine automatically
-with certainty from a file what encoding scheme has been used. This means that
-you may run into situations where you have to tell \R{} literally in which
+with certainty from a file what encoding scheme has been used (although for some encodings it is possible). 
+This means that you may run into situations where you have to tell \R{} literally in which
 encoding a file has been stored. Once a file has been read into \R{}, a
-character vector will internally be stored in either \code{UTF-8} or
+character vector will internally be translated to either \code{UTF-8} or
 \code{latin1}. 
 
 The \code{fileEncoding} argument of \code{read.table} and its relatives tells
@@ -960,10 +968,15 @@ file encoding must be specified when the file is opened, before calling
 %
 %
 When reading the file, \R{} will not translate the encoding to \code{UTF-8} or
-\code{latin1} by itself, but instead relies on libraries offered by the
-operating system.  \R{}'s \code{iconv} function forms an interface to the
-OS-specific character encoding conversion libraries. With \code{iconvlist()}
-you can check what encodings can be translated by your operating system.
+\code{latin1} by itself, but instead relies on an external \code{iconv}
+library. Depending on the operating system, \R{} either uses the conversion
+sevice offered by the OS, or uses a third-party library included with \R{}.
+\R{}'s \code{iconv} function allows users to translate character
+representations, because of the OS-dependencies just mentioned, not all
+translations will be possible on all operating systems. With \code{iconvlist()}
+you can check what encodings can be translated by your operating system. The
+only encoding systems that is guaranteed to be available on all platforms are
+\code{UTF-8} and \code{latin1}.
 
 \newpage
 \subsection*{Exercises}
