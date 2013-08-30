@@ -4,8 +4,6 @@
 % - rule checking, summarizing, plotting
 % - soft rules and outlier detection
 % - deterministic corrections with deducorrect
-% - 
-%
 
 \section{From technically correct data to consistent data}
 \label{sect:inputtomicro}
@@ -61,33 +59,33 @@ is recorded in the code.
 
 \code{NA} obstructs many statistical functions in \R{}. 
 <<>>=
-age <- c(23, 16, Inf, NA)
-income <- c(2000, 2500, 1000, NaN)
+age <- c(23, 16, NA)
 
 # Not a useful output...
-c(mu_income=mean(income), mu_age=mean(age))
+mean(age)
 
-# error!
-coef(lm(income ~ age))
+mean(age, na.rm=TRUE)
 @
 With the parameter \code{na.rm=TRUE} most functions in R can remove the 
-missing values.
+missing values, but this is cumbersome in analysis.
 
-Observations containing \code{NA} can be
-detected and removed easily in \R{} with the functions \code{complete.cases}.
+Which observations are complete can be
+detected in \R{} with the function \code{complete.cases}.
 This function returns a \code{logical} indicating which do not contain \code{NA}
-values. Using this result the complete rows can be selected from the 
-\code{data.frame}.  
-\R{} also contains the \code{na.omit} function,
-which does exactly that.
+values.  
 <<>>=
 print(person) 
 complete.cases(person)
-na.omit(person)
 @
-The result of the \code{na.omit} function is a \code{data.frame} with the 
-incomplete rows
-removed, but also contains the names of the removed rows in the attribute 
+Using this result the incomplete rows can be removed from the \code{data.frame}.
+In fact \R{} contains the \code{na.omit} function,
+which does exactly that.
+<<>>=
+(persons_complete <- na.omit(person))
+na.action(persons_complete)
+@
+The result of the \code{na.omit} function is a \code{data.frame} without 
+incomplete rows, but also contains the names of the removed rows in the attribute 
 \code{na.action}.
 
 \subsubsection{Special values}
@@ -264,6 +262,7 @@ a larger set of rules they can be detected.
 <<cache=FALSE,echo=FALSE>>=
 E <- editfile("edits.txt")
 read_chunk('edits.txt')
+#print(E)
 @
 <<rules, eval=FALSE>>=
 @
@@ -271,11 +270,12 @@ read_chunk('edits.txt')
 The result of \code{violatedEdits} shows which rows are invalid according to
 what rules. Note that if a multivariate rule is violated, it is not clear which
 variable is erroneous. For example in record 2 and 5 \code{child} and 
-\code{married} are in conflict. Which one is correct?\footnote{Based on the 
+\code{married} are in conflict. Which values are correct?\footnote{Based on the 
 other values of the record, this can be determined using error localization.}
 <<width=7>>=
-(ve <- violatedEdits(E, person))
+(ve <- violatedEdits(E, person[c(2,5),]))
 @
+\code{violatedEdits} shows that both violate rule \code{cat5}, but also other rules.
 It is also possible to do some statistics on the violated edits. For large
 datasets this can be very revealing: it may show problems in the collection of
 the data. It may also show that some rules are never violated.  The result of
@@ -322,12 +322,13 @@ number of variables so that it complies to the rules specified. The function in
 \code{editrules} that does this, is called \code{localizeErrors}.  It takes a
 set of rules and a \code{data.frame} and returns the found solutions.
 <<>>=
-person[2,]
-le <- localizeErrors(E, person[2,])
-le$status
+id <- c(2,5)
+person[id,]
+le <- localizeErrors(E, person[id,])
 le$adapt
 @
-
+Note that although both records have conflicting values \code{child} and \code{married}
+the solution is different (Why?).
 \code{\$adapt} is a \code{logical} that signifies which variables are considered
 erroneous. It can be used in the correction and imputation procedures for filling in valid
 values. \code{localizeErrors} can be tuned with various options. It is possible

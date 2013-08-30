@@ -12,5 +12,6 @@ if ( status == "married" ) agegroup %in% c("adult","elderly")
 
 # mixed rules
 if ( status %in% c("married","widowed")) age - yearsmarried >= 17
-if ( age <= 18 ) agegroup == "child"
+if ( age < 18 ) agegroup == "child"
+if ( age >= 18 && age <65 ) agegroup == "adult"
 if ( age >= 65 ) agegroup == "elderly"
