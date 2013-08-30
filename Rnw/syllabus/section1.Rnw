@@ -132,8 +132,8 @@ on vectors (think of the element-wise arithmetic, for example). The basic types
 in \R{} are as follows.
 \begin{center}
 \begin{tabular}{ll}
-  \code{numeric} & Numeric data (approximations of the real numbers, $\mathbb{R}$)\\
-  \code{integer} & Integer data (whole numbers, $\mathbb{Z}$)\\
+  \code{numeric} & Numeric data (approximations of the real numbers, $\bs{R}$)\\
+  \code{integer} & Integer data (whole numbers, $\bs{Z}$)\\
   \code{factor}  & Categorical data (simple classifications, like \emph{gender})\\
   \code{ordered} & Ordinal data (ordered classifications, like \emph{educational level})\\
   \code{character} & Character data (strings)\\

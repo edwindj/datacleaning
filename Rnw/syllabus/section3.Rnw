@@ -10,20 +10,31 @@
 \section{From technically correct data to consistent data}
 \label{sect:inputtomicro}
 
-\emph{Consistent data} is \emph{technically correct data} that is fit for
-statistical analysis. 
-This means that it should not contain obvious errors,
-have special values such as \code{Inf} or \code{NaN}, that obstruct statistical
-analysis. Also, suspicious values such as outliers should be identified, so they
-can either be removed, replaced with better values, or treated appropriately in
-the subsequent statistical analysis.
+\emph{Consistent data} are \emph{technically correct data} that are fit for
+statistical analysis. They are data in which missing values, 
+special values, (obvious) errors and outliers are either removed, corrected 
+or imputed.
 
-With obvious errors, we mean that data violates expectations based on
-knowledge of the subject matter that the data describes. For example, a
-person's age cannot be negative, or a person of 10 years old can not have
-a drivers license. 
+Missing and special values obstruct most statistical methods, e.g. regression 
+with incomplete data is cumbersome. Obvious errors and outliers heavily bias 
+the outcome of most statistical estimates. Note that robust estimates are a 
+form of datacleaning: they typically ignore outliers.
 
-\subsection{Consistent data in R}
+The process towards consistent data involves the following steps:
+\begin{itemize}
+  \item Detection: find observations with missing values, 
+  special values, outliers and obvious errors.
+  \item Correction: change or remove values based on knowledge of 
+  the observation.
+  \item Imputation: fill in missing values based on knowledge of other 
+  observations or data.
+\end{itemize}
+
+Below, we first describe detection techniques that will allow you to find
+records and fields in records containing erroneous values. After that we go
+into correction techniques that can repair obvious errors based
+on formalized or heuristic knowledge. We end with an overview of imputation
+techniques, that can generate plausible values for partially missing data.
 
 In practice, simply throwing out the records which violate one or more rules is
 undesirable since it may introduce estimation bias or even leave you with to
@@ -31,19 +42,12 @@ few data to reliably analyse statistically.  Moreover, in many cases an invalid
 or incomplete observations can be corrected or imputed by leveraging auxiliary
 information either within the same data set or from other sources. 
 
-Below, we first describe detection techniques that will allow you to find
-records and fields in records containing erroneous values. After that we go
-into deterministic correction techniques that can repair obvious errors based
-on formalized or heuristic knowledge. We end with an overview of imputation
-techniques, that can generate plausible values for partially missing data.
-
 \subsection{Detection}
 Detecting that something is wrong is the first step in data cleaning.  Below we
 outline several methods for detecting suspicious or erroneous in either
 individual variables or in combinations thereof.
 
-
-\subsubsection{Detecting extraordinary values}
+\subsubsection{Missing and special values}
 %<<echo=FALSE>>=
 %person <- transform(person, height=as.numeric(as.character(height)))
 %@
@@ -108,7 +112,6 @@ by Hawkins\cite{hawkins:1980}), this definition is sufficient for the current
 tutorial. Below we mention a few fairly common graphical and computational
 techniques for outlier detection in univariate numerical data.
 
-\subsubsection{Univariate outliers}
 For more or less unimodal and symmetrically distributed data, 
 Tukey's box-and-whisker
 method\cite{tukey:1977} for outlier detection is often appropriate. In this
@@ -147,7 +150,7 @@ are represented at the ends of the box-and-whisker plots and outliers are
 indicated with as separate points above or below the whiskers.
 
 The box-and-whisker method fails when data are distributed skewly, as in an
-exponential or lognormal distribution for example. In that case one can either
+exponential or log-normal distribution for example. In that case one can either
 transform the data for example with a logarithm, or square root transformation.
 Another option is to use method that takes the skewness into account. A
 particularly easy-to-implement example is the method of Hiridoglou and
@@ -174,8 +177,12 @@ hboutlier <- function(x,r){
 The above function returns a \code{logical} vector indicating which elements of 
 $x$ are outliers.
 
+\subsubsection{Errors}
+With obvious errors are data that violate expectations based on
+knowledge of the subject matter that the data describes. For example, a
+person's age cannot be negative, or a person of 10 years old can not have
+a drivers license. Rules ...
 
-\subsection{Checking record-wise rules with the \code{editrules} package.} 
 With \R{} you can write scripts that do error detection, by writing code that 
 checks each hard rule. However if you have many rules this soon gives many problems
 Rules may interact, so the rules should be not seen as separate rules, but as a
@@ -204,7 +211,7 @@ person <- read.csv("files/person.txt")
 @
 
 <<echo=FALSE,results="asis">>=
-xtable(person, caption="Person data, with lots of errors")
+xtable(person, caption="Person data, each observation contains at least one error.")
 @
 
 Lets first start with a small example with restrictions on age.
@@ -252,7 +259,7 @@ a dependency graph as follows (See Figure 3).
 <<echo=FALSE>>=
 captxt = paste(
 "A graph plot, showing the interconnection of restrictions.",
-"Blue circles represent varaibles and yellow boxes represent restrictions.",
+"Blue circles represent variables and yellow boxes represent restrictions.",
 "The lines indicate which restrictions pertain to what variables."
 )
 set.seed(1)
@@ -393,7 +400,6 @@ correctionRules(expression(x <- mean(x)))
 Finally, it is currently not possible to add new variables using correctionrules
 although such a feature will likely be added in the future.
 
-
 \subsubsection{Correction of cases where the cause of error can be deduced}
 When the data you are analyzing is generated by people rather than machines or
 measurement devices, certain typical human-generated errors are likely to
@@ -439,7 +445,6 @@ cor$corrected
 cor$corrections
 @
 Indeed, swapping the $3$ and the $2$ in $y=132$ solves the edit violation.
-
 
 \begin{tip}{Tip}
 Every \code{correct-} function in \code{deducorrect} is an object of class
@@ -919,7 +924,6 @@ Correcting
   \item Replace all erronous values with \code{NA} using (the result of) \code{localizeErrors}
 \end{subex}
 \end{exercise}
-\begin{exercise}
 \label{ex:seqimpute}
 Imputing
 \begin{subex}
