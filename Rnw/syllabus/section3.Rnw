@@ -865,7 +865,7 @@ the above code and experiment further.
 
 
 
-\subsection{Minimal value adjustment}
+\subsubsection{Minimal value adjustment}
 \label{sect:rspa}
 Once missing numerical values have been adequately imputed, there is a good
 chance that the resulting records violate a number of edit rules.  The obvious
