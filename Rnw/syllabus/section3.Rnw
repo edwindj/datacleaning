@@ -20,15 +20,20 @@ with incomplete data is cumbersome. Obvious errors and outliers heavily bias
 the outcome of most statistical estimates. Note that robust estimates are a 
 form of datacleaning: they typically ignore outliers.
 
-The process towards consistent data involves the following steps:
-\begin{itemize}
-  \item Detection: find observations with missing values, 
-  special values, outliers and obvious errors.
-  \item Correction: change or remove values based on knowledge of 
-  the observation.
-  \item Imputation: fill in missing values based on knowledge of other 
-  observations or data.
-\end{itemize}
+The process towards consistent data involves the following steps.
+In  {\emph Detection} observations with missing values, special values, outliers
+and obvious errors are identified. In {\emph Correction} values are changed or 
+removed based on knowledge of 
+  the observation. {\emph Imputation} fills the remaning missing values based on 
+  knowledge of other observations or data.
+  
+A naive approach towards consistency is to stop after Detection and throw out all
+problematic observations. However this strategy has severe problems. 
+Firstly, throwing out partially missing observations also removes the available data 
+for those observations. In surveys the partially missing observations are often 
+the most interesting and different ones and throwing them out introduces an 
+observation bias. Secondly many data sets have few complete observations. 
+Removing incomplete data results in very few data to be analyzed reliabily. 
 
 Below, we first describe detection techniques that will allow you to find
 records and fields in records containing erroneous values. After that we go
@@ -36,37 +41,45 @@ into correction techniques that can repair obvious errors based
 on formalized or heuristic knowledge. We end with an overview of imputation
 techniques, that can generate plausible values for partially missing data.
 
-In practice, simply throwing out the records which violate one or more rules is
-undesirable since it may introduce estimation bias or even leave you with to
-few data to reliably analyse statistically.  Moreover, in many cases an invalid
-or incomplete observations can be corrected or imputed by leveraging auxiliary
-information either within the same data set or from other sources. 
-
 \subsection{Detection}
 Detecting that something is wrong is the first step in data cleaning.  Below we
-outline several methods for detecting suspicious or erroneous in either
-individual variables or in combinations thereof.
+outline several methods for detecting missing values, special values, outliers 
+and obvious errors in either individual variables or in combinations thereof.
 
-\subsubsection{Missing and special values}
+\subsubsection{Missing values}
 %<<echo=FALSE>>=
 %person <- transform(person, height=as.numeric(as.character(height)))
 %@
-
-\R{} contains several functions to deal with special values. We have 
-encountered several of them in section \ref{sect:specval}.
+A missing value in an observation is either empty or unknown. 
+In \R{} missing values are coded as \code{NA} and interpreted as unknown.
  
 \begin{tip}{Tip}
-It is important not to confuse empty values with a specific value. For example,
-if an empty value in a numerical column is to be interpreted as $0$, you should
-explicitly impute zeros so this interpretation is at least recorded in the
-code. 
+Note that observed data with \code{NA} not always means ``unknown''. It some 
+cases an empty value means $0$. This typical when using survey data or forms.
+In that case you should explicitly impute zeros so this interpretation 
+is recorded in the code. 
 \end{tip}
 
-Often, data will contain empty values. Rows (cases) containing \code{NA} can be
-detected and removed easily in \R{}, with the functions \code{complete.cases}
-which returns a \code{logical} indicating which rows contain no \code{NA}
-values. By indexing, this may be used to select the complete rows from a
-\code{data.frame}.  However, \R{} also contains the \code{na.omit} function,
+\code{NA} obstructs many statistical functions in \R{}. 
+<<>>=
+age <- c(23, 16, Inf, NA)
+income <- c(2000, 2500, 1000, NaN)
+
+# Not a useful output...
+c(mu_income=mean(income), mu_age=mean(age))
+
+# error!
+coef(lm(income ~ age))
+@
+With the parameter \code{na.rm=TRUE} most functions in R can remove the 
+missing values.
+
+Observations containing \code{NA} can be
+detected and removed easily in \R{} with the functions \code{complete.cases}.
+This function returns a \code{logical} indicating which do not contain \code{NA}
+values. Using this result the complete rows can be selected from the 
+\code{data.frame}.  
+\R{} also contains the \code{na.omit} function,
 which does exactly that.
 <<>>=
 print(person) 
@@ -78,17 +91,23 @@ incomplete rows
 removed, but also contains the names of the removed rows in the attribute 
 \code{na.action}.
 
+\subsubsection{Special values}
 Numeric columns can have more formalized special values: \code{Inf}, \code{-Inf},
-\code{NA} and \code{NaN}. Checking for these values together can be done with 
-\code{is.finite}.
+\code{NA} and \code{NaN}. (see section \ref{sect:specval})
 
-For example:
+Calculations involving special values result special values. For analysis special
+values should be removed.
+
+\R{} contains several functions to deal with special 
+values. We have encountered several of them in section \ref{sect:specval}.
+Checking for these values together can be done with 
+\code{is.finite}.
 <<>>=
 is.finite(c(1, Inf, NaN, NA))
 @
-\code{is.finite} works on a vector. We can write a utility 
-function \code{is.special} that checks a column for the
-(non)occurrence of special values
+\code{is.finite} works on a vector. Using a utility 
+function \code{is.special} a column of a \code{data.frame} can be checked for the
+occurrence of special values
 
 <<tidy=FALSE>>=
 is.special <- function(x){
@@ -98,8 +117,8 @@ person
 sapply(person, is.special)
 @
 %
-The result of \code{is.special} shows which data have special values. Observe
-that the \code{height} column is still stored as a \code{character} vector here
+Observe that the \code{height} column is still stored as a \code{character} 
+vector here
 (not \code{numeric}), so only the \code{NA} is detected.
 
 \subsubsection{Outliers}
@@ -111,6 +130,10 @@ that set of data}. Although more precise definitions exist (see e.g. the book
 by Hawkins\cite{hawkins:1980}), this definition is sufficient for the current
 tutorial. Below we mention a few fairly common graphical and computational
 techniques for outlier detection in univariate numerical data.
+
+Outliers heavily influence the outcome of estimates. Note that outliers do not 
+equal errors. Outliers should be detected, but not necessarily removed. Their 
+inclusion in the analysis is a statistical decision.
 
 For more or less unimodal and symmetrically distributed data, 
 Tukey's box-and-whisker
@@ -177,11 +200,27 @@ hboutlier <- function(x,r){
 The above function returns a \code{logical} vector indicating which elements of 
 $x$ are outliers.
 
-\subsubsection{Errors}
-With obvious errors are data that violate expectations based on
-knowledge of the subject matter that the data describes. For example, a
-person's age cannot be negative, or a person of 10 years old can not have
-a drivers license. Rules ...
+\subsubsection{Obvious errors}
+An obvious error is a value or combinations of values that cannot be true, based
+on prior knowledge of the subject domain. For example, a
+person's age cannot be negative, a man cannot be pregnant and a child can not have
+a drivers license.
+
+This knowledge can be expressed in rules or constraints. Data editing 
+literature calls them edits. A rule that must be obeyed by a record, is a 
+{\em hard rule}.
+If not it is a {\em soft rule}. Soft rules may indicate suspicious data
+Often data is dirty: it violates hard rules.
+  So first:
+  \begin{itemize}
+    \item Check which records violate hard rules.
+    \item Find out which values are the cause.
+    \item Replace this value with \code{NA}, so it can be corrected or imputed.
+  \end{itemize}
+  
+  
+Rule checking can be done straight in \R{}, but for a set of rules this is problematic.
+Rules interact and it may be difficult to find the causing value(s).
 
 With \R{} you can write scripts that do error detection, by writing code that 
 checks each hard rule. However if you have many rules this soon gives many problems
