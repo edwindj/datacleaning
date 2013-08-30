@@ -966,6 +966,7 @@ Correcting
   \item Replace all erronous values with \code{NA} using (the result of) \code{localizeErrors}
 \end{subex}
 \end{exercise}
+\begin{exercise}
 \label{ex:seqimpute}
 Imputing
 \begin{subex}
