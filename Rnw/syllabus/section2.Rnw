@@ -10,7 +10,7 @@ each attribute value is stored in a data type that is suitable to describe the
 value domain of the attribute and that the type is constant over units.  In
 short: for each unit, a text variable should be stored as text, numeric
 variables as numbers, and so on, and all this in a format that is consistent
-accross the data set.
+across the data set.
 
 
 \subsection{Technically correct data in \R{}}
@@ -143,9 +143,9 @@ prepending an \code{X}.
 
 If \code{colClasses} is not specified by the user, \code{read.table} will try
 to determine the column types. Although this may seem convenient, it is
-noticably slower for larger files (say, larger than a few MB) and it may yield
+noticeably slower for larger files (say, larger than a few MB) and it may yield
 unexpected results. For example, in the above script, one of the rows contains
-a misformed numerical variable (\code{5.9*}), causing \R{} to interpret the
+a malformed numerical variable (\code{5.9*}), causing \R{} to interpret the
 whole column as a text variable. Moreover, by default text variables are
 converted to \code{factor}, so we are now stuck with a \emph{height} variable
 expressed as levels in a categorical variable:
@@ -160,7 +160,7 @@ read.csv("files/unnamed.txt",
   header=FALSE,
   colClasses=c('numeric','numeric'))
 @
-This behaviour is desirable if you need to be strict about how data is offered
+This behavior is desirable if you need to be strict about how data is offered
 to your \R{} script. However, unless you are prepared to write \code{tryCatch}
 constructions, a script containing the above code will stop executing
 completely when an error is encountered.
@@ -376,7 +376,7 @@ Finally, we add column names and coerce the matrix to a \code{data.frame}. We us
 
 This step consists of preparing the \code{character} columns of our \code{data.frame}
 for coercion and translating numbers into \code{numeric} vectors and possibly
-\code{character} vectors to \code{factor} variables. String normalisation is
+\code{character} vectors to \code{factor} variables. String normalization is
 the subject of section \ref{sect:stringnormalisation} and type conversion is
 discussed in some more detail in the next section. However, in our example
 we can suffice with the following statements.
@@ -484,7 +484,7 @@ with the \code{levels} function.
 f <- factor(c("a","b","a","a","c"))
 levels(f)
 @
-The use of integers combined with a translation table is not uncommon in statistical sofware,
+The use of integers combined with a translation table is not uncommon in statistical software,
 so chances are that you eventually have to make such a translation by hand. For example,
 suppose we read in a vector where 1 stands for `male', 2 stands for `female' and 0 stands for unknown.
 Conversion to a factor variable can be done as in the example below. 
@@ -601,7 +601,7 @@ of century. In \R{}, 00-68 are interpreted as 2000-2068 and 69-99 as 1969-1999.
 dmy("01 01 68")
 dmy("01 01 69")
 @
-This behaviour is according to the 2008 POSIX standard, but one should expect that this
+This behavior is according to the 2008 POSIX standard, but one should expect that this
 interpretation changes over time.
 \end{tip}
 
@@ -642,7 +642,7 @@ text depend on the locale settings of the machine that is running \R{}. For exam
 on a PC running under a Dutch locale, ``\code{maandag}'' will be recognized as the
 first day of the week while in English locales ``\code{Monday}'' will be recognized. If
 the machine running \R{} has multiple locales installed you may add the argument
-\code{locale} to one of the \code{dmy}-like functions. In \code{linux}-alike systems
+\code{locale} to one of the \code{dmy}-like functions. In \code{Linux}-alike systems
 you can use the command \code{locale -a} in \code{bash} terminal to see the list of
 installed locales. In \code{Windows} you can find available locale settings under
 ``language and regional settings'', under the configuration screen.
@@ -884,7 +884,7 @@ alignment distance allows for transpositions of adjacent characters:
 \end{center}
 
 Thirdly, the \code{stringdist} package provides a function called
-\code{amatch}, which mimics the behaviour of \R{}'s \code{match} function:
+\code{amatch}, which mimics the behavior of \R{}'s \code{match} function:
 it returns the an index to the closest match within a maximum distance.
 Recall the \code{gender} and \code{code} example of page \pageref{example:gendercode}.
 <<tidy=FALSE>>=
@@ -927,18 +927,18 @@ web pages: according to a frequently repeated survey of
 \code{w3techs}\cite{w3techs:2013}, about 75\% of the 10 million most visited
 web pages are encoded in \code{UTF-8}. 
 
-You can find out the characer encoding of your system by typing (not
+You can find out the character encoding of your system by typing (not
 copy-pasting!) a non-\code{ASCII} character and ask for the encoding scheme,
 like so.
 <<eval=TRUE>>=
 Encoding("Queensrÿche")
 @
-If the answer is \code{"unkown"}, this means that the local native encoding
-is used. The default encoding used by your OS can be reqested by typing
+If the answer is \code{"unknown"}, this means that the local native encoding
+is used. The default encoding used by your OS can be requested by typing
 <<>>=
 Sys.getlocale("LC_CTYPE")
 @
-at the \R{} commandline.
+at the \R{} command-line.
 
 For \R{} to be able to correctly read in a textfile, it must understand which
 character encoding scheme was used to store it. By default, \R{} assumes that a
@@ -970,7 +970,7 @@ file encoding must be specified when the file is opened, before calling
 When reading the file, \R{} will not translate the encoding to \code{UTF-8} or
 \code{latin1} by itself, but instead relies on an external \code{iconv}
 library. Depending on the operating system, \R{} either uses the conversion
-sevice offered by the OS, or uses a third-party library included with \R{}.
+service offered by the OS, or uses a third-party library included with \R{}.
 \R{}'s \code{iconv} function allows users to translate character
 representations, because of the OS-dependencies just mentioned, not all
 translations will be possible on all operating systems. With \code{iconvlist()}
@@ -987,7 +987,7 @@ only encoding systems that is guaranteed to be available on all platforms are
 Type conversions.
 
   \begin{subex}
-    \item Load the buildtin \code{warpbreaks} data set .
+    \item Load the built in \code{warpbreaks} data set .
           Find out, in a single command, which columns of \code{warpbreaks} are either \code{numeric} or \code{integer}.
     \item Is \code{numeric} a natural data type for the columns which are stored as such? Convert to integer when necessary.
           (See also \code{?warpbreaks} for an explanation of the data).
