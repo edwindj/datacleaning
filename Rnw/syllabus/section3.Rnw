@@ -17,14 +17,14 @@ or imputed.
 
 Missing and special values obstruct most statistical methods, e.g. regression 
 with incomplete data is cumbersome. Obvious errors and outliers heavily bias 
-the outcome of most statistical estimates. Note that robust estimates are a 
-form of datacleaning: they typically ignore outliers.
+the outcome of most statistical estimates. Note that robust estimates can be 
+seen as  a form of datacleaning: they typically remove outliers.
 
 The process towards consistent data involves the following steps.
-In  {\emph Detection} observations with missing values, special values, outliers
-and obvious errors are identified. In {\emph Correction} values are changed or 
+In  \emph{Detection} observations with missing values, special values, outliers
+and obvious errors are identified. In \emph{Correction} values are changed or 
 removed based on knowledge of 
-  the observation. {\emph Imputation} fills the remaning missing values based on 
+  the observation. \emph{Imputation} fills the remaining missing values based on 
   knowledge of other observations or data.
   
 A naive approach towards consistency is to stop after Detection and throw out all
@@ -33,7 +33,7 @@ Firstly, throwing out partially missing observations also removes the available 
 for those observations. In surveys the partially missing observations are often 
 the most interesting and different ones and throwing them out introduces an 
 observation bias. Secondly many data sets have few complete observations. 
-Removing incomplete data results in very few data to be analyzed reliabily. 
+Removing incomplete data results in very few data to be analyzed reliably. 
 
 Below, we first describe detection techniques that will allow you to find
 records and fields in records containing erroneous values. After that we go
@@ -42,8 +42,7 @@ on formalized or heuristic knowledge. We end with an overview of imputation
 techniques, that can generate plausible values for partially missing data.
 
 \subsection{Detection}
-Detecting that something is wrong is the first step in data cleaning.  Below we
-outline several methods for detecting missing values, special values, outliers 
+Below contains an outline of several methods for detecting missing values, special values, outliers 
 and obvious errors in either individual variables or in combinations thereof.
 
 \subsubsection{Missing values}
@@ -93,13 +92,14 @@ removed, but also contains the names of the removed rows in the attribute
 
 \subsubsection{Special values}
 Numeric columns can have more formalized special values: \code{Inf}, \code{-Inf},
-\code{NA} and \code{NaN}. (see section \ref{sect:specval})
+\code{NA} and \code{NaN} (see section \ref{sect:specval}).
 
-Calculations involving special values result special values. For analysis special
-values should be removed.
+Calculations involving special values result in special values, thereby 
+obstructing statistical operations. Before analysis special values must 
+be removed. 
 
 \R{} contains several functions to deal with special 
-values. We have encountered several of them in section \ref{sect:specval}.
+values (e.g. section \ref{sect:specval}).
 Checking for these values together can be done with 
 \code{is.finite}.
 <<>>=
@@ -131,9 +131,11 @@ by Hawkins\cite{hawkins:1980}), this definition is sufficient for the current
 tutorial. Below we mention a few fairly common graphical and computational
 techniques for outlier detection in univariate numerical data.
 
-Outliers heavily influence the outcome of estimates. Note that outliers do not 
-equal errors. Outliers should be detected, but not necessarily removed. Their 
-inclusion in the analysis is a statistical decision.
+Outliers heavily influence the outcome of estimates. 
+\begin{tip}{Note}
+Outliers do not equal errors. They should be detected, but not necessarily 
+removed. Their inclusion in the analysis is a statistical decision.
+\end{tip}
 
 For more or less unimodal and symmetrically distributed data, 
 Tukey's box-and-whisker
@@ -158,7 +160,7 @@ limit (so for the same dataset, generally less upper or lower outliers will be d
 boxplot.stats(x,coef=2)$out
 @
 %
-\begin{wrapfigure}{l}{0.5\textwidth}
+\begin{wrapfigure}{r}{0.5\textwidth}
 \begin{center}
 <<>>=
 boxplot(x)
@@ -203,30 +205,21 @@ $x$ are outliers.
 \subsubsection{Obvious errors}
 An obvious error is a value or combinations of values that cannot be true, based
 on prior knowledge of the subject domain. For example, a
-person's age cannot be negative, a man cannot be pregnant and a child can not have
+person's age cannot be negative, a man cannot be pregnant and a child cannot have
 a drivers license.
 
-This knowledge can be expressed in rules or constraints. Data editing 
-literature calls them edits. A rule that must be obeyed by a record, is a 
-{\em hard rule}.
-If not it is a {\em soft rule}. Soft rules may indicate suspicious data
-Often data is dirty: it violates hard rules.
-  So first:
-  \begin{itemize}
-    \item Check which records violate hard rules.
-    \item Find out which values are the cause.
-    \item Replace this value with \code{NA}, so it can be corrected or imputed.
-  \end{itemize}
+This knowledge can be expressed in \emph{rules} or constraints. In data editing 
+literature they are called \emph{edits}. A rule that must be obeyed by a record, is a 
+{\em hard rule}. A rule that should be obeyed by a record, is a 
+{\em soft rule}. Soft rules may indicate suspicious data.
+Often data violates hard rules. In that is the case the following step is to 
+find out which values are the cause. This is called error localization.
   
-  
-Rule checking can be done straight in \R{}, but for a set of rules this is problematic.
-Rules interact and it may be difficult to find the causing value(s).
-
-With \R{} you can write scripts that do error detection, by writing code that 
-checks each hard rule. However if you have many rules this soon gives many problems
-Rules may interact, so the rules should be not seen as separate rules, but as a
-set of connected rules. Furthermore your \R{} code quickly obscures the rules you 
-try to implement. It would be easier and more clear to define a rule set that all
+Rule implementation can be done straight in \R{}, but for a set of rules this is
+problematic. Rules may interact and should be not seen as separate, 
+but as a set of connected rules. Furthermore \R{} code quickly 
+obscures the rules one tries to implement. 
+It would be easier and more clear to define a rule set that all
 records must obey, and to check if a record obeys the rules.
 
 The \code{editrules} package allows one to define rules on categorical,
@@ -236,7 +229,7 @@ for manipulating the rule set, for example checking if the set of rules is
 consistent or not. We will briefly discuss the features of \code{editrules}, it
 has many options and functions, but these are not needed in this introduction.
 
-The rules you specify in \code{editrules} are valid \R{} syntax. They can 
+The rules one needs to specify in \code{editrules} are valid \R{} syntax. They can 
 be specified in a \code{character} vector directly with \code{editset} or stored 
 separately in a text file and read in with \code{editfile}. 
 The last option makes it a lot easier to maintain a large set of rules.
@@ -257,14 +250,16 @@ Lets first start with a small example with restrictions on age.
 <<>>=
 (E <- editset(c("age >=0", "age <= 150")))
 @
-The data can be checked with \code{violatedEdits}. Record 4 contains an error.
+The data can be checked with \code{violatedEdits}. Record 4 contains an error 
+according to the rule specified: an \code{age} of \code{221} is not allowed. 
+
 <<>>=
 violatedEdits(E, person)[4,]
 @
 \code{violatedEdits} shows for each row of the data, which rule (edit) is violated.
 
-As can be seen from the table, the dataset contains lots of more errors, lets
-find some more using a more complex set of rules 
+As can be seen from the table, the dataset contains more errors. Using 
+a larger set of rules they can be detected.
 
 <<cache=FALSE,echo=FALSE>>=
 E <- editfile("edits.txt")
@@ -275,21 +270,27 @@ read_chunk('edits.txt')
 
 The result of \code{violatedEdits} shows which rows are invalid according to
 what rules. Note that if a multivariate rule is violated, it is not clear which
-variable is erroneous.
+variable is erroneous. For example in record 2 and 5 \code{child} and 
+\code{married} are in conflict. Which one is correct?\footnote{Based on the 
+other values of the record, this can be determined using error localization.}
 <<width=7>>=
 (ve <- violatedEdits(E, person))
 @
 It is also possible to do some statistics on the violated edits. For large
-dataset this can be very revealing: it may show problems in the collection of
+datasets this can be very revealing: it may show problems in the collection of
 the data. It may also show that some rules are never violated.  The result of
-violatedEdits can be plotted.
+\code{violatedEdits} can be plotted.
 %
+\begin{wrapfigure}{r}{0.5\textwidth}
+\begin{center}
 <<>>=
 plot(ve)
 @
-i%
+\end{center}
+\end{wrapfigure}
+
 \code{editrules} makes it easy to specify rules that data must obey. It allows 
-for easy checking if observations/cases/rows contain valid data or not.
+for easy checking if observations contain valid data or not.
 
 Restrictions pertaining to multiple variables introduce dependencies between
 those variables. Also, variables that occur in more than one restriction form a
@@ -303,20 +304,20 @@ captxt = paste(
 )
 set.seed(1)
 @
-<<width=7, fig.cap=captxt>>=
+<<width=3.5, fig.cap=captxt>>=
 plot(E)
 @
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Error localization}
 \label{sect:errloc}
-When using \code{is.finite}, \code{special} and univariate rules, it is clear
-what values are invalid. However in case that there are many restrictions, this
-may not be clear. e.g. if an observation has the variables \code{age},
+For missing values, special values and univariate rules it is clear what values
+are invalid. However for multiple multivariate rules, this is in general not  
+clear. In the example of the previous section the variables \code{age},
 \code{agegroup}, \code{status}, \code{yearsmarried} are all connected.
 \code{editrules} can localize values that need to be adjusted. It takes the
-Fellegi-Holt~\cite{Fellegi1976} principle which says: change the values of a minimal (weighted)
+Fellegi-Holt~\cite{Fellegi1976} principle which says: change the values 
+of a minimal (weighted)
 number of variables so that it complies to the rules specified. The function in
 \code{editrules} that does this, is called \code{localizeErrors}.  It takes a
 set of rules and a \code{data.frame} and returns the found solutions.
@@ -337,25 +338,27 @@ solver, which is typically very fast. For more information see the reference man
 of \code{editrules}.
 
 \subsection{Correction}
-\subsubsection{Deterministic and deductive methods}
+Correction fixes an inconsistent observation by using the available data
+of the observation. If correction is not possible the incorrect values are 
+removed so they can be imputed.
+
 In some cases, the cause of errors in data can be determined with enough
 certainty so that the solution is almost automatically known. In recent years,
 several such methods have been developed and implemented in the
 \code{deducorrect} package\cite{loo:2011}. In this section we give a quick
 overview of the possibilities of \code{deducorrect}. 
 
-To follow the examples load the deducorrect package.
-<<result=FALSE>>=
+<<echo=FALSE, result=FALSE>>=
 library(deducorrect)
 @
 
-\subsubsection{Automated correction using deterministic rules}
+\subsubsection{Automated ad hoc correction}
 Data cleaning often involves applying a lot of \emph{ad-hoc} transformations
 and derivations of new variables. This may lead to large scripts, where
-you select parts of the data, change some variables, select another part,
-change some more variables, etc. When such scripts are neatly written and
+one selects parts of the data, changes some variables, selects another part,
+changes some more variables, etc. When such scripts are neatly written and
 commented, they can almost be treated as a log of the actions performed
-by the analyst. However, as scripts get longer it is nicer to 
+by the analyst. However, as scripts get longer it is better to 
 store the transformation rules separately and log which rule is executed
 on what record. The \code{deducorrect} package offers functionality for 
 this. Consider as an example the following (fictitious) dataset listing
@@ -439,7 +442,7 @@ correctionRules(expression(x <- mean(x)))
 Finally, it is currently not possible to add new variables using correctionrules
 although such a feature will likely be added in the future.
 
-\subsubsection{Correction of cases where the cause of error can be deduced}
+\subsubsection{Deductive correction}
 When the data you are analyzing is generated by people rather than machines or
 measurement devices, certain typical human-generated errors are likely to
 occur. Given that data has to obey certain edit rules, the occurrence of such
@@ -494,10 +497,10 @@ and so on. See \code{?"deducorrect-object"} for a full explanation.
 \end{tip}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Deterministic imputation methods}
+\subsubsection{Deterministic imputation}
 
-Under some circumstances, the rules that your data have to obey are
-so restrictive that there's just a single solution for a missing value.
+In some cases a missing value can be determined because an observation and its 
+hard rules generate a single solution. 
 As an example, consider a record with variables listing the costs
 for \emph{staff} \emph{cleaning}, \emph{housing} and the total \emph{total}.
 We have the following rules.
@@ -558,12 +561,12 @@ Here, \code{deduImpute} uses automated logic to derive from the conditional
 rules that if someone has a drivers license, he has to be an adult.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Model-based imputation}
+\subsection{Imputation}
 \label{sect:mbimputation}
-When deterministic or deductive corrections and imputations are not sufficient
-to replace missing values, one may either correct for the missing data using
-advances weight models or by estimating the actual missing values using
-statistical models. There is a vast body of literature on imputation methods
+If after correction observations contain missing values, they have to be 
+imputed with plausible values. Filling in missing data can be done using
+advanced weight models or statistical estimation.
+There is a vast body of literature on imputation methods
 and is goes beyond the scope of this tutorial to discuss them all. In stead, we
 present in Table \ref{tab:imputation} an overview of packages that offer some
 kind of imputation method and list them against a number of popular model-based
