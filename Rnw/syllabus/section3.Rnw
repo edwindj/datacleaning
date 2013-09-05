@@ -9,104 +9,143 @@
 \label{sect:inputtomicro}
 
 \emph{Consistent data} are \emph{technically correct data} that are fit for
-statistical analysis. They are data in which missing values, 
-special values, (obvious) errors and outliers are either removed, corrected 
-or imputed.
+statistical analysis. They are data in which missing values, special values,
+(obvious) errors and outliers are either removed, corrected or imputed. The
+data are consistent with expectations based on real-world knowledge about the
+subject that the data describe. 
 
-Missing and special values obstruct most statistical methods, e.g. regression 
-with incomplete data is cumbersome. Obvious errors and outliers heavily bias 
-the outcome of most statistical estimates. Note that robust estimates can be 
-seen as  a form of datacleaning: they typically remove outliers.
+Consistency can be understood to include \emph{in-record} consistency, meaning
+that no contradictory information is stored in a single record, and
+\emph{cross-record} consistency, meaning that statistical summaries of
+different variables do not conflict with each other. Finally, one can include
+cross-dataset consistency, meaning that the dataset that is currently analyzed
+is consistent with other datasets pertaining to the same subject matter. In
+this tutorial we mainly focus on methods dealing with in-record consistency,
+with the exception of outlier handling which can be considered a cross-record
+consistency issue.
 
-The process towards consistent data involves the following steps.
-In  \emph{Detection} observations with missing values, special values, outliers
-and obvious errors are identified. In \emph{Correction} values are changed or 
-removed based on knowledge of 
-  the observation. \emph{Imputation} fills the remaining missing values based on 
-  knowledge of other observations or data.
-  
-A naive approach towards consistency is to stop after Detection and throw out all
-problematic observations. However this strategy has severe problems. 
-Firstly, throwing out partially missing observations also removes the available data 
-for those observations. In surveys the partially missing observations are often 
-the most interesting and different ones and throwing them out introduces an 
-observation bias. Secondly many data sets have few complete observations. 
-Removing incomplete data results in very few data to be analyzed reliably. 
+The process towards consistent data involves always involves the following 
+three steps.
+\begin{enumerate}
+\item \emph{Detection} of an inconsistency. That is, one establishes which
+expectations are violated. For example, one may expect a positive value for an
+\emph{age} variable.
+\item \emph{Selection} of the field or fields causing the inconsistency. This
+is trivial in the case of a univariate demand as in the previous step, but may
+be more cumbersome when cross-variable relations are expected to hold. For
+example, one may expect that persons under a certain age, the \emph{marital
+status} is \emph{unmarried}. In the case of a violation it is not immediately
+obvious whether \emph{age}, \emph{marital status} or both are wrong.
+\item \emph{Correction} of the fields that are deemed erroneous by the
+selection method.  This may be done through deterministic, deductive, or
+model-based methods.
+\end{enumerate}
+%
+For many data correction methods these steps are not necessarily neatly
+separated. For example, in the deductive correction methods described in
+subsection \ref{sect:deductivecorrection} below, the three steps are performed
+with a single mathematical operation. Nevertheless, it is useful to be able to
+recognize these substeps in order to make clear what assumptions are made
+during the data cleaning process. 
 
-Below, we first describe detection techniques that will allow you to find
-records and fields in records containing erroneous values. After that we go
-into correction techniques that can repair obvious errors based
-on formalized or heuristic knowledge. We end with an overview of imputation
-techniques, that can generate plausible values for partially missing data.
+In the following subsection (\ref{sect:detectandlocalize}) we introduce a
+number of techniques dedicated to the detection of errors and the selection of
+erroneous fields. If the field selection procedure is performed separately from
+the error detection procedure, it is generally referred to as \emph{error
+localization}. The latter is described in subsection \ref{sect:errloc}.
+Subsection  \ref{sect:correction} describes techniques that implement
+deterministic or deductive correction methods. In these techniques, erroneous
+values are replaced by better ones by directly deriving them from other values
+in the same record. Finally, subsection \ref{sect:mbimputation} gives an overview of some
+commonly used imputation techniques that are available in \R{}.
 
-\subsection{Detection}
-Below contains an outline of several methods for detecting missing values, special values, outliers 
-and obvious errors in either individual variables or in combinations thereof.
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Detection and localization of errors}
+\label{sect:detectandlocalize}
+This section details a number of techniques to detect univariate and
+multivariate constraint violations. Special attention is paid tot the error
+localization problem in subsection \ref{sect:errloc}.
 
 \subsubsection{Missing values}
-%<<echo=FALSE>>=
-%person <- transform(person, height=as.numeric(as.character(height)))
-%@
-A missing value in an observation is either empty or unknown. 
-In \R{} missing values are coded as \code{NA} and interpreted as unknown.
- 
-\begin{tip}{Tip}
-Note that observed data with \code{NA} not always means ``unknown''. It some 
-cases an empty value means $0$. This typical when using survey data or forms.
-In that case you should explicitly impute zeros so this interpretation 
-is recorded in the code. 
-\end{tip}
+A missing value, represented by \code{NA} in \R{}, is a placeholder for a datum
+of which the type is known but its value isn't. Therefore, it is impossible to
+perform statistical analyses on data where one or more values in the data are
+missing. One may choose to either omit elements from a dataset that contain
+missing values or to impute a value, but missingness is something to be dealt
+with prior to any analyses.
 
-\code{NA} obstructs many statistical functions in \R{}. 
+In practice, analysts, but also commonly used numerical software may confuse a
+missing value with a default value or category. For instance, in \code{Excel
+2010}, the result of adding the contents of a field containing the number 1
+with an empty field results in 1. This behaviour is most definitely unwanted
+since \code{Excel} silently imputes `0' where it should have said something
+along the lines of `unable to compute'. It should be up to the analyst to
+decide how empty values are handled, since a default imputation may yield
+unexpected or erroneous results for reasons that are hard to trace. Another
+commonly encountered mistake is to confuse an \code{NA} in categorical data
+with the category \emph{unknown}. If \emph{unknown} is indeed a category, it
+should be added as a \code{factor} level so it can be appropriately analyzed.
+Consider as an example a categorical variable representing  \emph{place of
+birth}. Here, the category \emph{unknown} means that we have no knowledge about
+where a person is born. In contrast, \code{NA} indicates that we have no
+information to determine whether the birth place is known or not.
+
+
+The behaviour of \R{}'s core functionality is completely consistent with the
+idea that the analyst must decide what to do with missing data. A common choice,
+namely `leave out records with missing data' is supported by many base functions
+through the \code{na.rm} option.
 <<>>=
 age <- c(23, 16, NA)
-
-# Not a useful output...
 mean(age)
-
 mean(age, na.rm=TRUE)
 @
-With the parameter \code{na.rm=TRUE} most functions in R can remove the 
-missing values, but this is cumbersome in analysis.
+Functions such as \code{sum}, \code{prod}, \code{quantile}, \code{sd} and so on all
+have this option. Functions implementing bivariate statistics such as \code{cor}
+and \code{cov} offer options to include complete or pairwise complete values.
 
-Which observations are complete can be
-detected in \R{} with the function \code{complete.cases}.
-This function returns a \code{logical} indicating which do not contain \code{NA}
-values.  
+Besides the \code{is.na} function, that was already mentioned in section
+\ref{sect:specval}, \R{} comes with a few other functions facilitating
+\code{NA} handling.  The \code{complete.cases} function detects rows in a
+\code{data.frame} that do not contain \code{any} missing value. Recall the
+\code{person} data set example from page \pageref{pp:person}.
 <<>>=
 print(person) 
 complete.cases(person)
 @
-Using this result the incomplete rows can be removed from the \code{data.frame}.
-In fact \R{} contains the \code{na.omit} function,
-which does exactly that.
+The resulting \code{logical} be used to remove incomplete records from the
+\code{data.frame}.  Alternatively the \code{na.omit} function, does the same.
 <<>>=
 (persons_complete <- na.omit(person))
 na.action(persons_complete)
 @
-The result of the \code{na.omit} function is a \code{data.frame} without 
-incomplete rows, but also contains the names of the removed rows in the attribute 
-\code{na.action}.
+The result of the \code{na.omit} function is a \code{data.frame} where
+incomplete rows have been deleted. The \code{row.names} of the removed
+records are stored in an attribute called \code{na.action}.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Special values}
-Numeric columns can have more formalized special values: \code{Inf}, \code{-Inf},
-\code{NA} and \code{NaN} (see section \ref{sect:specval}).
+As explained in section \ref{sect:specval}, numeric variables are endowed with
+several formalized special values including $\pm$\code{Inf}, \code{NA} and
+\code{NaN}. Calculations involving special values often result in special
+values, and since a statistical statement about a real-world phenomenon
+should never include a special value, it is desirable to handle special
+values prior to analyses.
 
-Calculations involving special values result in special values, thereby 
-obstructing statistical operations. Before analysis special values must 
-be removed. 
-
-\R{} contains several functions to deal with special 
-values (e.g. section \ref{sect:specval}).
-Checking for these values together can be done with 
-\code{is.finite}.
+For numeric variables, special values indicate values that are not an element
+of the mathematical set of real numbers ($\mathbb{R}$). The function \code{is.finite}
+determines which values are `regular' values.
 <<>>=
 is.finite(c(1, Inf, NaN, NA))
 @
-\code{is.finite} works on a vector. Using a utility 
-function \code{is.special} a column of a \code{data.frame} can be checked for the
-occurrence of special values
-
+This function accepts vectorial input. With little effort we can write a function
+that may be used to check every numerical column in a data.frame/
+%
 <<tidy=FALSE>>=
 is.special <- function(x){
   if (is.numeric(x)) !is.finite(x) else is.na(x)
@@ -114,11 +153,11 @@ is.special <- function(x){
 person
 sapply(person, is.special)
 @
-%
-Observe that the \code{height} column is still stored as a \code{character} 
-vector here
-(not \code{numeric}), so only the \code{NA} is detected.
+Here, the \code{is.special} function is applied to each column of \code{person}
+using \code{sapply}. \code{is.special} checks its input vector for numerical
+special values if the type is numeric, otherwise it only checks for \code{NA}.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Outliers}
 There is a vast body of literature on outlier detection, and several
 definitions of \emph{outlier} exist. A general definition by Barnett and
@@ -129,19 +168,18 @@ by Hawkins\cite{hawkins:1980}), this definition is sufficient for the current
 tutorial. Below we mention a few fairly common graphical and computational
 techniques for outlier detection in univariate numerical data.
 
-Outliers heavily influence the outcome of estimates. 
 \begin{tip}{Note}
 Outliers do not equal errors. They should be detected, but not necessarily 
 removed. Their inclusion in the analysis is a statistical decision.
 \end{tip}
 
-For more or less unimodal and symmetrically distributed data, 
-Tukey's box-and-whisker
-method\cite{tukey:1977} for outlier detection is often appropriate. In this
-method, an observation is an outlier when it is larger than the so-called
-``whiskers'' of the set of observations.  The upper whisker is computed by
-adding 1.5 times the interquartile range to the third quartile and rounding to
-the nearest lower observation.  The lower whisker is computed likewise.
+For more or less unimodal and symmetrically distributed data, Tukey's
+box-and-whisker method\cite{tukey:1977} for outlier detection is often
+appropriate. In this method, an observation is an outlier when it is larger
+than the so-called ``whiskers'' of the set of observations.  The upper whisker
+is computed by adding 1.5 times the interquartile range to the third quartile
+and rounding to the nearest lower observation.  The lower whisker is computed
+likewise.
 
 The base \R{}, installation comes with function \code{boxplot.stats},
 which, amongst other things, list the outliers.
@@ -157,13 +195,17 @@ limit (so for the same dataset, generally less upper or lower outliers will be d
 <<>>=
 boxplot.stats(x,coef=2)$out
 @
-%
-\begin{wrapfigure}{r}{0.5\textwidth}
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+\vspace{-1cm}
 \begin{center}
-<<>>=
-boxplot(x)
+<<echo=FALSE>>=
+par(mar=c(0.1,3,0.1,0.1),oma=c(0,0,0,0))
 @
-\caption{A box-and-whisker plot.}
+<<echo=FALSE>>=
+boxplot(x,cex=2,cex.axis=2)
+@
+\caption{A box-and-whisker plot, produced with the \code{boxplot} function.}
 \end{center}
 \end{wrapfigure}
 %
@@ -173,160 +215,180 @@ are represented at the ends of the box-and-whisker plots and outliers are
 indicated with as separate points above or below the whiskers.
 
 The box-and-whisker method fails when data are distributed skewly, as in an
-exponential or log-normal distribution for example. In that case one can either
-transform the data for example with a logarithm, or square root transformation.
-Another option is to use method that takes the skewness into account. A
-particularly easy-to-implement example is the method of Hiridoglou and
-Berthelot\cite{hiridoglou:1986} for positive observations.  In this method, an
-observation is an outlier when
+exponential or log-normal distribution for example. In that case one can
+attempt to transform the data, for example with a logarithm or square root
+transformation.  Another option is to use method that takes the skewness into
+account. A particularly easy-to-implement example is the method of Hiridoglou
+and Berthelot\cite{hiridoglou:1986} for positive observations.  In this method,
+an observation is an outlier when
 \begin{equation}
 h(x) = \max\left(
 \frac{x}{x^*},\frac{x^*}{x} 
 \right)
 \geq r,\textrm{ and } x>0.
 \end{equation}
-Here, $r$ is a user-defined reference value and $x^*$ is usually the the median
+Here, $r$ is a user-defined reference value and $x^*$ is usually the median
 observation, although other measures of centrality may be chosen. Here, the
 score function $h(x)$ grows as $1/x$ as $x$ approaches zero and grows linearly
 with $x$ when it is larger than $x^*$. It is therefore appropriate for
-long-tailed distributions. An implementation in of this method in \R{} does not 
-seem available but it is implemented simple enough as the following function.
-<<>>=
+long-tailed distributions. An implementation in of this method in \R{} does not
+seem available but it is implemented simple enough as follows.
+<<tidy=FALSE>>=
 hboutlier <- function(x,r){
-  xref <- median(x, na.rm=TRUE)
-  max(x/xref, xref/x, na.rm=TRUE) > r
+  x <- x[is.finite(x)]
+  stopifnot(
+    length(x) > 0
+    , all(x>0)
+  )
+  xref <- median(x)
+  if (xref <= sqrt(.Machine$double.eps))
+    warning("Reference value close to zero: results may be inaccurate")
+  pmax(x/xref, xref/x) > r
 }
 @
 The above function returns a \code{logical} vector indicating which elements of 
 $x$ are outliers.
 
-\subsubsection{Obvious errors}
-An obvious error is a value or combinations of values that cannot be true, based
-on prior knowledge of the subject domain. For example, a
-person's age cannot be negative, a man cannot be pregnant and a child cannot have
-a drivers license.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Obvious inconsistencies}
+An obvious inconsistency occurs when a record contains a value or combination
+of values that cannot correspond to a real-world situation. For example, a
+person's age cannot be negative, a man cannot be pregnant and an under-aged person cannot
+possess a drivers license.
 
-This knowledge can be expressed in \emph{rules} or constraints. In data editing 
-literature they are called \emph{edits}. A rule that must be obeyed by a record, is a 
-{\em hard rule}. A rule that should be obeyed by a record, is a 
-{\em soft rule}. Soft rules may indicate suspicious data.
-Often data violates hard rules. In that is the case the following step is to 
-find out which values are the cause. This is called error localization.
-  
-Rule implementation can be done straight in \R{}, but for a set of rules this is
-problematic. Rules may interact and should be not seen as separate, 
-but as a set of connected rules. Furthermore \R{} code quickly 
-obscures the rules one tries to implement. 
-It would be easier and more clear to define a rule set that all
-records must obey, and to check if a record obeys the rules.
-
-The \code{editrules} package allows one to define rules on categorical,
-numerical or mixed data sets which each record must obey. Furthermore it can 
-use these rules to check data for errors and find erroneous values. It also allows
-for manipulating the rule set, for example checking if the set of rules is 
-consistent or not. We will briefly discuss the features of \code{editrules}, it
-has many options and functions, but these are not needed in this introduction.
-
-The rules one needs to specify in \code{editrules} are valid \R{} syntax. They can 
-be specified in a \code{character} vector directly with \code{editset} or stored 
-separately in a text file and read in with \code{editfile}. 
-The last option makes it a lot easier to maintain a large set of rules.
-For pure numerical or categorical restrictions \code{editmatrix} and \code{editarray}
-can be used. They are more efficient than the general \code{editset}.
-
-<<echo=FALSE>>=
-library(editrules)
-library(xtable)
-person <- read.csv("files/person.txt")
+Such knowledge can be expressed as \emph{rules} or constraints. In data editing
+literature these rules are referred to as \emph{edit rules} or \emph{edits}, in short.
+Checking for obvious inconsistencies can be done straightforwardly in \R{} using
+logical indices and recycling. For example, to check which elements of
+\code{x} obey the rule `\code{x} must be nonnegative' one simply uses the following.
+<<eval=FALSE>>=
+x_nonnegative <- x >= 0
 @
+However, as the number of variables increases, the number of rules may increase
+rapidly and it may be beneficial to manage the rules separate from the data.
+Moreover, since multivariate rules may be interconnected by sharing variables,
+deciding which variable or variables in a record cause an inconsistency may not
+be straightforward.
 
-<<echo=FALSE,results="asis">>=
-xtable(person, caption="Person data, each observation contains at least one error.")
-@
+The \code{editrules} package\cite{jonge:2011} allows one to define rules on
+categorical, numerical or mixed-type data sets which each record must obey.
+Furthermore, \code{editrules} can check which rules are obeyed or not and
+allows one to find the minimal set of variables to adapt so that all rules can
+be obeyed.  The package also implements a number of basic rule operations
+allowing users to test rule sets for contradictions and certain redundancies.
 
-Lets first start with a small example with restrictions on age.
+As an example, we will work with a small file containing the following data.
+\begin{center}
+\lstinputlisting[
+    xleftmargin=1cm,
+    numbers=left,
+    basicstyle=\ttfamily\small
+  ]{files/people.txt}
+\end{center}
+%
+We read this data into a variable called \code{people}
+and define some restrictions on \emph{age} using \code{editset}.
 <<>>=
+people <- read.csv("files/people.txt")
+library(editrules)
 (E <- editset(c("age >=0", "age <= 150")))
 @
-The data can be checked with \code{violatedEdits}. Record 4 contains an error 
-according to the rule specified: an \code{age} of \code{221} is not allowed. 
-
-<<>>=
-violatedEdits(E, person)[4,]
-@
-\code{violatedEdits} shows for each row of the data, which rule (edit) is violated.
-
-As can be seen from the table, the dataset contains more errors. Using 
-a larger set of rules they can be detected.
-
-<<cache=FALSE,echo=FALSE>>=
-E <- editfile("edits.txt")
-read_chunk('edits.txt')
-#print(E)
-@
-<<rules, eval=FALSE>>=
-@
-
-The result of \code{violatedEdits} shows which rows are invalid according to
-what rules. Note that if a multivariate rule is violated, it is not clear which
-variable is erroneous. For example in record 2 and 5 \code{child} and 
-\code{married} are in conflict. Which values are correct?\footnote{Based on the 
-other values of the record, this can be determined using error localization.}
-<<width=7>>=
-(ve <- violatedEdits(E, person[c(2,5),]))
-@
-\code{violatedEdits} shows that both violate rule \code{cat5}, but also other rules.
-It is also possible to do some statistics on the violated edits. For large
-datasets this can be very revealing: it may show problems in the collection of
-the data. It may also show that some rules are never violated.  The result of
-\code{violatedEdits} can be plotted.
+The \code{editset} function parses the textual rules and stores them in an
+\code{editset} object. Each rule is assigned a name according to it's type
+(\code{num}eric, \code{cat}egorical, or \code{mix}ed) and a number.  The data
+can be checked against these rules with the \code{violatedEdits} function.
+Record 4 contains an error according to one of the rules: an \code{age} of
+\Sexpr{person$age[4]} is not allowed. 
 %
-\begin{wrapfigure}{r}{0.5\textwidth}
-\begin{center}
 <<>>=
+violatedEdits(E, people)
+@
+\code{violatedEdits} returns a \code{logical} array indicating  for each row of
+the data, which rules are violated.
+
+The number and type of rules applying to a data set usually quickly grow with
+the number of variables. With \code{editrules}, users may read rules, specified
+in a limited \R{}-syntax, directly from a text file using the \code{editfile}
+function. As an example consider the contents of the following text file. 
+\begin{center}
+\lstinputlisting[
+    xleftmargin=1cm,
+    numbers=left,
+    basicstyle=\ttfamily\small
+  ]{files/edits.txt}
+\end{center}
+There are rules pertaining to purely numerical, purely categorical and rules
+pertaining to both data types. Moreover, there are univariate as well as multivariate
+rules. Comments are written behind the usual \code{\#} character. The ruleset can
+be read as follows.
+<<cache=FALSE>>=
+E <- editfile("files/edits.txt")
+@
+As the number of rules grows, looking at the full array produced by
+\code{violatedEdits} becomes cumbersome. For this reason, \code{editrules}
+offers methods to summarize or visualize the result.
+<<>>=
+ve <- violatedEdits(E,people)
+summary(ve)
 plot(ve)
 @
-\end{center}
-\end{wrapfigure}
+Here, the edit labeled \code{cat5} is violated by two records (20\% of all
+records).  Violated edits are sorted from most to least often violated. The
+plot visualizes the same information.
 
-\code{editrules} makes it easy to specify rules that data must obey. It allows 
-for easy checking if observations contain valid data or not.
 
-Restrictions pertaining to multiple variables introduce dependencies between
-those variables. Also, variables that occur in more than one restriction form a
-connection between those restrictions. These dependencies can be visualized in
-a dependency graph as follows (See Figure 3).
+Since rules may pertain to multiple variables, and variables may occur in
+several rules (\emph{e.g.} the \emph{age} variable in the current example),
+there is a dependency between rules and variables. It can be informative
+to show these dependencies in a graph using the \code{plot} function, as in
+Figure 3.
+%
 <<echo=FALSE>>=
 captxt = paste(
-"A graph plot, showing the interconnection of restrictions.",
+"A graph plot, created with \\code{plot(E)}, showing the interconnection of restrictions.",
 "Blue circles represent variables and yellow boxes represent restrictions.",
 "The lines indicate which restrictions pertain to what variables."
 )
 set.seed(1)
+par(mar=rep(0,4),oma=rep(0,4))
 @
-<<width=3.5, fig.cap=captxt>>=
+<<echo=FALSE, width=3.5, fig.cap=captxt>>=
 plot(E)
 @
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Error localization}
 \label{sect:errloc}
-For missing values, special values and univariate rules it is clear what values
-are invalid. However for multiple multivariate rules, this is in general not  
-clear. In the example of the previous section the variables \code{age},
-\code{agegroup}, \code{status}, \code{yearsmarried} are all connected.
-\code{editrules} can localize values that need to be adjusted. It takes the
-Fellegi-Holt~\cite{Fellegi1976} principle which says: change the values 
-of a minimal (weighted)
-number of variables so that it complies to the rules specified. The function in
-\code{editrules} that does this, is called \code{localizeErrors}.  It takes a
-set of rules and a \code{data.frame} and returns the found solutions.
+The interconnectivity of edits is what make error localisation a hard problem.
+For example, the graph in Figure 3 shows that a record violating edit
+\code{num4} may contain an error in \emph{age} and/or \emph{years married}.
+Suppose that we alter age so that \code{num4} is not violated anymore. We then
+run the risk of violating up to \emph{six} other edits.
+
+If we have no other information available but the edit violations, it makes
+sense to minimize the number of fields being altered. This principle, commonly
+referred to as the principle of Fellegi and Holt\cite{fellegi:1976}, is based
+on the idea that errors occur relatively few times and when they do, they occur
+randomly across variables. Over the years several algorithms have been
+developed to solve this minimisation problem\cite{waal:2011} of which two have
+been implemented in \code{editrules}. The \code{localizeErrors} function provides
+access to this functionality.
+
+As an example we take two records from the \code{people} dataset from the previous subsection.
 <<>>=
 id <- c(2,5)
-person[id,]
-le <- localizeErrors(E, person[id,])
+people[id,]
+violatedEdits(E,people[id,])
+@
+We use a mixed-integer-programming approach to find the minimal
+set of variables to alter. 
+<<>>=
+le <- localizeErrors(E, people[id,],method='mip')
 le$adapt
 @
+Here, 
+
 Note that although both records have conflicting values \code{child} and \code{married}
 the solution is different (Why?).
 \code{\$adapt} is a \code{logical} that signifies which variables are considered
@@ -338,7 +400,9 @@ which values should be adapted. It is also possible to use a mixed integer progr
 solver, which is typically very fast. For more information see the reference manual
 of \code{editrules}.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Correction}
+\label{sect:correction}
 Correction fixes an inconsistent observation by using the available data
 of the observation. If correction is not possible the incorrect values are 
 removed so they can be imputed.
@@ -444,6 +508,7 @@ Finally, it is currently not possible to add new variables using correctionrules
 although such a feature will likely be added in the future.
 
 \subsubsection{Deductive correction}
+\label{sect:deductivecorrection}
 When the data you are analyzing is generated by people rather than machines or
 measurement devices, certain typical human-generated errors are likely to
 occur. Given that data has to obey certain edit rules, the occurrence of such

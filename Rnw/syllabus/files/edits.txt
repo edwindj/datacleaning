@@ -1,4 +1,3 @@
-## @knitr rules
 # numerical rules
 age >= 0
 height > 0

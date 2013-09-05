@@ -137,9 +137,9 @@ person <- read.csv(
   , col.names = c("age","height") )
 person
 @
-In the first attempt, \code{read.csv} interprets the first line as column
-headers and fixes the numeric data to meet \R{}'s variable naming standards by
-prepending an \code{X}.
+\label{pp:person} In the first attempt, \code{read.csv} interprets the first
+line as column headers and fixes the numeric data to meet \R{}'s variable
+naming standards by prepending an \code{X}.
 
 
 If \code{colClasses} is not specified by the user, \code{read.table} will try
