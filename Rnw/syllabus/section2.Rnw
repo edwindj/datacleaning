@@ -3,14 +3,15 @@
 \label{sect:rawtoinput}
 A data set is a collection of data that describes attribute values (variables)
 of a number of real-world objects (units). With data that is \emph{technically
-correct}, we understand a data set that is suitable for automated processing
-such that for each unit, the attribute values should be correctly recognized
-and read by the same set of computer instructions. Specifically, we demand that
-each attribute value is stored in a data type that is suitable to describe the
-value domain of the attribute and that the type is constant over units.  In
-short: for each unit, a text variable should be stored as text, numeric
-variables as numbers, and so on, and all this in a format that is consistent
-across the data set.
+correct}, we understand a data set where each value
+\begin{enumerate}
+\item can be directly recognized as belonging to a certain variable;
+\item is stored in a data type
+that represents the value domain of the real-world variable.  
+\end{enumerate}
+In other words, for each unit, a text variable should be stored as text, a
+numeric variable as a number, and so on, and all this in a format that is
+consistent across the data set.
 
 
 \subsection{Technically correct data in \R{}}
