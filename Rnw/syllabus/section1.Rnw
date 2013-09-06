@@ -34,7 +34,7 @@ scripted and therefore reproduced.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Statistical analysis in 5 steps}
+\subsection{Statistical analysis in five steps}
 In this tutorial a statistical analysis is viewed as the result of a
 number of data processing steps where each step increases the ``value'' of the
 data. 
