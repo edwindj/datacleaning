@@ -1,4 +1,5 @@
 \documentclass[rapport, english]{cbsreport}
+\usepackage{todonotes}
 \usepackage[english]{babel}
 \usepackage{amsmath}
 \usepackage{threeparttable}
