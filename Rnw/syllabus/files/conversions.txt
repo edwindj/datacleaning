@@ -1,4 +1,3 @@
-## @knitr conversions
 # convert centimeters
 if ( unit == "cm" ){
   height <- height/100

@@ -363,8 +363,8 @@ plot(E)
 The interconnectivity of edits is what make error localisation a hard problem.
 For example, the graph in Figure 3 shows that a record violating edit
 \code{num4} may contain an error in \emph{age} and/or \emph{years married}.
-Suppose that we alter age so that \code{num4} is not violated anymore. We then
-run the risk of violating up to \emph{six} other edits.
+Suppose that we alter \emph{age} so that \code{num4} is not violated anymore. We then
+run the risk of violating up to \emph{six} other edits containing \emph{age}.
 
 If we have no other information available but the edit violations, it makes
 sense to minimize the number of fields being altered. This principle, commonly
@@ -372,62 +372,71 @@ referred to as the principle of Fellegi and Holt\cite{fellegi:1976}, is based
 on the idea that errors occur relatively few times and when they do, they occur
 randomly across variables. Over the years several algorithms have been
 developed to solve this minimisation problem\cite{waal:2011} of which two have
-been implemented in \code{editrules}. The \code{localizeErrors} function provides
-access to this functionality.
+been implemented in \code{editrules}. The \code{localizeErrors} function
+provides access to this functionality.
 
-As an example we take two records from the \code{people} dataset from the previous subsection.
+As an example we take two records from the \code{people} dataset from the
+previous subsection.
 <<>>=
 id <- c(2,5)
 people[id,]
 violatedEdits(E,people[id,])
 @
-We use a mixed-integer-programming approach to find the minimal
-set of variables to alter. 
+Record 2 violates \code{mix6} while record 5 violates edits \code{num2},
+\code{cat5} and \code{mix8}. We use \code{localizeErrors}, with a mixed-integer programming
+approach to find the minimal set of variables to adapt.
 <<>>=
 le <- localizeErrors(E, people[id,],method='mip')
 le$adapt
 @
-Here, 
-
-Note that although both records have conflicting values \code{child} and \code{married}
-the solution is different (Why?).
-\code{\$adapt} is a \code{logical} that signifies which variables are considered
-erroneous. It can be used in the correction and imputation procedures for filling in valid
-values. \code{localizeErrors} can be tuned with various options. It is possible
-to supply a confidence weight for each variable allowing for 
-fine grained control on
-which values should be adapted. It is also possible to use a mixed integer programming
-solver, which is typically very fast. For more information see the reference manual
-of \code{editrules}.
+Here, the \code{le} object contains some processing metadata and a logical
+array labeled \code{adapt} which indicates the minimal set of variables to be
+altered in each record. It can be used in correction and imputation
+procedures for filling in valid values. Such procedures are not part of
+\code{editrules}, but for demonstration purposes we will manually fill
+in new values showing that the solution computed by \code{localizeErrors}
+indeed allows one to repair records to full compliance with all edit rules.
+<<results='hide'>>=
+people[2,'status'] <- 'single'
+people[5,'height'] <- 7
+people[5,'agegroup'] <- 'adult'
+summary(violatedEdits(E,people[id,]))
+@
+%
+The behaviour of \code{localizeErrors} can be tuned with various options. It is
+possible to supply a confidence weight for each variable allowing for fine
+grained control on which values should be adapted. It is also possible to
+choose a branch-and-bound based solver (instead of the MIP solver used here),
+which is typically slower but has allows for more control. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Correction}
 \label{sect:correction}
-Correction fixes an inconsistent observation by using the available data
-of the observation. If correction is not possible the incorrect values are 
-removed so they can be imputed.
+Correction methods aim to fix inconsistent observations by altering invalid
+values in a record based on information from valid values. Depending on the
+method this is either a single-step procedure or a two-step procedure where
+first, an error localisation method is used to empty certain fields, followed
+by an imputation step.
 
 In some cases, the cause of errors in data can be determined with enough
 certainty so that the solution is almost automatically known. In recent years,
 several such methods have been developed and implemented in the
 \code{deducorrect} package\cite{loo:2011}. In this section we give a quick
 overview of the possibilities of \code{deducorrect}. 
-
 <<echo=FALSE, result=FALSE>>=
 library(deducorrect)
 @
 
 \subsubsection{Automated ad hoc correction}
-Data cleaning often involves applying a lot of \emph{ad-hoc} transformations
-and derivations of new variables. This may lead to large scripts, where
-one selects parts of the data, changes some variables, selects another part,
-changes some more variables, etc. When such scripts are neatly written and
-commented, they can almost be treated as a log of the actions performed
-by the analyst. However, as scripts get longer it is better to 
-store the transformation rules separately and log which rule is executed
-on what record. The \code{deducorrect} package offers functionality for 
-this. Consider as an example the following (fictitious) dataset listing
-the body length of some brothers.
+In practice, data cleaning procedures involve a lot of \emph{ad-hoc}
+transformations. This may lead to long scripts where one selects parts of
+the data, changes some variables, selects another part, changes some more
+variables, etc. When such scripts are neatly written and commented, they can
+almost be treated as a log of the actions performed by the analyst. However, as
+scripts get longer it is better to store the transformation rules separately
+and log which rule is executed on what record.  The \code{deducorrect} package
+offers functionality for this. Consider as an example the following
+(fictitious) dataset listing the body length of some brothers.
 <<>>=
 (marx <- read.csv("files/marx.csv",stringsAsFactors=FALSE))
 @
@@ -451,12 +460,20 @@ will be a significant administrative overhead.
 
 The deducorrect package takes all this overhead of your hands with the 
 \code{correctionRules} functionality. For example, to perform the above 
-task, one first specifies a file with simple correction rules as follows.
+task, one first specifies a file with correction rules as follows.
 <<echo=FALSE>>=
 read_chunk("files/conversions.txt")
 @
-<<conversions,eval=FALSE,tidy=FALSE>>=
-@
+%<<conversions,eval=FALSE,tidy=FALSE>>=
+%@
+\begin{center}
+\lstinputlisting[
+    xleftmargin=1cm,
+    numbers=left,
+    basicstyle=\ttfamily\small
+  ]{files/conversions.txt}
+\end{center}
+%
 With \code{deducorrect} we can read these rules, apply them to the data and
 obtain a log of all actual changes as follows.
 <<>>=
@@ -465,16 +482,16 @@ R <- correctionRules("files/conversions.txt")
 R
 @
 \code{correctionRules} has parsed the rules and stored them in a \code{correctionRules}
-object. We may now apply them to our data
+object. We may now apply them to the data.
 <<>>=
 cor <- correctWithRules(R,marx)
 @
-as simple as that. The returned value, \code{cor}, is a \code{list} containing the
+The returned value, \code{cor}, is a \code{list} containing the
 corrected data
 <<>>=
 cor$corrected
 @
-but also a log of applied corrections.
+as well as a also a log of applied corrections.
 <<>>=
 cor$corrections[1:4]
 @
@@ -486,26 +503,28 @@ above for formatting reasons)
 cor$corrections[5]
 @
 So here, with just two commands, the data is processed and all actions logged
-in a \code{data.frame} which you can store or analyze. The rules that may be
-applied with \code{deducorrect} are rules that can be executed
+in a \code{data.frame} which may be can stored or analyzed. The rules that may
+be applied with \code{deducorrect} are rules that can be executed
 record-by-record. 
 
-By design, there are some limitations to which rules can be applied with \code{correctWithRules}.
-The processing rules should be executable record-by-record. That is, it is not permitted
-to use functions line \code{mean} or \code{sd}. The symbols that may be used can be listed
-as follows.
+By design, there are some limitations to which rules can be applied with
+\code{correctWithRules}.  The processing rules should be executable
+record-by-record. That is, it is not permitted to use functions line
+\code{mean} or \code{sd}. The symbols that may be used can be listed as
+follows.
 <<>>=
 getOption('allowedSymbols')
 @
 When the rules are read by \code{correctionRules}, it checks whether any symbol
 occurs that is not in the list of allowed symbols and returns an error message
-when such a symbol is found. For example.
+when such a symbol is found as in the following example.
 <<>>=
 correctionRules(expression(x <- mean(x)))
 @
 %
-Finally, it is currently not possible to add new variables using correctionrules
-although such a feature will likely be added in the future.
+Finally, it is currently not possible to add new variables using
+\code{correctionRules} although such a feature will likely be added in the
+future.
 
 \subsubsection{Deductive correction}
 \label{sect:deductivecorrection}
@@ -520,7 +539,7 @@ such errors. Below we give some examples, every time with just a single edit rul
 The functions can handle larger sets of edits however.
 
 With \code{correctRoundings} deviations of the size of one or two measurement
-units can be repaired. The function chooses randomly one variable to alter such that
+units can be repaired. The function randomly selects one variable to alter such that
 the rule violation(s) are nullified while no new violations are generated.
 <<>>=
 e <- editmatrix("x + y == z")
@@ -530,9 +549,9 @@ cor$corrected
 cor$corrections
 @
 
-The function \code{correctSigns} is able to detect and repair sign errors. 
-It does this by trying combinations of variable swaps on variables that
-occur in violated edits.
+The function \code{correctSigns} is able to detect and repair sign errors.  It
+does this by trying combinations of variable swaps on variables that occur in
+violated edits.
 <<>>=
 e <- editmatrix("x + y == z")
 d <- data.frame(x = 100, y = -100, z=200)
@@ -558,18 +577,18 @@ Indeed, swapping the $3$ and the $2$ in $y=132$ solves the edit violation.
 Every \code{correct-} function in \code{deducorrect} is an object of class
 \code{deducorrect}. When printed, it doesn't show the whole contents (the
 corrected data and logging information) but a summary of what happened with
-your data. A \code{deducorrect} object also contains data on timing, user,
+th data. A \code{deducorrect} object also contains data on timing, user,
 and so on. See \code{?"deducorrect-object"} for a full explanation.
 \end{tip}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Deterministic imputation}
 
-In some cases a missing value can be determined because an observation and its 
-hard rules generate a single solution. 
-As an example, consider a record with variables listing the costs
-for \emph{staff} \emph{cleaning}, \emph{housing} and the total \emph{total}.
-We have the following rules.
+In some cases a missing value can be determined because the observed values
+combined with edit constraints rules force a unique solution.  As an example,
+consider a record with variables listing the costs for \emph{staff}
+\emph{cleaning}, \emph{housing} and the total \emph{total}.  We have the
+following rules.
 \begin{equation}
 \begin{array}{l}
   \textrm{\em staff} + \textrm{\em cleaning} + \textrm{\em housing} = \textrm{\em total}\\
@@ -607,8 +626,7 @@ with absolute certainty (uniquely) from the rules. In the example, there are
 many possible solutions to impute the last record and hence \code{deduImpute}
 leaves it untouched.
 
-Similar situations exist for categorical data, and purely categorical data
-is handled by \code{deduImpute} as well.
+Similar situations exist for categorical data, which are handled by \code{deduImpute} as well.
 <<tidy=FALSE>>=
 E <- editarray(expression(
   age %in% c("adult","under-aged"),
@@ -629,11 +647,9 @@ rules that if someone has a drivers license, he has to be an adult.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Imputation}
 \label{sect:mbimputation}
-If after correction observations contain missing values, they have to be 
-imputed with plausible values. Filling in missing data can be done using
-advanced weight models or statistical estimation.
-There is a vast body of literature on imputation methods
-and is goes beyond the scope of this tutorial to discuss them all. In stead, we
+Imputation is the process of estimating or deriving values for fields where
+data is missing.  There is a vast body of literature on imputation methods and
+is goes beyond the scope of this tutorial to discuss all of them. In stead, we
 present in Table \ref{tab:imputation} an overview of packages that offer some
 kind of imputation method and list them against a number of popular model-based
 imputation methods. We note that the list of packages and methods are somewhat
@@ -641,13 +657,15 @@ arbitrary as they result from an investigation conducted at Statistics
 Netherlands \cite{broek:2012} for internal purposes. Nevertheless we feel that
 this overview is a quite useful place to start. See for example the paper by
 Kalton and Kasprzyk\cite{kalton:1986} for an overview of established imputation
-methods.  The packages \code{Amelia}, \code{deducorrect} and \code{mix} do not
-implement any of the methods mentioned in the table. That is because
-\code{Amelia} implements a multiple imputation method based on the assumption
-of a conditional multinormal variable distribution. The \code{deducorrect}
-package implements deductive and deterministic method, and we choose not to
-call this model-based in this tutorial. The \code{mix} package implements a
-Bayesian estimation method based on an Markov Chain Monte Carlo algorithm.
+methods.  
+
+The packages \code{Amelia}, \code{deducorrect} and \code{mix} do not implement
+any of the methods mentioned in the table. That is because \code{Amelia}
+implements a multiple imputation method based on the assumption of a
+conditional multinormal variable distribution. The \code{deducorrect} package
+implements deductive and deterministic methods, and we choose not to call this
+model-based in this tutorial. The \code{mix} package implements a Bayesian
+estimation method based on an Markov Chain Monte Carlo algorithm.
 
 There is no one single best imputation method that works in all cases. The
 imputation model of choice depends on what auxiliary information is available
@@ -659,14 +677,13 @@ and then minimally adjust the imputed values so that the restrictions are
 obeyed.  Separately, these methods are available in \R{}.
 
 \begin{table}[!t]
-\begin{adjustwidth}{-2cm}{}
+\begin{adjustwidth}{-2mm}{}
 \begin{threeparttable}
-\caption{An overview of imputation functionality offered by some  \R{} packages.
-reg: regression, rand: random, seq: sequential, NN: nearest neighbor, pmm:
-predictive mean matching, kNN: $k$-nearest-neighbors, int: interpolation,
-lo/no last observation carried forward / next observation carried backward,
-LS: method of Little and Su.
-}
+\caption{An overview of imputation functionality offered by some  \R{}
+packages.  reg: regression, rand: random, seq: sequential, NN: nearest
+neighbor, pmm: predictive mean matching, kNN: $k$-nearest-neighbors, int:
+interpolation, lo/no last observation carried forward / next observation
+carried backward, LS: method of Little and Su.  }
 \label{tab:imputation}
 \begin{tabular}{|l|ccc|ccc|c|ccc|}
 \hline
@@ -787,7 +804,7 @@ that implement ratio imputation in a single function.
 
 The third, and last numerical model we treat are (generalized) linear
 regression models. In such models, missing values are imputed
-using as follows
+as follows
 \begin{equation}
 \hat{x}_i = \hat{\beta}_0 + \hat{\beta}_1y_{1,i} + \cdots + \hat{\beta}_ky_{k,i},
 \end{equation}
@@ -815,8 +832,9 @@ precise and/or robust against outliers than standard (generalized) linear
 regression.  Moreover, both \code{mice} and \code{mi} implement methods for
 multiple imputation, which allows for estimation of the imputation variance.
 Such methods are beyond the scope of the current text. The \code{imputation}
-package has a function \code{lmImpute} but is uses a the row number as
-auxiliary variable which limits the practical usability.
+package has a function \code{lmImpute} but is uses the row number as auxiliary
+variable which limits its practical usability to cases where the row number is
+directly related to a covariate value.
 
 
 \subsubsection{Hot deck imputation}
@@ -915,7 +933,7 @@ Here is an example of \code{kNN}.
 library(VIM)
 data(iris)
 n <- nrow(iris)
-# provide some empty values (10 in each row, randomly)
+# provide some empty values (10 in each column, randomly)
 for ( i in 1:ncol(iris) ){
   iris[sample(1:n,10,replace=FALSE),i] <- NA
 }
