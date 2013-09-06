@@ -11,7 +11,13 @@
 \emph{Consistent data} are \emph{technically correct data} that are fit for
 statistical analysis. They are data in which missing values, special values,
 (obvious) errors and outliers are either removed, corrected or imputed. The
-data are consistent with expectations based on real-world knowledge about the
+data are consistent with expectations 
+\todo{Ik zou hier de woorden 'expectations based on' weglaten. Hoewel semantisch
+en filosofisch
+correct, roept expectations bij statistici een ander begrip op. Vooral omdat we 
+hier harde fouten behandelen, lijkt het me handiger om hier een hardere formulering 
+te kiezen. Misschien 'rules'/'constraints' i.p.v. expectations?} based on real-world 
+knowledge about the
 subject that the data describe. 
 
 Consistency can be understood to include \emph{in-record} consistency, meaning
@@ -28,12 +34,14 @@ The process towards consistent data involves always involves the following
 three steps.
 \begin{enumerate}
 \item \emph{Detection} of an inconsistency. That is, one establishes which
-expectations are violated. For example, one may expect a positive value for an
+expectations are violated. For example, one \todo{Idem, ik heb hier de voorkeur
+voor 'An age variable must be positive'} expects a positive value for an
 \emph{age} variable.
 \item \emph{Selection} of the field or fields causing the inconsistency. This
 is trivial in the case of a univariate demand as in the previous step, but may
 be more cumbersome when cross-variable relations are expected to hold. For
-example, one may expect that persons under a certain age, the \emph{marital
+example, \todo{'The marital status of a child must be unmarried'}
+one expects that for persons under a certain age, the \emph{marital
 status} is \emph{unmarried}. In the case of a violation it is not immediately
 obvious whether \emph{age}, \emph{marital status} or both are wrong.
 \item \emph{Correction} of the fields that are deemed erroneous by the
