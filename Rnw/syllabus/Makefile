@@ -5,10 +5,9 @@ PDFS= syllabus.pdf
 all: $(PDFS) 
 
 clean:
-	rm -f *.tex *.bbl *.blg *.aux *.out *.log *.spl 
+	rm -f *.tex *.bbl *.blg *.aux *.out *.log *.spl *.toc
+	rm -rf figure
 
 %.pdf: %.Rnw $(RNW)
-	R -e "knitr:::knit('$*.Rnw')"
-	xelatex $*.tex
-	bibtex  $*
+	R -e "knitr:::knit2pdf('$*.Rnw', compiler='xelatex')"
 
