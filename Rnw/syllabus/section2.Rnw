@@ -420,7 +420,7 @@ that we discuss date conversion.
 
 \subsubsection{Introduction to \R{}'s typing system}
 Everything in \R{} is an object\cite{chambers:2008}. An object is a container
-of data endowed with a \emph{class} label describing the data. Objects can
+of data endowed with a label describing the data. Objects can
 be created, destroyed or overwritten on-the-fly by the user.
 
 The function \code{class} returns the class label of an \R{} object.
@@ -477,17 +477,17 @@ retrieve or modify an object's type.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Recoding factors}
 In \R{}, the value of categorical variables is stored in \code{factor} variables.
-
-A \code{factor} basically an integer vector endowed with a table specifying what integer 
+A \code{factor} is an integer vector endowed with a table specifying what integer 
 value corresponds to what \code{level}. The values in this translation table can be requested
 with the \code{levels} function.
 <<>>=
 f <- factor(c("a","b","a","a","c"))
 levels(f)
 @
-The use of integers combined with a translation table is not uncommon in statistical software,
-so chances are that you eventually have to make such a translation by hand. For example,
-suppose we read in a vector where 1 stands for `male', 2 stands for `female' and 0 stands for unknown.
+The use of integers combined with a translation table is not uncommon in
+statistical software, so chances are that you eventually have to make such a
+translation by hand. For example, suppose we read in a vector where 1 stands
+for \code{male}, 2 stands for \code{female} and 0 stands for \code{unknown}.
 Conversion to a factor variable can be done as in the example below. 
 <<>>=
 # example:

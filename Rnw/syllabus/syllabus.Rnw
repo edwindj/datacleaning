@@ -112,15 +112,17 @@ library(editrules)
 \thispagestyle{empty}
 
 \begin{abstract}
-More often than not, data analyses consists for a large part of data cleaning
-to make the actual statistical analyses possible. These introductory lecture
-notes cover a range of techniques, implemented in the \R{} statistical
-environment, allowing the reader to read raw (textual) data into \R{} and
-prepare it for statistical analyses.  The process of data analyses is viewed as
-a value chain where data cleaning involves the first two steps: first,
-improving the data so that it can be read into a rectangular format into \R{}
-and secondly, the removal of inconsistencies and empty values so that the data
-can be analysed with ease.
+Data cleaning, or data preparation is an essential part of a statistical
+analyses. In fact, in practice it is often more time-consuming than the
+statistical analyses itself. These lecture notes describes a range of
+techniques, implemented in the \R{} statistical environment that allow the
+reader to build data cleaning scripts for a wide range of data that is stored
+in textual format. These notes cover technical as well as subject-matter
+related aspects of data cleaning. Technical aspects include data reading, type
+conversion and string matching and manipulation. Subject-matter related aspects
+include topics like data checking, error localisation and an introduction to
+imputation methods in R. References to relevant literature and \R{} packages
+are provided throughout.
 
 
 These lecture notes are based on a tutorial given by the authors at the
@@ -135,20 +137,38 @@ These lecture notes are based on a tutorial given by the authors at the
 \newpage
 \subsection*{Notes to the reader}
 \addcontentsline{toc}{subsection}{Notes to the reader}
-This tutorial is aimed at users who have some \R{} programming experience.  That is, we
-expect the reader to be familiar with concepts like variable assignment,
-\code{vector}, \code{list}, and \code{data.frame}; writing simple loops, and
-perhaps writing simple functions. More complicated constructs, when used, will
-be explained in the text. We have adopted the following conventions in this text.
+This tutorial is aimed at users who have some \R{} programming experience.
+That is, we the reader is expected to be familiar with concepts such as
+variable assignment, \code{vector}, \code{list}, \code{data.frame}, writing
+simple loops, and perhaps writing simple functions. More complicated
+constructs, when used, will be explained in the text. We have adopted the
+following conventions in this text.
 
-\textbf{Code.} All code examples in this tutorial can be executed,
-unless otherwise indicated. Code examples are shown in gray boxes, like this:
+\textbf{Code.} All code examples in this tutorial can be executed, unless
+otherwise indicated. Code examples are shown in gray boxes, like this:
 <<>>=
 1 + 1
 @
-where output is preceded by a double hash sign \code{\#\#}. 
-When we use inline code or function names, these are typeset
-in \code{fixed width} font, just like the code in gray boxes.
+where output is preceded by a double hash sign \code{\#\#}.  When code,
+function names or arguments occur in the main text, these are typeset in
+\code{fixed width} font, just like the code in gray boxes. When we refer to
+\R{} data types, like \code{vector} or \code{numeric} these are denoted in
+fixed width font as well.
+
+\textbf{Variables.} In the main text, variables are written in slanted format
+while their values (when textual) are written in fixed-width format. For
+example: the \emph{Marital status} is \code{unmarried}.
+
+\textbf{Data.} Sometimes small data files are used as an example. These files
+printed in the document in fixed-width format and can easily be copied from the
+\code{pdf} file. Here is an example:
+\lstinputlisting[
+    xleftmargin=1cm,
+    numbers=left,
+    basicstyle=\ttfamily\small
+  ]{files/daltons.txt}
+
+Alternatively, the files can be found at \url{http://tinyurl.com/mblhtsg}.
 
 \textbf{Tips.} Occasionally we have tips, best practices, or other remarks that
 are relevant but not part of the main text. These are shown in separate
@@ -157,22 +177,12 @@ paragraphs as follows.
 To become an \R{} master, you must practice every day.
 \end{tip}
 
-\textbf{Filenames} As is usual in \code{R}, we use the forward slash (\code{/}) as
+\textbf{Filenames.} As is usual in \code{R}, we use the forward slash (\code{/}) as
 file name separator. Under windows, one may replace each forward slash with a double
 backslash \code{$\backslash\backslash$}.
 
-
-In some of the scripts shown in this tutorial, small data files will be 
-read. You can find these files at \url{http://tinyurl.com/mblhtsg}.
-
-
-
-
-Finally, this document was written for the \textit{useR!2013} conference.
-We'd like to thank the organizers for providing us with the opportunity for
-giving this tutorial. 
-
-\hfill {EdJ and MvdL}
+\textbf{References.} For brevity, referenes are numbered, occurring as superscript in
+the main text.
 
 
 \clearpage

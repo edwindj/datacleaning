@@ -80,7 +80,7 @@ Once this preprocessing has taken place, data can be deemed \textsl{Technically
 correct}.  That is, in this state data can be read into an \R{}
 \code{data.frame}, with correct names, types and labels, without further
 trouble. However, that does not mean that the values are error-free or complete.
-For example, an \emph{age} variable may be reported negative, an under-aged person
+For example, an age variable may be reported negative, an under-aged person
 may be registered to possess a driver's license, or  data may simply be missing.
 Such inconsistencies obviously depend on the subject matter that the data
 pertains to, and they should be ironed out before valid statistical inference
@@ -132,15 +132,15 @@ on vectors (think of the element-wise arithmetic, for example). The basic types
 in \R{} are as follows.
 \begin{center}
 \begin{tabular}{ll}
-  \code{numeric} & Numeric data (approximations of the real numbers, $\bs{R}$)\\
-  \code{integer} & Integer data (whole numbers, $\bs{Z}$)\\
+  \code{numeric} & Numeric data (approximations of the real numbers, $\mathbb{R}$)\\
+  \code{integer} & Integer data (whole numbers, $\mathbb{Z}$)\\
   \code{factor}  & Categorical data (simple classifications, like \emph{gender})\\
   \code{ordered} & Ordinal data (ordered classifications, like \emph{educational level})\\
   \code{character} & Character data (strings)\\
   \code{raw}  & Binary data\\
 \end{tabular}
 \end{center}
-All basic operations in \R{} work element wise on vector where the shortest
+All basic operations in \R{} work elementwise on vectors where the shortest
 argument is recycled if necessary. This goes for arithmetic operations
 (addition, subtraction,$\ldots$), comparison operators (\code{==},
 \code{<=},\ldots), logical operators (\code{\&}, \code{|}, \code{!},$\ldots$)
