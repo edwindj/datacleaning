@@ -35,7 +35,7 @@ is trivial in the case of a univariate demand as in the previous step, but may
 be more cumbersome when cross-variable relations are expected to hold. For
 example the \emph{marital status} of a child must be \code{unmarried}.
 In the case of a violation it is not immediately
-obvious whether \emph{age}, \emph{marital status} or both are wrong.
+clear whether \emph{age}, \emph{marital status} or both are wrong.
 \item \emph{Correction} of the fields that are deemed erroneous by the
 selection method.  This may be done through deterministic, deductive, or
 model-based methods.
@@ -45,7 +45,7 @@ For many data correction methods these steps are not necessarily neatly
 separated. For example, in the deductive correction methods described in
 subsection \ref{sect:deductivecorrection} below, the three steps are performed
 with a single mathematical operation. Nevertheless, it is useful to be able to
-recognize these substeps in order to make clear what assumptions are made
+recognize these sub-steps in order to make clear what assumptions are made
 during the data cleaning process. 
 
 In the following subsection (\ref{sect:detectandlocalize}) we introduce a
@@ -74,10 +74,10 @@ localization problem in subsection \ref{sect:errloc}.
 \subsubsection{Missing values}
 A missing value, represented by \code{NA} in \R{}, is a placeholder for a datum
 of which the type is known but its value isn't. Therefore, it is impossible to
-perform statistical analyses on data where one or more values in the data are
+perform statistical analysis on data where one or more values in the data are
 missing. One may choose to either omit elements from a dataset that contain
 missing values or to impute a value, but missingness is something to be dealt
-with prior to any analyses.
+with prior to any analysis.
 
 In practice, analysts, but also commonly used numerical software may confuse a
 missing value with a default value or category. For instance, in \code{Excel
@@ -94,7 +94,6 @@ Consider as an example a categorical variable representing  \emph{place of
 birth}. Here, the category \emph{unknown} means that we have no knowledge about
 where a person is born. In contrast, \code{NA} indicates that we have no
 information to determine whether the birth place is known or not.
-
 
 The behavior of \R{}'s core functionality is completely consistent with the
 idea that the analyst must decide what to do with missing data. A common choice,
@@ -128,6 +127,11 @@ The result of the \code{na.omit} function is a \code{data.frame} where
 incomplete rows have been deleted. The \code{row.names} of the removed
 records are stored in an attribute called \code{na.action}.
 
+\begin{tip}{Note}
+It may happen that a missing value in a data set means $0$ or \code{Not applicable}.
+If that is the case, it should be explicitly imputed with 
+that value, because it is not unknown, but was coded as empty.
+\end{tip}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Special values}
 As explained in section \ref{sect:specval}, numeric variables are endowed with
@@ -135,7 +139,7 @@ several formalized special values including $\pm$\code{Inf}, \code{NA} and
 \code{NaN}. Calculations involving special values often result in special
 values, and since a statistical statement about a real-world phenomenon
 should never include a special value, it is desirable to handle special
-values prior to analyses.
+values prior to analysis.
 
 For numeric variables, special values indicate values that are not an element
 of the mathematical set of real numbers ($\mathbb{R}$). The function \code{is.finite}
@@ -360,7 +364,7 @@ plot(E)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Error localization}
 \label{sect:errloc}
-The interconnectivity of edits is what make error localisation a hard problem.
+The interconnectivity of edits is what make error localization a hard problem.
 For example, the graph in Figure 3 shows that a record violating edit
 \code{num4} may contain an error in \emph{age} and/or \emph{years married}.
 Suppose that we alter \emph{age} so that \code{num4} is not violated anymore. We then
@@ -415,7 +419,7 @@ which is typically slower but has allows for more control.
 Correction methods aim to fix inconsistent observations by altering invalid
 values in a record based on information from valid values. Depending on the
 method this is either a single-step procedure or a two-step procedure where
-first, an error localisation method is used to empty certain fields, followed
+first, an error localization method is used to empty certain fields, followed
 by an imputation step.
 
 In some cases, the cause of errors in data can be determined with enough
@@ -585,7 +589,7 @@ and so on. See \code{?"deducorrect-object"} for a full explanation.
 \subsubsection{Deterministic imputation}
 
 In some cases a missing value can be determined because the observed values
-combined with edit constraints rules force a unique solution.  As an example,
+combined with their constraints force a unique solution.  As an example,
 consider a record with variables listing the costs for \emph{staff}
 \emph{cleaning}, \emph{housing} and the total \emph{total}.  We have the
 following rules.

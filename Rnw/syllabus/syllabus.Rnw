@@ -112,18 +112,17 @@ library(editrules)
 \thispagestyle{empty}
 
 \begin{abstract}
-Data cleaning, or data preparation is an essential part of a statistical
-analyses. In fact, in practice it is often more time-consuming than the
+Data cleaning, or data preparation is an essential part of statistical
+analysis. In fact, in practice it is often more time-consuming than the
 statistical analyses itself. These lecture notes describes a range of
 techniques, implemented in the \R{} statistical environment that allow the
 reader to build data cleaning scripts for a wide range of data that is stored
 in textual format. These notes cover technical as well as subject-matter
 related aspects of data cleaning. Technical aspects include data reading, type
 conversion and string matching and manipulation. Subject-matter related aspects
-include topics like data checking, error localisation and an introduction to
+include topics like data checking, error localization and an introduction to
 imputation methods in R. References to relevant literature and \R{} packages
 are provided throughout.
-
 
 These lecture notes are based on a tutorial given by the authors at the
 \emph{useR!2013} conference in Albacete, Spain.  
@@ -181,7 +180,7 @@ To become an \R{} master, you must practice every day.
 file name separator. Under windows, one may replace each forward slash with a double
 backslash \code{$\backslash\backslash$}.
 
-\textbf{References.} For brevity, referenes are numbered, occurring as superscript in
+\textbf{References.} For brevity, references are numbered, occurring as superscript in
 the main text.
 
 
