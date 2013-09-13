@@ -653,16 +653,16 @@ it goes beyond the scope of this tutorial to discuss all of them. In stead, we
 present in Table \ref{tab:imputation} an overview of packages that offer some
 kind of imputation method and list them against a number of popular model-based
 imputation methods. We note that the list of packages and methods are somewhat
-arbitrary as they result from an investigation conducted at Statistics
-Netherlands \cite{broek:2012} for internal purposes. Nevertheless we feel that
-this overview is a quite useful place to start. See for example the paper by
-Kalton and Kasprzyk\cite{kalton:1986} for an overview of established imputation
-methods.  
+biased towards applications at Statistics Netherlands, as the table was
+originally produced during a study for internal purposes\cite{broek:2012}.
+Nevertheless we feel that this overview can be a quite useful place to start.
+See for example the paper by Kalton and Kasprzyk\cite{kalton:1986} for an
+overview of established imputation methods.  
 
 The packages \code{Amelia}, \code{deducorrect} and \code{mix} do not implement
 any of the methods mentioned in the table. That is because \code{Amelia}
-implements a multiple imputation method based on the assumption of a
-conditional multinormal variable distribution. The \code{deducorrect} package
+implements a multiple imputation method which was out of scope for the study 
+mentioned above. The \code{deducorrect} package
 implements deductive and deterministic methods, and we choose not to call this
 model-based in this tutorial. The \code{mix} package implements a Bayesian
 estimation method based on an Markov Chain Monte Carlo algorithm.
