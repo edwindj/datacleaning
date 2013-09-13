@@ -29,7 +29,7 @@ three steps.
 \begin{enumerate}
 \item \emph{Detection} of an inconsistency. That is, one establishes which
 constraints are violated. For example, an \emph{age} variable is constraint to
-nonnegative values.
+non negative values.
 \item \emph{Selection} of the field or fields causing the inconsistency. This
 is trivial in the case of a univariate demand as in the previous step, but may
 be more cumbersome when cross-variable relations are expected to hold. For
@@ -82,7 +82,7 @@ with prior to any analyses.
 In practice, analysts, but also commonly used numerical software may confuse a
 missing value with a default value or category. For instance, in \code{Excel
 2010}, the result of adding the contents of a field containing the number 1
-with an empty field results in 1. This behaviour is most definitely unwanted
+with an empty field results in 1. This behavior is most definitely unwanted
 since \code{Excel} silently imputes `0' where it should have said something
 along the lines of `unable to compute'. It should be up to the analyst to
 decide how empty values are handled, since a default imputation may yield
@@ -96,7 +96,7 @@ where a person is born. In contrast, \code{NA} indicates that we have no
 information to determine whether the birth place is known or not.
 
 
-The behaviour of \R{}'s core functionality is completely consistent with the
+The behavior of \R{}'s core functionality is completely consistent with the
 idea that the analyst must decide what to do with missing data. A common choice,
 namely `leave out records with missing data' is supported by many base functions
 through the \code{na.rm} option.
@@ -260,7 +260,7 @@ Such knowledge can be expressed as \emph{rules} or constraints. In data editing
 literature these rules are referred to as \emph{edit rules} or \emph{edits}, in short.
 Checking for obvious inconsistencies can be done straightforwardly in \R{} using
 logical indices and recycling. For example, to check which elements of
-\code{x} obey the rule `\code{x} must be nonnegative' one simply uses the following.
+\code{x} obey the rule `\code{x} must be non negative' one simply uses the following.
 <<eval=FALSE>>=
 x_nonnegative <- x >= 0
 @
@@ -319,7 +319,7 @@ function. As an example consider the contents of the following text file.
 \end{center}
 There are rules pertaining to purely numerical, purely categorical and rules
 pertaining to both data types. Moreover, there are univariate as well as multivariate
-rules. Comments are written behind the usual \code{\#} character. The ruleset can
+rules. Comments are written behind the usual \code{\#} character. The rule set can
 be read as follows.
 <<cache=FALSE>>=
 E <- editfile("files/edits.txt")
@@ -371,7 +371,7 @@ sense to minimize the number of fields being altered. This principle, commonly
 referred to as the principle of Fellegi and Holt\cite{fellegi:1976}, is based
 on the idea that errors occur relatively few times and when they do, they occur
 randomly across variables. Over the years several algorithms have been
-developed to solve this minimisation problem\cite{waal:2011} of which two have
+developed to solve this minimization problem\cite{waal:2011} of which two have
 been implemented in \code{editrules}. The \code{localizeErrors} function
 provides access to this functionality.
 
@@ -403,7 +403,7 @@ people[5,'agegroup'] <- 'adult'
 summary(violatedEdits(E,people[id,]))
 @
 %
-The behaviour of \code{localizeErrors} can be tuned with various options. It is
+The behavior of \code{localizeErrors} can be tuned with various options. It is
 possible to supply a confidence weight for each variable allowing for fine
 grained control on which values should be adapted. It is also possible to
 choose a branch-and-bound based solver (instead of the MIP solver used here),
@@ -649,7 +649,7 @@ rules that if someone has a drivers license, he has to be an adult.
 \label{sect:mbimputation}
 Imputation is the process of estimating or deriving values for fields where
 data is missing.  There is a vast body of literature on imputation methods and
-is goes beyond the scope of this tutorial to discuss all of them. In stead, we
+it goes beyond the scope of this tutorial to discuss all of them. In stead, we
 present in Table \ref{tab:imputation} an overview of packages that offer some
 kind of imputation method and list them against a number of popular model-based
 imputation methods. We note that the list of packages and methods are somewhat
