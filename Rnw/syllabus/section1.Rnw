@@ -216,6 +216,9 @@ L[c(1,3)]
 L[c('x','y')]
 L[['z']]
 @
+Especially, use the \code{class} function to determine the type of the result
+of each statement.
+
 %
 A \code{data.frame} is not much more than a \code{list} of vectors, possibly of
 different types, but with every vector (now columns) of the same length. Since

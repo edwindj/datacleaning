@@ -37,8 +37,8 @@ example the \emph{marital status} of a child must be \code{unmarried}.
 In the case of a violation it is not immediately
 clear whether \emph{age}, \emph{marital status} or both are wrong.
 \item \emph{Correction} of the fields that are deemed erroneous by the
-selection method.  This may be done through deterministic, deductive, or
-model-based methods.
+selection method.  This may be done through deterministic (model-based) or
+stochastic methods.
 \end{enumerate}
 %
 For many data correction methods these steps are not necessarily neatly
@@ -54,10 +54,11 @@ erroneous fields. If the field selection procedure is performed separately from
 the error detection procedure, it is generally referred to as \emph{error
 localization}. The latter is described in subsection \ref{sect:errloc}.
 Subsection  \ref{sect:correction} describes techniques that implement
-deterministic or deductive correction methods. In these techniques, erroneous
-values are replaced by better ones by directly deriving them from other values
-in the same record. Finally, subsection \ref{sect:mbimputation} gives an overview of some
-commonly used imputation techniques that are available in \R{}.
+correction methods based on `direct rules' or `deductive correction'.  In these
+techniques, erroneous values are replaced by better ones by directly deriving
+them from other values in the same record. Finally, subsection
+\ref{sect:mbimputation} gives an overview of some commonly used imputation
+techniques that are available in \R{}.
 
 
 
@@ -200,6 +201,17 @@ limit (so for the same dataset, generally less upper or lower outliers will be d
 boxplot.stats(x,coef=2)$out
 @
 
+The box-and-whisker method can be visualized with the box-and-whisker plot,
+where the box indicates the interquartile range and the median, the whiskers
+are represented at the ends of the box-and-whisker plots and outliers are
+indicated with as separate points above or below the whiskers.
+
+The box-and-whisker method fails when data are distributed skewly, as in an
+exponential or log-normal distribution for example. In that case one can
+attempt to transform the data, for example with a logarithm or square root
+transformation.  Another option is to use method that takes the skewness into
+account. 
+%
 \begin{wrapfigure}{r}{0.4\textwidth}
 \vspace{-1cm}
 \begin{center}
@@ -213,17 +225,8 @@ boxplot(x,cex=2,cex.axis=2)
 \end{center}
 \end{wrapfigure}
 %
-The box-and-whisker method can be visualized with the box-and-whisker plot,
-where the box indicates the interquartile range and the median, the whiskers
-are represented at the ends of the box-and-whisker plots and outliers are
-indicated with as separate points above or below the whiskers.
-
-The box-and-whisker method fails when data are distributed skewly, as in an
-exponential or log-normal distribution for example. In that case one can
-attempt to transform the data, for example with a logarithm or square root
-transformation.  Another option is to use method that takes the skewness into
-account. A particularly easy-to-implement example is the method of Hiridoglou
-and Berthelot\cite{hiridoglou:1986} for positive observations.  In this method,
+A particularly easy-to-implement example is the method of Hiridoglou
+and Berthelot\cite{hiridoglou:1986} for positive observations.  Icommonn this method,
 an observation is an outlier when
 \begin{equation}
 h(x) = \max\left(
@@ -234,9 +237,11 @@ h(x) = \max\left(
 Here, $r$ is a user-defined reference value and $x^*$ is usually the median
 observation, although other measures of centrality may be chosen. Here, the
 score function $h(x)$ grows as $1/x$ as $x$ approaches zero and grows linearly
-with $x$ when it is larger than $x^*$. It is therefore appropriate for
-long-tailed distributions. An implementation in of this method in \R{} does not
-seem available but it is implemented simple enough as follows.
+with $x$ when it is larger than $x^*$. It is therefore appropriate for finding
+both outliers on both sides of the distribution. Moreover, because of the
+different behaviour for small and large $x$-values, it is appropriate for
+skewed (long-tailed) distributions. An implementation of this method in \R{}
+does not seem available but it is implemented simple enough as follows.
 <<tidy=FALSE>>=
 hboutlier <- function(x,r){
   x <- x[is.finite(x)]
@@ -270,7 +275,7 @@ x_nonnegative <- x >= 0
 @
 However, as the number of variables increases, the number of rules may increase
 rapidly and it may be beneficial to manage the rules separate from the data.
-Moreover, since multivariate rules may be interconnected by sharing variables,
+Moreover, since multivariate rules may be interconnected by common variables,
 deciding which variable or variables in a record cause an inconsistency may not
 be straightforward.
 
@@ -411,7 +416,7 @@ The behavior of \code{localizeErrors} can be tuned with various options. It is
 possible to supply a confidence weight for each variable allowing for fine
 grained control on which values should be adapted. It is also possible to
 choose a branch-and-bound based solver (instead of the MIP solver used here),
-which is typically slower but has allows for more control. 
+which is typically slower but allows for more control. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Correction}
@@ -660,8 +665,8 @@ imputation methods. We note that the list of packages and methods are somewhat
 biased towards applications at Statistics Netherlands, as the table was
 originally produced during a study for internal purposes\cite{broek:2012}.
 Nevertheless we feel that this overview can be a quite useful place to start.
-See for example the paper by Kalton and Kasprzyk\cite{kalton:1986} for an
-overview of established imputation methods.  
+De Waal, Pannekoek and Scholtus\cite{waal:2011} (Chpt.\ 7) give a consice overview of many 
+of established imputation methods.  
 
 The packages \code{Amelia}, \code{deducorrect} and \code{mix} do not implement
 any of the methods mentioned in the table. That is because \code{Amelia}
@@ -749,10 +754,10 @@ Here, we distinguish three imputation models. The first is imputation of the mea
 \begin{equation}
 \hat{x}_i = \bar{x},
 \end{equation}
-where the mean is taken over the observed values. The usability of this model
-is limited since it obviously causes a bias in measures of spread, estimated
-from the sample after imputation. However, in base \R{} it is implemented
-simply enough.
+where the $\hat{x}_i$ is the imputation value and the mean is taken over the
+observed values. The usability of this model is limited since it obviously
+causes a bias in measures of spread, estimated from the sample after
+imputation. However, in base \R{} it is implemented simply enough.
 <<eval=FALSE>>=
 x[is.na(x)] <- mean(x,na.rm=TRUE)
 @
@@ -900,10 +905,15 @@ We will use this function in exercise \ref{ex:seqimpute}.
 
 
 \emph{Predictive mean matching} (pmm) is a form of nearest-neighbor hot-deck
-imputation with a specific distance function. In predictive mean matching one
-first estimates values for empty fields, for example with a regression method.
-Empty values are then imputed with observed values which are the most similar
-to the predicted values. Predictive mean matching imputation has been
+imputation with a specific distance function. Suppose that in record $j$, the
+$i$th value is missing. One then estimates the value $\hat{x}_{ji}$ using a
+prediction model (often some form of regression) for the record with the
+missing values as well as for possible donor records $k\not=j$ where the $i$the
+value is not missing. One then determines
+$k^*=\argmin_{k\not=j}d(\hat{x}_{ki},\hat{x}_{ji})$ with $d$ a distance
+function and copies the observed value $x_{k^*i}$ to the $j$th record.
+
+Predictive mean matching imputation has been
 implemented in several packages (\code{mi}, \code{mice}, \code{BaBoon}) but
 each time either for a specific type of data and/or using a specific prediction
 model (\emph{e.g.} \code{Bayesglm}). Moreover, the packages known to us always

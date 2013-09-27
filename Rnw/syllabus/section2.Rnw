@@ -36,10 +36,10 @@ formats over binary formats:
 \begin{itemize}
 \item It is human-readable. When you inspect a text-file, make sure to use a
 text-reader (\code{more}, \code{less}) or editor (\code{Notepad}, \code{vim})
-that uses a fixed-width font. Never use an office application for this purpose 
-typesetting clutters the data's structure, for example by  the use of ligature.
-\item Text is very permissive in the types values that are stored, allowing for
-comments and annotations.
+that uses a fixed-width font. Never use an office application for this purpose
+since typesetting clutters the data's structure, for example by  the use of
+ligature.  \item Text is very permissive in the types values that are stored,
+allowing for comments and annotations.
 \end{itemize}
 %
 The task then, is to find ways to read a textfile into \R{} and have it
@@ -146,7 +146,7 @@ If \code{colClasses} is not specified by the user, \code{read.table} will try
 to determine the column types. Although this may seem convenient, it is
 noticeably slower for larger files (say, larger than a few MB) and it may yield
 unexpected results. For example, in the above script, one of the rows contains
-a malformed numerical variable (\code{5.9*}), causing \R{} to interpret the
+a malformed numerical variable (\code{5.7*}), causing \R{} to interpret the
 whole column as a text variable. Moreover, by default text variables are
 converted to \code{factor}, so we are now stuck with a \emph{height} variable
 expressed as levels in a categorical variable:
