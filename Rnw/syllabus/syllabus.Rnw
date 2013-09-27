@@ -144,7 +144,7 @@ constructs, when used, will be explained in the text. We have adopted the
 following conventions in this text.
 
 \textbf{Code.} All code examples in this tutorial can be executed, unless
-otherwise indicated. Code examples are shown in gray boxes, like this:
+otherwise indicated. Code examples are shown in gray boxes, like this:\\
 <<>>=
 1 + 1
 @

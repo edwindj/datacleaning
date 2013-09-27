@@ -126,7 +126,7 @@ this, we assume that we have a the following text file stored under \code{files/
     basicstyle=\ttfamily\small
   ]{files/unnamed.txt}
 \end{center}
-Now consider the following script.
+Now consider the following script.\\
 <<tidy=FALSE>>=
 # first line is erroneously interpreted as column names
 (person <- read.csv("files/unnamed.txt"))
@@ -149,13 +149,13 @@ unexpected results. For example, in the above script, one of the rows contains
 a malformed numerical variable (\code{5.7*}), causing \R{} to interpret the
 whole column as a text variable. Moreover, by default text variables are
 converted to \code{factor}, so we are now stuck with a \emph{height} variable
-expressed as levels in a categorical variable:
+expressed as levels in a categorical variable:\\
 <<>>=
 str(person)
 @
 %
 Using \code{colClasses}, we can force \R{} to either interpret the columns
-in the way we want or throw an error when this is not possible.
+in the way we want or throw an error when this is not possible.\\
 <<tidy=FALSE>>=
 read.csv("files/unnamed.txt",
   header=FALSE,
@@ -168,7 +168,7 @@ completely when an error is encountered.
 
 As an alternative, columns can be read in as \code{character} by setting
 \code{stringsAsFactors=FALSE}. Next, one of the \code{as.}-functions can be
-applied to convert to the desired type, as shown below. 
+applied to convert to the desired type, as shown below. \\
 <<tidy=FALSE>>=
 dat <- read.csv(
   file              = "files/unnamed.txt"
@@ -228,7 +228,7 @@ each line in the file.  \code{readLines} detects both the end-of-line and
 carriage return characters so lines are detected regardless of whether the file
 was created under \code{DOS}, \code{UNIX} or \code{MAC} (each OS has
 traditionally had different ways of marking an end-of-line). Reading in the
-Daltons file yields the following.
+Daltons file yields the following.\\
 <<>>=
 (txt <- readLines("files/daltons.txt")) 
 @
@@ -238,9 +238,7 @@ of lines in the textfile.
 \textbf{Step 2. Selecting lines containing data.} This is generally done by
 throwing out lines containing comments or otherwise lines that do not contain
 any data fields. You can use \code{grep} or \code{grepl}
-to detect such lines. 
-
-
+to detect such lines. \\
 <<>>=
 # detect lines starting with a percentage sign..
 I <- grepl("^%",txt)
@@ -258,7 +256,7 @@ pattern 'start-of-line' followed by a percent-sign.  The functionality of
 \textbf{Step 3. Split lines into separate fields.} This can be done with
 \code{strsplit}. This function accepts a \code{character} vector and a \code{split}
 argument which tells \code{strsplit} how to split a string into substrings. The
-result is a \code{list} of \code{character} vectors.
+result is a \code{list} of \code{character} vectors.\\
 <<>>=
 (fieldList <- strsplit(dat,split=","))
 @
@@ -297,7 +295,7 @@ order. In \code{read.table}, lines that contain less fields than the maximum
 number of fields detected are appended with \code{NA}. One advantage of the
 do-it-yourself approach shown here is that we do not have to make this assumption.
 The easiest way to standardize rows is to write a function that takes a single
-\code{character} vector as input and assigns the values in the right order.
+\code{character} vector as input and assigns the values in the right order.\\
 %
 <<tidy=FALSE>>=
 assignFields <- function(x){
@@ -319,7 +317,7 @@ output vector of class \code{character}. The \code{grepl} statement detects
 fields containing alphabetical values \code{a-z} or \code{A-Z}. To assign year
 of birth and year of death, we use the knowledge that all Dalton brothers were
 born before and died after 1890. To retrieve the fields for each row in the example, 
-we need to apply this function to every element of \code{fieldList}. 
+we need to apply this function to every element of \code{fieldList}. \\
 <<warning=FALSE>>=
 standardFields <- lapply(fieldList, assignFields)
 standardFields
@@ -341,7 +339,7 @@ and general the field assigner should be.
 \begin{tip}{Tip}
 Element-wise operations over lists are easy to parallelize with the
 \code{parallel} package that comes with the standard \R{} installation. For
-example, on a quadcore computer you can do the following.
+example, on a quadcore computer you can do the following.\\
 <<eval=FALSE,tidy=FALSE>>=
 library(parallel)
 cluster <- makeCluster(4)
@@ -357,7 +355,7 @@ since there is some overhead in setting up and running the cluster.
 \textbf{Step 5. Transform to \code{data.frame}.}
 There are several ways to transform a list to a \code{data.frame} object.
 Here, first all elements are copied into a \code{matrix} which is then coerced
-into a \code{data.frame}.
+into a \code{data.frame}.\\
 <<tidy=FALSE>>=
 (M <- matrix(
   unlist(standardFields)
@@ -380,13 +378,13 @@ for coercion and translating numbers into \code{numeric} vectors and possibly
 \code{character} vectors to \code{factor} variables. String normalization is
 the subject of section \ref{sect:stringnormalisation} and type conversion is
 discussed in some more detail in the next section. However, in our example
-we can suffice with the following statements.
+we can suffice with the following statements.\\
 <<>>=
 daltons$birth <- as.numeric(daltons$birth)
 daltons$death <- as.numeric(daltons$death)
 daltons
 @
-Or, using \code{transform}:
+Or, using \code{transform}:\\
 <<tidy=FALSE>>=
 daltons = transform( daltons
                    , birth = as.numeric(birth)
@@ -410,7 +408,7 @@ coercion functions, but as a reference they are listed here.
 Each of these functions takes an \R{} object and tries to convert it to the
 class specified behind the ``\code{as.}''.
 By default, values that cannot be converted to the specified type will be 
-converted to a \code{NA} value while a warning is issued.
+converted to a \code{NA} value while a warning is issued.\\
 <<>>=
 as.numeric(c("7","7*","7.0","7,0"))
 @
@@ -423,7 +421,7 @@ Everything in \R{} is an object\cite{chambers:2008}. An object is a container
 of data endowed with a label describing the data. Objects can
 be created, destroyed or overwritten on-the-fly by the user.
 
-The function \code{class} returns the class label of an \R{} object.
+The function \code{class} returns the class label of an \R{} object.\\
 <<>>=
 class(c('abc','def'))
 class(1:10)
@@ -432,7 +430,7 @@ class(factor(c("abc","def")))
 @
 
 \begin{tip}{Tip}
-Here's a quick way to retrieve the classes of all columns in a \code{data.frame} called \code{dat}.
+Here's a quick way to retrieve the classes of all columns in a \code{data.frame} called \code{dat}.\\
 <<eval=FALSE>>=
 sapply(dat,class)
 @
@@ -444,7 +442,7 @@ in \R{} scripts. Under the hood, the basic \R{} objects are stored as \Clang{}
 structures as \Clang{} is the language in which \R{} itself has been written. The type
 of \Clang{} structure that is used to store a basic type can be found with the
 \code{typeof} function. Compare the results below with those in the previous
-code snippet.
+code snippet.\\
 <<>>=
 typeof(c('abc','def'))
 typeof(1:10)
@@ -479,7 +477,7 @@ retrieve or modify an object's type.
 In \R{}, the value of categorical variables is stored in \code{factor} variables.
 A \code{factor} is an integer vector endowed with a table specifying what integer 
 value corresponds to what \code{level}. The values in this translation table can be requested
-with the \code{levels} function.
+with the \code{levels} function.\\
 <<>>=
 f <- factor(c("a","b","a","a","c"))
 levels(f)
@@ -488,7 +486,7 @@ The use of integers combined with a translation table is not uncommon in
 statistical software, so chances are that you eventually have to make such a
 translation by hand. For example, suppose we read in a vector where 1 stands
 for \code{male}, 2 stands for \code{female} and 0 stands for \code{unknown}.
-Conversion to a factor variable can be done as in the example below. 
+Conversion to a factor variable can be done as in the example below. \\
 <<>>=
 # example:
 gender <- c(2,1,1,2,0,1,1)
@@ -504,18 +502,18 @@ argument will be regarded missing.
 Levels in a factor variable have no natural ordering. However in multivariate (regression) analyses
 it can be beneficial to fix one of the levels as the reference level. \R{}'s standard multivariate
 routines (\code{lm}, \code{glm}) use the first level as reference level. The \code{relevel} function
-allows you to determine which level comes first.
+allows you to determine which level comes first.\\
 %
 <<>>=
 (gender <- relevel(gender, ref='female'))
 @
-Levels can also be reordered, depending on the mean value of another variable, for example:
+Levels can also be reordered, depending on the mean value of another variable, for example:\\
 <<>>=
 age <- c(27, 52, 65, 34, 89, 45, 68)
 (gender <- reorder(gender, age))
 @
 Here, the means are added as a named vector attribute to \code{gender}. It can be removed
-by setting that attribute to \code{NULL}.
+by setting that attribute to \code{NULL}.\\
 <<>>=
 attr(gender,'scores') <- NULL
 gender
@@ -548,7 +546,7 @@ durations by subtraction of two \code{POSIXct} objects.
 
 When a \code{POSIXct} object is printed, \code{R} shows it in a human-readable
 calender format. For example, the command \code{Sys.time} returns the system
-time provided by the operating system in \code{POSIXct} format.
+time provided by the operating system in \code{POSIXct} format.\\
 <<>>=
 current_time <- Sys.time()
 class(current_time)
@@ -569,7 +567,7 @@ language is again defined in the operating system's locale settings.
 
 The \code{lubridate} package\cite{grolemund:2011} contains a number of
 functions facilitating the conversion of text to \code{POSIXct} dates.
-As an example, consider the following code.
+As an example, consider the following code.\\
 %
 <<message=FALSE>>=
 library(lubridate)
@@ -597,7 +595,7 @@ extraction is very easy.
 
 \begin{tip}{Note}
 It is not uncommon to indicate years with two numbers, leaving out the indication
-of century. In \R{}, 00-68 are interpreted as 2000-2068 and 69-99 as 1969-1999.
+of century. In \R{}, 00-68 are interpreted as 2000-2068 and 69-99 as 1969-1999.\\
 <<>>=
 dmy("01 01 68")
 dmy("01 01 69")
@@ -609,7 +607,7 @@ interpretation changes over time.
 
 It should be noted that \code{lubridate} (as well as \R{}'s base functionality) is
 only capable of converting certain standard notations. For example, the following
-notation does not convert.
+notation does not convert.\\
 <<>>=
 dmy("15 Febr. 2013")
 @
@@ -651,7 +649,7 @@ installed locales. In \code{Windows} you can find available locale settings unde
 If you know the textual format that is used to describe a date in the input, you may
 want to use \R{}'s core functionality to convert from text to \code{POSIXct}. This
 can be done with the \code{as.POSIXct} function. It takes as arguments a \code{character}
-vector with time/date strings and a string describing the format. 
+vector with time/date strings and a string describing the format. \\
 <<>>=
 dates <- c("15-9-2009","16-07-2008","17 12-2007","29-02-2011")
 as.POSIXct(dates,format="%d-%m-%Y")
@@ -670,7 +668,7 @@ above are also not converted.
 
 Finally, to convert dates from \code{POSIXct} back to character, one may use
 the \code{format} function that comes with base \R{}. It accepts a \code{POSIXct}
-date/time object and an output format string.
+date/time object and an output format string.\\
 <<>>=
 mybirth <- dmy("28 Sep 1976")
 format(mybirth,format="I was born on %B %d, %Y")
@@ -682,7 +680,7 @@ format(mybirth,format="I was born on %B %d, %Y")
 
 Because of the many ways people can write the same things down, character data
 can be difficult to process.  For example, consider the following excerpt of a
-data set with a \code{gender} variable.
+data set with a \code{gender} variable.\\
 <<echo=2>>=
 data.frame(gender=c("M","male ","Female","fem."))
 @
@@ -720,7 +718,7 @@ The \code{stringr} package\cite{wickham:2009} offers a number of functions that
 make some some string manipulation tasks a lot easier than they would be with
 \R{}'s base functions. For example, extra white
 spaces at the beginning or end of a string can be removed using
-\code{str\_trim}.
+\code{str\_trim}.\\
 <<>>=
 library(stringr)
 str_trim("  hello world ")
@@ -729,7 +727,7 @@ str_trim("  hello world ",side="right")
 @
 Conversely, strings can be padded with spaces or other characters with
 \code{str\_pad} to a certain width. For example, numerical codes are often
-represented with prepending zeros.
+represented with prepending zeros.\\
 <<>>=
 str_pad(112,width=6,side='left', pad=0)
 @
@@ -738,7 +736,7 @@ indicate whether trimming or padding should occur at the beginning
 (\code{left}), end (\code{right}) or both sides of the string. 
 
 Converting strings to complete upper or lower case can be done with \R{}'s
-built-in \code{toupper} and \code{tolower} functions.
+built-in \code{toupper} and \code{tolower} functions.\\
 <<>>=
 toupper("Hello world")
 tolower("Hello World")
@@ -765,7 +763,7 @@ numerical index. You may think of \code{grep(...)} as \code{which(grepl(...))}.
 %
 In the most simple case, the pattern to look for is a simple substring. For
 example, using the data of the example on page
-\pageref{sect:stringnormalisation}, we get the following.
+\pageref{sect:stringnormalisation}, we get the following.\\
 <<>>=
 gender <- c("M","male ","Female","fem.")
 grepl('m',gender)
@@ -774,7 +772,7 @@ grep('m',gender)
 Note that the result is case sensitive: the capital \code{M} in the first
 element of \code{gender} does not match the lower case \code{m}. There are
 several ways to circumvent this case sensitivity.  Either by case normalization
-or by the optional argument \code{ignore.case}.
+or by the optional argument \code{ignore.case}.\\
 <<>>=
 grepl('m',gender,ignore.case=TRUE)
 grepl('m',tolower(gender))
@@ -784,7 +782,7 @@ Obviously, looking for the occurrence of \code{m} or \code{M} in the
 \code{male} and which not. Preferably we would like to search for strings that
 start with an \code{m} or \code{M}.  Fortunately, the search patterns that
 \code{grep} accepts allow for such searches. The beginning of a string is
-indicated with a caret (\code{\^}).
+indicated with a caret (\code{\^}).\\
 <<>>=
 grepl('^m',gender,ignore.case=TRUE)
 @
@@ -799,7 +797,7 @@ and \code{gsub}) understand have more of these meta-characters, namely:
 \end{verbatim}
 \label{lab:regexp}
 If you need to search a string for any of these characters, you can use the
-option \code{fixed=TRUE}.
+option \code{fixed=TRUE}.\\
 <<>>=
 grepl('^',gender,fixed=TRUE)
 @
@@ -824,7 +822,7 @@ how much two strings differ from each other.  An important distance measure is
 implemented by the \R{}'s native \code{adist} function. This function counts
 how many basic operations are needed to turn one string into another. These
 operations include insertion, deletion or substitution of a single
-character\cite{levenshtein:1966}.  For example
+character\cite{levenshtein:1966}.  For example\\
 <<>>=
 adist("abc","bac")
 @
@@ -836,7 +834,7 @@ character substitutions:
 
 Using \code{adist}, we can compare fuzzy text strings
 to a list of known codes. For example:
-\label{example:gendercode}
+\label{example:gendercode}\\
 <<>>=
 codes <- c('male','female')
 D <- adist(gender,codes)
@@ -848,7 +846,7 @@ Here, \code{adist} returns the distance matrix between our vector of fixed
 codes and the input data. For readability we added row- and column names
 accordingly. Now, to find out which code matches best with our raw data, we
 need to find the index of the smallest distance for each row of \code{D}. This
-can be done as follows.
+can be done as follows.\\
 <<>>=
 i <- apply(D,1,which.min)
 data.frame(
@@ -873,7 +871,7 @@ of which are likely to provide results that are better than \code{adist}'s.
 Most importantly, the distance function used by \code{adist} does not allow for
 character transpositions, which is a common typographical error. Using the
 \emph{optimal string alignment distance} (the default choice for
-\code{stringdist}) we get
+\code{stringdist}) we get\\
 <<message=FALSE>>=
 library(stringdist)
 stringdist("abc","bac")
@@ -887,7 +885,7 @@ alignment distance allows for transpositions of adjacent characters:
 Thirdly, the \code{stringdist} package provides a function called
 \code{amatch}, which mimics the behavior of \R{}'s \code{match} function:
 it returns the an index to the closest match within a maximum distance.
-Recall the \code{gender} and \code{code} example of page \pageref{example:gendercode}.
+Recall the \code{gender} and \code{code} example of page \pageref{example:gendercode}.\\
 <<tidy=FALSE>>=
 # this yields the closest match of 'gender' in 'codes' (within a distance of 4)
 (i <- amatch(gender,codes,maxDist=4))
@@ -930,12 +928,12 @@ web pages are encoded in \code{UTF-8}.
 
 You can find out the character encoding of your system by typing (not
 copy-pasting!) a non-\code{ASCII} character and ask for the encoding scheme,
-like so.
+like so.\\
 <<eval=TRUE>>=
 Encoding("Queensrÿche")
 @
 If the answer is \code{"unknown"}, this means that the local native encoding
-is used. The default encoding used by your OS can be requested by typing
+is used. The default encoding used by your OS can be requested by typing\\
 <<>>=
 Sys.getlocale("LC_CTYPE")
 @
@@ -956,7 +954,7 @@ character vector will internally be translated to either \code{UTF-8} or
 The \code{fileEncoding} argument of \code{read.table} and its relatives tells
 \R{} what encoding scheme was used to store the file. For \code{readLines} the
 file encoding must be specified when the file is opened, before calling
-\code{readLines}, as in the example below.
+\code{readLines}, as in the example below.\\
 <<eval=FALSE>>=
 # 1. open a connection to your file, specifying its encoding
   f <- file('myUTF16file.txt',encoding='UTF-16')
@@ -993,7 +991,7 @@ Type conversions.
     \item Is \code{numeric} a natural data type for the columns which are stored as such? Convert to integer when necessary.
           (See also \code{?warpbreaks} for an explanation of the data).
     \item Error messages in \R{} sometimes report the underlying \emph{type} of an object rather than the user-level \emph{class}.
-          Derive from the following code and error message what the underlying type of an \R{} function is.
+          Derive from the following code and error message what the underlying type of an \R{} function is.\\
           <<>>=
           mean[1]
           @
@@ -1003,7 +1001,7 @@ Type conversions.
 
 \begin{exercise}
 \label{ex:factor}
-Type the following code in your \R{} terminal.
+Type the following code in your \R{} terminal.\\
 <<>>=
 v <- factor(c("2","3","5","7","11"))
 @

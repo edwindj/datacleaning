@@ -99,7 +99,7 @@ information to determine whether the birth place is known or not.
 The behavior of \R{}'s core functionality is completely consistent with the
 idea that the analyst must decide what to do with missing data. A common choice,
 namely `leave out records with missing data' is supported by many base functions
-through the \code{na.rm} option.
+through the \code{na.rm} option.\\
 <<>>=
 age <- c(23, 16, NA)
 mean(age)
@@ -113,13 +113,13 @@ Besides the \code{is.na} function, that was already mentioned in section
 \ref{sect:specval}, \R{} comes with a few other functions facilitating
 \code{NA} handling.  The \code{complete.cases} function detects rows in a
 \code{data.frame} that do not contain \code{any} missing value. Recall the
-\code{person} data set example from page \pageref{pp:person}.
+\code{person} data set example from page \pageref{pp:person}.\\
 <<>>=
 print(person) 
 complete.cases(person)
 @
 The resulting \code{logical} be used to remove incomplete records from the
-\code{data.frame}.  Alternatively the \code{na.omit} function, does the same.
+\code{data.frame}.  Alternatively the \code{na.omit} function, does the same.\\
 <<>>=
 (persons_complete <- na.omit(person))
 na.action(persons_complete)
@@ -144,12 +144,12 @@ values prior to analysis.
 
 For numeric variables, special values indicate values that are not an element
 of the mathematical set of real numbers ($\mathbb{R}$). The function \code{is.finite}
-determines which values are `regular' values.
+determines which values are `regular' values.\\
 <<>>=
 is.finite(c(1, Inf, NaN, NA))
 @
 This function accepts vectorial input. With little effort we can write a function
-that may be used to check every numerical column in a data.frame/
+that may be used to check every numerical column in a data.frame\\
 %
 <<tidy=FALSE>>=
 is.special <- function(x){
@@ -187,7 +187,7 @@ and rounding to the nearest lower observation.  The lower whisker is computed
 likewise.
 
 The base \R{}, installation comes with function \code{boxplot.stats},
-which, amongst other things, list the outliers.
+which, amongst other things, list the outliers.\\
 <<>>=
 x <- c(1:10,20, 30)
 boxplot.stats(x)$out
@@ -196,7 +196,7 @@ Here, $20$ and $50$ are detected as outliers since they are above the upper
 whisker of the observations in \code{x}. The factor $1.5$ used to compute the
 whisker is to an extent arbitrary and it can be altered by setting the \code{coef}
 option of \code{boxplot.stats}. A higher coefficient means a higher outlier detection
-limit (so for the same dataset, generally less upper or lower outliers will be detected).
+limit (so for the same dataset, generally less upper or lower outliers will be detected).\\
 <<>>=
 boxplot.stats(x,coef=2)$out
 @
@@ -241,7 +241,7 @@ with $x$ when it is larger than $x^*$. It is therefore appropriate for finding
 both outliers on both sides of the distribution. Moreover, because of the
 different behaviour for small and large $x$-values, it is appropriate for
 skewed (long-tailed) distributions. An implementation of this method in \R{}
-does not seem available but it is implemented simple enough as follows.
+does not seem available but it is implemented simple enough as follows.\\
 <<tidy=FALSE>>=
 hboutlier <- function(x,r){
   x <- x[is.finite(x)]
@@ -269,7 +269,7 @@ Such knowledge can be expressed as \emph{rules} or constraints. In data editing
 literature these rules are referred to as \emph{edit rules} or \emph{edits}, in short.
 Checking for obvious inconsistencies can be done straightforwardly in \R{} using
 logical indices and recycling. For example, to check which elements of
-\code{x} obey the rule `\code{x} must be non negative' one simply uses the following.
+\code{x} obey the rule `\code{x} must be non negative' one simply uses the following.\\
 <<eval=FALSE>>=
 x_nonnegative <- x >= 0
 @
@@ -296,7 +296,7 @@ As an example, we will work with a small file containing the following data.
 \end{center}
 %
 We read this data into a variable called \code{people}
-and define some restrictions on \emph{age} using \code{editset}.
+and define some restrictions on \emph{age} using \code{editset}.\\
 <<>>=
 people <- read.csv("files/people.txt")
 library(editrules)
@@ -307,7 +307,7 @@ The \code{editset} function parses the textual rules and stores them in an
 (\code{num}eric, \code{cat}egorical, or \code{mix}ed) and a number.  The data
 can be checked against these rules with the \code{violatedEdits} function.
 Record 4 contains an error according to one of the rules: an \code{age} of
-\Sexpr{person$age[4]} is not allowed. 
+\Sexpr{person$age[4]} is not allowed. \\
 %
 <<>>=
 violatedEdits(E, people)
@@ -329,13 +329,13 @@ function. As an example consider the contents of the following text file.
 There are rules pertaining to purely numerical, purely categorical and rules
 pertaining to both data types. Moreover, there are univariate as well as multivariate
 rules. Comments are written behind the usual \code{\#} character. The rule set can
-be read as follows.
+be read as follows.\\
 <<cache=FALSE>>=
 E <- editfile("files/edits.txt")
 @
 As the number of rules grows, looking at the full array produced by
 \code{violatedEdits} becomes cumbersome. For this reason, \code{editrules}
-offers methods to summarize or visualize the result.
+offers methods to summarize or visualize the result.\\
 <<>>=
 ve <- violatedEdits(E,people)
 summary(ve)
@@ -350,7 +350,7 @@ Since rules may pertain to multiple variables, and variables may occur in
 several rules (\emph{e.g.} the \emph{age} variable in the current example),
 there is a dependency between rules and variables. It can be informative
 to show these dependencies in a graph using the \code{plot} function, as in
-Figure 3.
+Figure 3.\\
 %
 <<echo=FALSE>>=
 captxt = paste(
@@ -385,7 +385,7 @@ been implemented in \code{editrules}. The \code{localizeErrors} function
 provides access to this functionality.
 
 As an example we take two records from the \code{people} dataset from the
-previous subsection.
+previous subsection.\\
 <<>>=
 id <- c(2,5)
 people[id,]
@@ -393,7 +393,7 @@ violatedEdits(E,people[id,])
 @
 Record 2 violates \code{mix6} while record 5 violates edits \code{num2},
 \code{cat5} and \code{mix8}. We use \code{localizeErrors}, with a mixed-integer programming
-approach to find the minimal set of variables to adapt.
+approach to find the minimal set of variables to adapt.\\
 <<>>=
 le <- localizeErrors(E, people[id,],method='mip')
 le$adapt
@@ -404,7 +404,7 @@ altered in each record. It can be used in correction and imputation
 procedures for filling in valid values. Such procedures are not part of
 \code{editrules}, but for demonstration purposes we will manually fill
 in new values showing that the solution computed by \code{localizeErrors}
-indeed allows one to repair records to full compliance with all edit rules.
+indeed allows one to repair records to full compliance with all edit rules.\\
 <<results='hide'>>=
 people[2,'status'] <- 'single'
 people[5,'height'] <- 7
@@ -431,7 +431,7 @@ In some cases, the cause of errors in data can be determined with enough
 certainty so that the solution is almost automatically known. In recent years,
 several such methods have been developed and implemented in the
 \code{deducorrect} package\cite{loo:2011}. In this section we give a quick
-overview of the possibilities of \code{deducorrect}. 
+overview of the possibilities of \code{deducorrect}. \\
 <<echo=FALSE, result=FALSE>>=
 library(deducorrect)
 @
@@ -445,13 +445,13 @@ almost be treated as a log of the actions performed by the analyst. However, as
 scripts get longer it is better to store the transformation rules separately
 and log which rule is executed on what record.  The \code{deducorrect} package
 offers functionality for this. Consider as an example the following
-(fictitious) dataset listing the body length of some brothers.
+(fictitious) dataset listing the body length of some brothers.\\
 <<>>=
 (marx <- read.csv("files/marx.csv",stringsAsFactors=FALSE))
 @
 The task here is to standardize the lengths and express all of them in
 meters. The obvious way would be to use the indexing techniques summarized
-in Section \ref{sect:indexing}, which would look something like this.
+in Section \ref{sect:indexing}, which would look something like this.\\
 <<>>=
 marx_m <- marx
 I <- marx$unit == "cm"
@@ -469,7 +469,7 @@ will be a significant administrative overhead.
 
 The deducorrect package takes all this overhead of your hands with the 
 \code{correctionRules} functionality. For example, to perform the above 
-task, one first specifies a file with correction rules as follows.
+task, one first specifies a file with correction rules as follows.\\
 <<echo=FALSE>>=
 read_chunk("files/conversions.txt")
 @
@@ -484,30 +484,30 @@ read_chunk("files/conversions.txt")
 \end{center}
 %
 With \code{deducorrect} we can read these rules, apply them to the data and
-obtain a log of all actual changes as follows.
+obtain a log of all actual changes as follows.\\
 <<>>=
 # read the conversion rules.
 R <- correctionRules("files/conversions.txt")
 R
 @
 \code{correctionRules} has parsed the rules and stored them in a \code{correctionRules}
-object. We may now apply them to the data.
+object. We may now apply them to the data.\\
 <<>>=
 cor <- correctWithRules(R,marx)
 @
 The returned value, \code{cor}, is a \code{list} containing the
-corrected data
+corrected data\\
 <<>>=
 cor$corrected
 @
-as well as a also a log of applied corrections.
+as well as a also a log of applied corrections.\\
 <<>>=
 cor$corrections[1:4]
 @
 The log lists for each row, what variable was changed, what the old value was
 and what the new value is. Furthermore, the fifth column of
 \code{cor\$corrections} shows the corrections that were applied (not shown
-above for formatting reasons)
+above for formatting reasons)\\
 <<>>=
 cor$corrections[5]
 @
@@ -520,13 +520,13 @@ By design, there are some limitations to which rules can be applied with
 \code{correctWithRules}.  The processing rules should be executable
 record-by-record. That is, it is not permitted to use functions line
 \code{mean} or \code{sd}. The symbols that may be used can be listed as
-follows.
+follows.\\
 <<>>=
 getOption('allowedSymbols')
 @
 When the rules are read by \code{correctionRules}, it checks whether any symbol
 occurs that is not in the list of allowed symbols and returns an error message
-when such a symbol is found as in the following example.
+when such a symbol is found as in the following example.\\
 <<>>=
 correctionRules(expression(x <- mean(x)))
 @
@@ -549,7 +549,7 @@ The functions can handle larger sets of edits however.
 
 With \code{correctRoundings} deviations of the size of one or two measurement
 units can be repaired. The function randomly selects one variable to alter such that
-the rule violation(s) are nullified while no new violations are generated.
+the rule violation(s) are nullified while no new violations are generated.\\
 <<>>=
 e <- editmatrix("x + y == z")
 d <- data.frame(x = 100,y=101,z=200)
@@ -560,7 +560,7 @@ cor$corrections
 
 The function \code{correctSigns} is able to detect and repair sign errors.  It
 does this by trying combinations of variable swaps on variables that occur in
-violated edits.
+violated edits.\\
 <<>>=
 e <- editmatrix("x + y == z")
 d <- data.frame(x = 100, y = -100, z=200)
@@ -572,7 +572,7 @@ cor$corrections
 Finally, the function \code{correctTypos} is capable of detecting and correcting
 typographic errors in numbers. It does this by computing candidate solutions and
 checking whether those candidates are less than a certain string distance (see Section 
-\ref{sect:appstringmatching}) removed from the original.
+\ref{sect:appstringmatching}) removed from the original.\\
 <<>>=
 e <- editmatrix("x + y == z")
 d <- data.frame(x = 123, y = 132, z = 246)
@@ -612,7 +612,7 @@ the last rule). However, there are other cases where unique solutions exist.
 Suppose that we have $staff = total$. Assuming that these values are correct,
 the only possible values for the other two variables  is $housing=cleaning=0$.
 The \code{deducorrect} function \code{deduImpute} is able to recognize such
-cases and compute the unique imputations.
+cases and compute the unique imputations.\\
 <<tidy=FALSE>>=
 E <- editmatrix(expression(
   staff + cleaning + housing == total,
@@ -635,7 +635,7 @@ with absolute certainty (uniquely) from the rules. In the example, there are
 many possible solutions to impute the last record and hence \code{deduImpute}
 leaves it untouched.
 
-Similar situations exist for categorical data, which are handled by \code{deduImpute} as well.
+Similar situations exist for categorical data, which are handled by \code{deduImpute} as well.\\
 <<tidy=FALSE>>=
 E <- editarray(expression(
   age %in% c("adult","under-aged"),
@@ -757,14 +757,14 @@ Here, we distinguish three imputation models. The first is imputation of the mea
 where the $\hat{x}_i$ is the imputation value and the mean is taken over the
 observed values. The usability of this model is limited since it obviously
 causes a bias in measures of spread, estimated from the sample after
-imputation. However, in base \R{} it is implemented simply enough.
+imputation. However, in base \R{} it is implemented simply enough.\\
 <<eval=FALSE>>=
 x[is.na(x)] <- mean(x,na.rm=TRUE)
 @
 In principle one can use other measures of centrality, and in fact, the \code{Hmisc}
 package has a convenient wrapper function allowing you to specify what function is
 used to compute imputed values from the non-missing. For example, imputation of 
-the mean or median can be done as follows. 
+the mean or median can be done as follows. \\
 <<eval=FALSE>>=
 library(Hmisc)
 x <- impute(x, fun=mean)     # mean imputation
@@ -772,7 +772,7 @@ x <- impute(x, fun=median)   # median imputation
 @
 An nice feature of the \code{impute} function is that the resulting
 vector ``remembers'' what values were imputed. This information
-may be requested with \code{is.imputed} as in the example below.
+may be requested with \code{is.imputed} as in the example below.\\
 <<echo=FALSE,message=FALSE>>=
 library(Hmisc)
 @
@@ -800,7 +800,7 @@ $y\geq0$ apply. There is no package directly implementing ratio imputation,
 unless it is regarded a special case of regression imputation. It is easily
 implemented using plain \R{} though. Below, we suppose that \code{x} and \code{y}
 are numeric vectors of equal length, \code{x} contains missing values and \code{y}
-is complete.
+is complete.\\
 <<eval=FALSE>>=
 I <- is.na(x)
 R <- sum(x[!I])/sum(y[!I])
@@ -821,7 +821,7 @@ where the $\hat{\beta}_0,\hat{\beta}_1\ldots\hat{\beta}_k$ are estimated linear
 regression coefficients for each of the auxiliary variables
 $y_1,y_2\ldots,y_k$. Estimating linear models is easy enough using \code{lm}
 and \code{predict} in standard \R{}. Here, we use the built-in \code{iris}
-data set as an example.
+data set as an example.\\
 <<>>=
 data(iris)
 iris$Sepal.Length[1:10] <- NA
@@ -866,7 +866,7 @@ from the same data set. When meaningful, random hot deck methods can be
 applied per stratum. For example, one may apply random hot-deck imputation of
 body height for male and female respondents separately. Random hot-deck on a
 single vector can be applied with the \code{impute} function of the
-\code{Hmisc} package.
+\code{Hmisc} package.\
 <<>>=
 data(women)
 # add some missingess
@@ -886,7 +886,7 @@ similar auxiliaries occur sequentially in the \code{data.frame}.  Next, each
 missing value is imputed with the value from the first following record that
 has an observed value. There seems to be no package that implements the
 sequential hot deck technique. However, given a vector that is sorted, the
-following function offers some basic functionality.
+following function offers some basic functionality.\\
 <<tidy=FALSE>>=
 # x    :  vector to be imputed
 # last : value to use if last value of x is empty
@@ -942,7 +942,7 @@ the distance is given by $1-(x_i-x_j)/(\max(x)-\min(x))$. The weight $w_{ijk}=0$
 when the $k$'th variable is missing in record $i$ or record $j$ and otherwise
 $1$.
 
-Here is an example of \code{kNN}.
+Here is an example of \code{kNN}.\\
 <<message=FALSE>>=
 library(VIM)
 data(iris)
@@ -984,7 +984,7 @@ is minimized and $\bs{x}$ obeys a given set of (in)equality restrictions
 \bs{Ax} \leq \bs{b}.
 \end{equation}
 
-As practical example consider the following script.
+As practical example consider the following script.\\
 <<>>=
 library(editrules)
 library(rspa)
@@ -1000,14 +1000,14 @@ d1$adjusted
 The function \code{adjustRecords} adjusts every record minimally to obey the restrictions
 in \code{E}. 
 Indeed, we may check that the adjusted data now obeys every rule within \code{adjustRecords}'
-default tolerance of $0.01$.
+default tolerance of $0.01$.\\
 <<>>=
 violatedEdits(E,d1$adjusted,tol=0.01)
 @
 By default, all variables in the input \code{data.frame} are adjusted with
 equal amounts. However, suppose that $z$ is an imputed value while $x$ and $y$
 are observed, original values. We can tell \code{adjustRecords} to only adjust
-\code{z} as follows.
+\code{z} as follows.\\
 <<>>=
 A <- array(c(x=FALSE,y=FALSE,z=TRUE),dim=c(1,3))
 A
