@@ -37,6 +37,8 @@
 \newcommand{\Clang}{\code{C}} %% call as \Clang{} to avoid extra spaces.
 \newcommand{\mcode}[1]{\textrm{\code{#1}}}
 
+\renewenvironment{knitrout}{\par}{}
+
 %%% listings from external files
 \usepackage{listings}
 \lstset{

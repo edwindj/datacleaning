@@ -146,7 +146,7 @@ argument is recycled if necessary. This goes for arithmetic operations
 \code{<=},\ldots), logical operators (\code{\&}, \code{|}, \code{!},$\ldots$)
 and basic math functions like \code{sin}, \code{cos}, \code{exp} and so on. 
 If you want to brush up your basic knowledge of vector and recycling properties,
-you can execute the following code and think about why it works the way it does.\\
+you can execute the following code and think about why it works the way it does.
 <<eval=FALSE>>=
 # vectors have variables of _one_ type
 c(1,2,"three")
