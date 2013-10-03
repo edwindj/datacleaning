@@ -13,7 +13,7 @@ conclusions, and supporting decision making.
 \end{quote}
 
 Most statistical theory focuses on data modeling, prediction and
-statistical inference while it is usually assumed that data is in the correct
+statistical inference while it is usually assumed that data are in the correct
 state for data analysis. In practice, a data analyst spends much if not most of
 his time on preparing the data before doing any statistical operation.  It is
 very rare that the raw data one works with are in the correct format, are

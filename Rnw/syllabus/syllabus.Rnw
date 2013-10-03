@@ -114,10 +114,10 @@ library(editrules)
 \begin{abstract}
 Data cleaning, or data preparation is an essential part of statistical
 analysis. In fact, in practice it is often more time-consuming than the
-statistical analyses itself. These lecture notes describes a range of
+statistical analyses itself. These lecture notes describe a range of
 techniques, implemented in the \R{} statistical environment, that allow the
 reader to build data cleaning scripts for date suffering from a wide range of
-errors and inconsistencies.  in textual format. These notes cover technical as
+errors and inconsistencies, in textual format. These notes cover technical as
 well as subject-matter related aspects of data cleaning. Technical aspects
 include data reading, type conversion and string matching and manipulation.
 Subject-matter related aspects include topics like data checking, error
@@ -137,7 +137,7 @@ These lecture notes are based on a tutorial given by the authors at the
 \subsection*{Notes to the reader}
 \addcontentsline{toc}{subsection}{Notes to the reader}
 This tutorial is aimed at users who have some \R{} programming experience.
-That is, we the reader is expected to be familiar with concepts such as
+That is, the reader is expected to be familiar with concepts such as
 variable assignment, \code{vector}, \code{list}, \code{data.frame}, writing
 simple loops, and perhaps writing simple functions. More complicated
 constructs, when used, will be explained in the text. We have adopted the

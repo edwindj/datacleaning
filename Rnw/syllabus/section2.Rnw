@@ -2,7 +2,7 @@
 \section{From raw data to technically correct data}
 \label{sect:rawtoinput}
 A data set is a collection of data that describes attribute values (variables)
-of a number of real-world objects (units). With data that is \emph{technically
+of a number of real-world objects (units). With data that are \emph{technically
 correct}, we understand a data set where each value
 \begin{enumerate}
 \item can be directly recognized as belonging to a certain variable;
@@ -118,7 +118,7 @@ ${^\mathrm{\dagger}}${\small Used only internally by \code{read.fwf}}\hfill
 %
 Except for \code{read.table} and \code{read.fwf}, each of the above functions assumes by 
 default that the first line in the text file contains column headers. To demonstrate
-this, we assume that we have a the following text file stored under \code{files/unnamed.txt}.
+this, we assume that we have the following text file stored under \code{files/unnamed.txt}.
 \begin{center}
 \lstinputlisting[
     xleftmargin=1cm,
@@ -718,7 +718,7 @@ The \code{stringr} package\cite{wickham:2009} offers a number of functions that
 make some some string manipulation tasks a lot easier than they would be with
 \R{}'s base functions. For example, extra white
 spaces at the beginning or end of a string can be removed using
-\code{str\_trim}.\\
+\code{str\_trim}.\par
 <<>>=
 library(stringr)
 str_trim("  hello world ")
