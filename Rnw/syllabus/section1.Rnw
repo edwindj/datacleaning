@@ -37,7 +37,7 @@ scripted and therefore reproduced.
 \subsection{Statistical analysis in five steps}
 In this tutorial a statistical analysis is viewed as the result of a
 number of data processing steps where each step increases the ``value'' of the
-data. 
+data\footnote{In fact, such a value chain is an integral part of Statistics Netherlands business architecture.}. 
 
 %
 \begin{wrapfigure}{l}{0.5\textwidth}
@@ -50,7 +50,7 @@ data.
     \node[statpoint, below of=stat] (output) {Formatted output};
     \draw[arr] (raw.south) to node[action]   {type checking, normalizing} (input.north);
     \draw[arr] (input.south) to node[action] {fix and impute} (micro.north);
-    \draw[arr] (micro.south) to node[action] {estimate, analyze} (stat.north);
+    \draw[arr] (micro.south) to node[action] {estimate, analyze, derive, etc.} (stat.north);
     \draw[arr] (stat.south) to node[action]  {tabulate, plot} (output.north);
     \draw[decorate,
       decoration={
@@ -160,7 +160,7 @@ c(1,2,"three")
 Each element of a vector can be given a \code{name}. This can be done
 by passing named arguments to the \code{c()} function or later with
 the \code{names} function. Such names can be helpful giving meaning
-to  your variables. For example consider the vector\\
+to  your variables. For example compare the vector\\
 <<>>=
 x <- c("red","green","blue")
 @
