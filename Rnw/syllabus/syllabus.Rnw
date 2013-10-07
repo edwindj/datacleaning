@@ -116,7 +116,7 @@ library(editrules)
 \begin{abstract}
 Data cleaning, or data preparation is an essential part of statistical
 analysis. In fact, in practice it is often more time-consuming than the
-statistical analyses itself. These lecture notes describe a range of
+statistical analysis itself. These lecture notes describe a range of
 techniques, implemented in the \R{} statistical environment, that allow the
 reader to build data cleaning scripts for date suffering from a wide range of
 errors and inconsistencies, in textual format. These notes cover technical as
