@@ -149,8 +149,7 @@ determines which values are `regular' values.
 is.finite(c(1, Inf, NaN, NA))
 @
 This function accepts vectorial input. With little effort we can write a function
-that may be used to check every numerical column in a data.frame/
-%
+that may be used to check every numerical column in a data.frame
 <<tidy=FALSE>>=
 is.special <- function(x){
   if (is.numeric(x)) !is.finite(x) else is.na(x)

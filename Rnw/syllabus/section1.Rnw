@@ -13,7 +13,7 @@ conclusions, and supporting decision making.
 \end{quote}
 
 Most statistical theory focuses on data modeling, prediction and
-statistical inference while it is usually assumed that data is in the correct
+statistical inference while it is usually assumed that data are in the correct
 state for data analysis. In practice, a data analyst spends much if not most of
 his time on preparing the data before doing any statistical operation.  It is
 very rare that the raw data one works with are in the correct format, are
@@ -160,11 +160,11 @@ c(1,2,"three")
 Each element of a vector can be given a \code{name}. This can be done
 by passing named arguments to the \code{c()} function or later with
 the \code{names} function. Such names can be helpful giving meaning
-to  your variables. For example consider the vector
+to  your variables. For example consider the vector\\
 <<>>=
 x <- c("red","green","blue")
 @
-with the one below.
+with the one below.\\
 <<>>=
 capColor = c(huey="red",duey="blue",louie="green")
 @
@@ -180,7 +180,7 @@ omit, in stead of select elements. Negative and positive indices are not
 allowed in the same index vector. You can repeat a name or an index number, which
 results in multiple instances of the same value.
 You may check the above by predicting and then
-verifying the result of the following statements.
+verifying the result of the following statements.\\
 <<eval=FALSE>>=
 capColor['louie']
 names(capColor)[capColor == 'blue']
@@ -192,7 +192,7 @@ x[c(TRUE,FALSE)]
 x[c(-1,-2)]
 @
 Replacing values in vectors can be done in the same way. For example,
-you may check that in the following assignment
+you may check that in the following assignment\\
 <<eval>>=
 x <- 1:10
 x[c(TRUE,FALSE)] <- 1
@@ -207,7 +207,7 @@ The single bracket operator always returns a \code{sub-list} of the indexed
 item, and it returns the object in the list itself. Besides
 indexing, the dollar operator \code{\$} can be used to retrieve a single
 element. To understand the above, check the results of the following
-statements.
+statements.\\
 <<eval=FALSE>>=
 L <- list(x = c(1:5), y=c('a','b','c'),z=capColor)
 L[[2]]
@@ -232,7 +232,7 @@ is important to realize that the result of a two-index selection is simplified
 by \R{} as much as possible. Hence, selecting a single column using
 a two-index results in a vector. This behavior may be switched off using
 \code{drop=FALSE} as an extra parameter. Here are some short examples
-demonstrating the above.
+demonstrating the above.\\
 <<eval=FALSE>>=
 d <- data.frame(x = 1:10, y=letters[1:10],z=LETTERS[1:10])
 d[1]
@@ -259,7 +259,7 @@ differences between them.
 for a missing value.  All basic operations in \R{} handle \code{NA} without
 crashing and mostly return \code{NA} as an answer whenever one of the input
 arguments is \code{NA}. If you understand \code{NA}, you should be able to
-predict the result of the following \R{} statements.
+predict the result of the following \R{} statements.\\
 <<eval=FALSE>>=
 NA + 1
 sum(c(NA,1,2))
@@ -275,7 +275,7 @@ The function \code{is.na} can be used to detect \code{NA}'s.
 mathematics.  \code{NULL} is special since it has no \code{class} (its class
 is \code{NULL}) and has length 0 so it does not take up any space in a vector.
 In particular, if you understand \code{NULL}, the result of the following
-statements should be clear to you without starting \R{}.
+statements should be clear to you without starting \R{}.\\
 <<eval=FALSE>>=
 length(c(1,2,NULL,4))
 sum(c(1,2,NULL,4))
@@ -292,7 +292,7 @@ is a valid \code{numeric} that results from calculations like division of a
 number by zero. Since \code{Inf} is a numeric, operations between \code{Inf}
 and a finite numeric are well-defined and comparison operators work as
 expected. If you understand \code{Inf}, the result of the following statements
-should be clear to you.
+should be clear to you.\\
 <<eval=FALSE>>=
 pi/0
 2*Inf
@@ -308,7 +308,7 @@ In particular operations like \code{0/0}, \code{Inf-Inf} and \code{Inf/Inf} resu
 in \code{NaN}. Technically, \code{NaN} is of class numeric, which may seem odd
 since it is used to indicate that something is \emph{not} numeric. Computations
 involving numbers and \code{NaN} always result in \code{NaN}, so the result
-of the following computations should be clear.
+of the following computations should be clear.\\
 <<eval=FALSE>>=
 NaN + 1
 exp(NaN)

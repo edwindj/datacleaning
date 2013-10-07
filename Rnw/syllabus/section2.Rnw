@@ -2,7 +2,7 @@
 \section{From raw data to technically correct data}
 \label{sect:rawtoinput}
 A data set is a collection of data that describes attribute values (variables)
-of a number of real-world objects (units). With data that is \emph{technically
+of a number of real-world objects (units). With data that are \emph{technically
 correct}, we understand a data set where each value
 \begin{enumerate}
 \item can be directly recognized as belonging to a certain variable;
@@ -118,7 +118,7 @@ ${^\mathrm{\dagger}}${\small Used only internally by \code{read.fwf}}\hfill
 %
 Except for \code{read.table} and \code{read.fwf}, each of the above functions assumes by 
 default that the first line in the text file contains column headers. To demonstrate
-this, we assume that we have a the following text file stored under \code{files/unnamed.txt}.
+this, we assume that we have the following text file stored under \code{files/unnamed.txt}.
 \begin{center}
 \lstinputlisting[
     xleftmargin=1cm,
@@ -239,8 +239,6 @@ of lines in the textfile.
 throwing out lines containing comments or otherwise lines that do not contain
 any data fields. You can use \code{grep} or \code{grepl}
 to detect such lines. 
-
-
 <<>>=
 # detect lines starting with a percentage sign..
 I <- grepl("^%",txt)
