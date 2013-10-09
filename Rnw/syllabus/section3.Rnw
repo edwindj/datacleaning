@@ -435,7 +435,7 @@ overview of the possibilities of \code{deducorrect}.
 library(deducorrect)
 @
 
-\subsubsection{Automated ad hoc correction}
+\subsubsection{Simple transformation rules}
 In practice, data cleaning procedures involve a lot of \emph{ad-hoc}
 transformations. This may lead to long scripts where one selects parts of
 the data, changes some variables, selects another part, changes some more
