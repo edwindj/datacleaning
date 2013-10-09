@@ -1,4 +1,4 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
 %\subsection{Data analysis}
@@ -88,7 +88,7 @@ from such data can be produced.
 
 \textsl{Consistent data} is the stage where data is ready for statistical
 inference. It is the data that most statistical theories use as a starting
-point. Ideally, such theories can still be applied done without taking previous
+point. Ideally, such theories can still be applied without taking previous
 data cleaning steps into account. In practice however, data cleaning methods
 like imputation of missing values will influence statistical results and so
 must be accounted for in the following analyses or interpretation thereof.
@@ -230,7 +230,7 @@ comma. The first index indicates rows, the second indicates columns.  If one of
 the indices is left out, no selection is made (so everything is returned).  It
 is important to realize that the result of a two-index selection is simplified
 by \R{} as much as possible. Hence, selecting a single column using
-a two-index results in a vector. This behavior may be switched off using
+a two-index results in a vector. This behaviour may be switched off using
 \code{drop=FALSE} as an extra parameter. Here are some short examples
 demonstrating the above.\\
 <<eval=FALSE>>=
@@ -273,7 +273,7 @@ The function \code{is.na} can be used to detect \code{NA}'s.
 
 \item[\code{NULL}] You may think of \code{NULL} as the empty set from
 mathematics.  \code{NULL} is special since it has no \code{class} (its class
-is \code{NULL}) and has length 0 so it does not take up any space in a vector.
+is \code{NULL}) and has length $0$ so it does not take up any space in a vector.
 In particular, if you understand \code{NULL}, the result of the following
 statements should be clear to you without starting \R{}.\\
 <<eval=FALSE>>=

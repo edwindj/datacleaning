@@ -31,7 +31,7 @@ and categorical data should be stored as a \code{factor} or \code{ordered} vecto
 with the appropriate levels.
 
 Limiting ourselves to textual data formats for this tutorial may have its
-drawbacks, but there are several several favorable properties of textual
+drawbacks, but there are several favorable properties of textual
 formats over binary formats:
 \begin{itemize}
 \item It is human-readable. When you inspect a text-file, make sure to use a
@@ -54,7 +54,7 @@ read by \R{}.
 
 
 \subsection{Reading text data into a \R{} \code{data.frame}}
-In the following, we assume that the text-files we are reading contain at data
+In the following, we assume that the text-files we are reading contain data
 of at most one unit per line. The number of attributes, their format and
 separation symbols in lines containing data may differ over the lines. This
 includes files in fixed-width or \code{csv}-like format, but excludes
@@ -73,7 +73,7 @@ correct, or close to it.
 \end{tabular}
 \end{center}
 %
-the return type of all these functions is a \code{data.frame}. If the column names are
+The return type of all these functions is a \code{data.frame}. If the column names are
 stored in the first line, they can automatically be assigned to the \code{names} attribute
 of the resulting \code{data.frame}.
 
@@ -161,7 +161,7 @@ read.csv("files/unnamed.txt",
   header=FALSE,
   colClasses=c('numeric','numeric'))
 @
-This behavior is desirable if you need to be strict about how data is offered
+This behaviour is desirable if you need to be strict about how data is offered
 to your \R{} script. However, unless you are prepared to write \code{tryCatch}
 constructions, a script containing the above code will stop executing
 completely when an error is encountered.
@@ -180,8 +180,8 @@ dat
 @
 Now, everything is read in and the \code{height} column is translated to
 numeric, with the exception of the row containing \code{5.7*}. Moreover, since
-we now get a warning in stead of an error, a script containing this statement
-will continue to run, albeit with less data to analyse then it was supposed to.
+we now get a warning instead of an error, a script containing this statement
+will continue to run, albeit with less data to analyse than it was supposed to.
 It is of course up to the programmer to check for these extra
 \code{NA}'s and handle them appropriately.
 
@@ -459,7 +459,7 @@ table between factor and integers are kept in memory. Normally, a user should no
 have to worry about these subtleties, but there are exceptions. An example of this is 
 the subject of Exercise \ref{ex:factor}.
 
-In short, one may regard the \emph{class} of an object the object's type from
+In short, one may regard the \emph{class} of an object as the object's type from
 the user's point of view while the \emph{type} of an object is the way \R{}
 looks at the object. It is important to realize that \R{}'s coercion functions
 are fundamentally functions that change the underlying \code{type} of an object
@@ -600,7 +600,7 @@ of century. In \R{}, 00-68 are interpreted as 2000-2068 and 69-99 as 1969-1999.
 dmy("01 01 68")
 dmy("01 01 69")
 @
-This behavior is according to the 2008 POSIX standard, but one should expect that this
+This behaviour is according to the 2008 POSIX standard, but one should expect that this
 interpretation changes over time.
 \end{tip}
 
@@ -686,7 +686,7 @@ data.frame(gender=c("M","male ","Female","fem."))
 @
 If this would be treated as a factor variable without any preprocessing,
 obviously four, not two classes would be stored. The job at hand is therefore
-to automatically recognize from the above data whether each elements pertains
+to automatically recognize from the above data whether each element pertains
 to \code{male} or \code{female}. In statistical contexts, classifying such
 ``messy'' text strings into a number of fixed categories is often referred to
 as \emph{coding}.
@@ -865,7 +865,7 @@ specify a maximum Levenshtein distance between the input pattern and the found
 substring. The \code{agrep} function allows for searching for regular
 expression patterns, which makes it very flexible.
 
-Secondly, \code{stringdist} package\cite{loo:2013} offers a function called
+Secondly, the \code{stringdist} package\cite{loo:2013} offers a function called
 \code{stringdist} which can compute a variety of string distance metrics, some
 of which are likely to provide results that are better than \code{adist}'s.
 Most importantly, the distance function used by \code{adist} does not allow for
@@ -883,9 +883,9 @@ alignment distance allows for transpositions of adjacent characters:
 \end{center}
 
 Thirdly, the \code{stringdist} package provides a function called
-\code{amatch}, which mimics the behavior of \R{}'s \code{match} function:
-it returns the an index to the closest match within a maximum distance.
-Recall the \code{gender} and \code{code} example of page \pageref{example:gendercode}.
+\code{amatch}, which mimics the behaviour of \R{}'s \code{match} function: it
+returns an index to the closest match within a maximum distance.  Recall the
+\code{gender} and \code{code} example of page \pageref{example:gendercode}.
 <<tidy=FALSE>>=
 # this yields the closest match of 'gender' in 'codes' (within a distance of 4)
 (i <- amatch(gender,codes,maxDist=4))

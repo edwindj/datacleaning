@@ -24,12 +24,12 @@ this tutorial we mainly focus on methods dealing with in-record consistency,
 with the exception of outlier handling which can be considered a cross-record
 consistency issue.
 
-The process towards consistent data involves always involves the following 
+The process towards consistent data always involves the following 
 three steps.
 \begin{enumerate}
 \item \emph{Detection} of an inconsistency. That is, one establishes which
-constraints are violated. For example, an \emph{age} variable is constraint to
-non negative values.
+constraints are violated. For example, an \emph{age} variable is constrained to
+non-negative values.
 \item \emph{Selection} of the field or fields causing the inconsistency. This
 is trivial in the case of a univariate demand as in the previous step, but may
 be more cumbersome when cross-variable relations are expected to hold. For
@@ -83,7 +83,7 @@ with prior to any analysis.
 In practice, analysts, but also commonly used numerical software may confuse a
 missing value with a default value or category. For instance, in \code{Excel
 2010}, the result of adding the contents of a field containing the number 1
-with an empty field results in 1. This behavior is most definitely unwanted
+with an empty field results in 1. This behaviour is most definitely unwanted
 since \code{Excel} silently imputes `0' where it should have said something
 along the lines of `unable to compute'. It should be up to the analyst to
 decide how empty values are handled, since a default imputation may yield
@@ -96,7 +96,7 @@ birth}. Here, the category \emph{unknown} means that we have no knowledge about
 where a person is born. In contrast, \code{NA} indicates that we have no
 information to determine whether the birth place is known or not.
 
-The behavior of \R{}'s core functionality is completely consistent with the
+The behaviour of \R{}'s core functionality is completely consistent with the
 idea that the analyst must decide what to do with missing data. A common choice,
 namely `leave out records with missing data' is supported by many base functions
 through the \code{na.rm} option.
@@ -118,7 +118,7 @@ Besides the \code{is.na} function, that was already mentioned in section
 print(person) 
 complete.cases(person)
 @
-The resulting \code{logical} be used to remove incomplete records from the
+The resulting \code{logical} can be used to remove incomplete records from the
 \code{data.frame}.  Alternatively the \code{na.omit} function, does the same.
 <<>>=
 (persons_complete <- na.omit(person))
@@ -185,7 +185,7 @@ is computed by adding 1.5 times the interquartile range to the third quartile
 and rounding to the nearest lower observation.  The lower whisker is computed
 likewise.
 
-The base \R{}, installation comes with function \code{boxplot.stats},
+The base \R{} installation comes with function \code{boxplot.stats},
 which, amongst other things, list the outliers.
 <<>>=
 x <- c(1:10,20, 30)
@@ -203,12 +203,12 @@ boxplot.stats(x,coef=2)$out
 The box-and-whisker method can be visualized with the box-and-whisker plot,
 where the box indicates the interquartile range and the median, the whiskers
 are represented at the ends of the box-and-whisker plots and outliers are
-indicated with as separate points above or below the whiskers.
+indicated as separate points above or below the whiskers.
 
 The box-and-whisker method fails when data are distributed skewly, as in an
 exponential or log-normal distribution for example. In that case one can
 attempt to transform the data, for example with a logarithm or square root
-transformation.  Another option is to use method that takes the skewness into
+transformation.  Another option is to use a method that takes the skewness into
 account. 
 %
 \begin{wrapfigure}{r}{0.4\textwidth}
@@ -225,7 +225,7 @@ boxplot(x,cex=2,cex.axis=2)
 \end{wrapfigure}
 %
 A particularly easy-to-implement example is the method of Hiridoglou
-and Berthelot\cite{hiridoglou:1986} for positive observations.  Icommonn this method,
+and Berthelot\cite{hiridoglou:1986} for positive observations.  In this method,
 an observation is an outlier when
 \begin{equation}
 h(x) = \max\left(
@@ -237,7 +237,7 @@ Here, $r$ is a user-defined reference value and $x^*$ is usually the median
 observation, although other measures of centrality may be chosen. Here, the
 score function $h(x)$ grows as $1/x$ as $x$ approaches zero and grows linearly
 with $x$ when it is larger than $x^*$. It is therefore appropriate for finding
-both outliers on both sides of the distribution. Moreover, because of the
+outliers on both sides of the distribution. Moreover, because of the
 different behaviour for small and large $x$-values, it is appropriate for
 skewed (long-tailed) distributions. An implementation of this method in \R{}
 does not seem available but it is implemented simple enough as follows.
@@ -368,7 +368,7 @@ plot(E)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Error localization}
 \label{sect:errloc}
-The interconnectivity of edits is what make error localization a hard problem.
+The interconnectivity of edits is what makes error localization difficult.
 For example, the graph in Figure 3 shows that a record violating edit
 \code{num4} may contain an error in \emph{age} and/or \emph{years married}.
 Suppose that we alter \emph{age} so that \code{num4} is not violated anymore. We then
@@ -411,7 +411,7 @@ people[5,'agegroup'] <- 'adult'
 summary(violatedEdits(E,people[id,]))
 @
 %
-The behavior of \code{localizeErrors} can be tuned with various options. It is
+The behaviour of \code{localizeErrors} can be tuned with various options. It is
 possible to supply a confidence weight for each variable allowing for fine
 grained control on which values should be adapted. It is also possible to
 choose a branch-and-bound based solver (instead of the MIP solver used here),
@@ -499,7 +499,7 @@ corrected data
 <<>>=
 cor$corrected
 @
-as well as a also a log of applied corrections.
+as well as a log of applied corrections.
 <<>>=
 cor$corrections[1:4]
 @
@@ -511,13 +511,13 @@ above for formatting reasons)
 cor$corrections[5]
 @
 So here, with just two commands, the data is processed and all actions logged
-in a \code{data.frame} which may be can stored or analyzed. The rules that may
+in a \code{data.frame} which may be stored or analyzed. The rules that may
 be applied with \code{deducorrect} are rules that can be executed
 record-by-record. 
 
 By design, there are some limitations to which rules can be applied with
 \code{correctWithRules}.  The processing rules should be executable
-record-by-record. That is, it is not permitted to use functions line
+record-by-record. That is, it is not permitted to use functions like
 \code{mean} or \code{sd}. The symbols that may be used can be listed as
 follows.
 <<>>=
@@ -585,7 +585,7 @@ Indeed, swapping the $3$ and the $2$ in $y=132$ solves the edit violation.
 Every \code{correct-} function in \code{deducorrect} is an object of class
 \code{deducorrect}. When printed, it doesn't show the whole contents (the
 corrected data and logging information) but a summary of what happened with
-th data. A \code{deducorrect} object also contains data on timing, user,
+the data. A \code{deducorrect} object also contains data on timing, user,
 and so on. See \code{?"deducorrect-object"} for a full explanation.
 \end{tip}
 
@@ -664,8 +664,8 @@ imputation methods. We note that the list of packages and methods are somewhat
 biased towards applications at Statistics Netherlands, as the table was
 originally produced during a study for internal purposes\cite{broek:2012}.
 Nevertheless we feel that this overview can be a quite useful place to start.
-De Waal, Pannekoek and Scholtus\cite{waal:2011} (Chpt.\ 7) give a consice overview of many 
-of established imputation methods.  
+De Waal, Pannekoek and Scholtus\cite{waal:2011} (Chpt.\ 7) give a consice
+overview of several well-established imputation methods.  
 
 The packages \code{Amelia}, \code{deducorrect} and \code{mix} do not implement
 any of the methods mentioned in the table. That is because \code{Amelia}
@@ -840,7 +840,7 @@ precise and/or robust against outliers than standard (generalized) linear
 regression.  Moreover, both \code{mice} and \code{mi} implement methods for
 multiple imputation, which allows for estimation of the imputation variance.
 Such methods are beyond the scope of the current text. The \code{imputation}
-package has a function \code{lmImpute} but is uses the row number as auxiliary
+package has a function \code{lmImpute} but it uses the row number as auxiliary
 variable which limits its practical usability to cases where the row number is
 directly related to a covariate value.
 
@@ -868,7 +868,7 @@ single vector can be applied with the \code{impute} function of the
 \code{Hmisc} package.
 <<>>=
 data(women)
-# add some missingess
+# add some missings
 height <- women$height
 height[c(6,9)] <- NA
 height
@@ -955,7 +955,7 @@ iris2 <- kNN(iris)
 The \code{kNN} function determines the $k$ (default: 5) nearest neighbors of a
 record with missing values. For numerical variables the median of the $k$
 nearest neighbors is used as imputation value, for categorical variables the
-category that most often occurs in the $k$ nearest neighbors is used. Both the
+category that most often occurs in the $k$ nearest neighbors is used. Both 
 these functions may be replaced by the user. Finally, \code{kNN} prints (negatively)
 the time it took to complete the imputation. We encourage the reader to execute
 the above code and experiment further. 
@@ -983,7 +983,7 @@ is minimized and $\bs{x}$ obeys a given set of (in)equality restrictions
 \bs{Ax} \leq \bs{b}.
 \end{equation}
 
-As practical example consider the following script.
+As a practical example consider the following script.
 <<>>=
 library(editrules)
 library(rspa)
@@ -1041,18 +1041,18 @@ Checking with rules
   \begin{itemize}
     \item \code{Species} should be one of the following values: \code{setosa}, \code{versicolor} or \code{virginica}.
     \item All measured numerical properties of an iris should be positive.
-    \item The petal length of an iris is at least 2 times its petal width
+    \item The petal length of an iris is at least 2 times its petal width.
     \item The sepal length of an iris cannot exceed 30 cm.
     \item The sepals of an iris are longer than its petals.
   \end{itemize}
     Define these rules in a separate text file and read them into \R{} using \code{editfile} (package \code{editrules}).
     Print the resulting constraint object.
     
-  \item Determine how often each rules is broken (\code{violatedEdits}). Also summarize and plot the result.
+  \item Determine how often each rule is broken (\code{violatedEdits}). Also summarize and plot the result.
   \item What percentage of the data has no errors?
   \item Find out which observations have too long petals using the result of \code{violatedEdits}. 
   \item Find outliers in sepal length using \code{boxplot} and \code{boxplot.stats}. Retrieve the corrosponding observations and
-   look at the other values. Any ideas what might have happened? Set the outliers to \code{NA} (or a value that you may more    appropiate)
+   look at the other values. Any ideas what might have happened? Set the outliers to \code{NA} (or a value that you find more appropiate)
 \end{subex}
 \end{exercise}
 

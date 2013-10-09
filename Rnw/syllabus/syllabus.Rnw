@@ -118,7 +118,7 @@ Data cleaning, or data preparation is an essential part of statistical
 analysis. In fact, in practice it is often more time-consuming than the
 statistical analyses itself. These lecture notes describe a range of
 techniques, implemented in the \R{} statistical environment, that allow the
-reader to build data cleaning scripts for date suffering from a wide range of
+reader to build data cleaning scripts for data suffering from a wide range of
 errors and inconsistencies, in textual format. These notes cover technical as
 well as subject-matter related aspects of data cleaning. Technical aspects
 include data reading, type conversion and string matching and manipulation.
@@ -160,7 +160,7 @@ fixed width font as well.
 while their values (when textual) are written in fixed-width format. For
 example: the \emph{Marital status} is \code{unmarried}.
 
-\textbf{Data.} Sometimes small data files are used as an example. These files
+\textbf{Data.} Sometimes small data files are used as an example. These files are
 printed in the document in fixed-width format and can easily be copied from the
 \code{pdf} file. Here is an example:
 \lstinputlisting[
