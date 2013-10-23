@@ -103,7 +103,7 @@
 \begin{document}
 <<setup, include=FALSE, cache=FALSE>>=
 library(knitr)
-opts_chunk$set(size='small')
+opts_chunk$set(size='small',highlight=FALSE)
 @
 
 <<include=FALSE >>=
