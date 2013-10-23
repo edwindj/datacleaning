@@ -27,7 +27,6 @@
 % nicer bold symbols in math mode:
 \newcommand{\bs}[1]{\mathbf{#1}}
 
-
 % Footnote symbols to avoid confusion with superscript references.
 \renewcommand*{\thefootnote}{\fnsymbol{footnote}}
 
@@ -91,7 +90,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% preamble stuff
 \title{An introduction to data cleaning with R}
-\Projectnummer{208418, digidiv: PPM-2013-09-22-EJNE-MPLO}
+\Projectnummer{208418}
+\Sector{PPM-2013-09-22-EJNE-MPLO}
 \Keywords{methodology, data editing, statistical software}
 
 \author{Edwin de Jonge and Mark van der Loo}
