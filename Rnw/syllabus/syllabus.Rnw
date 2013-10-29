@@ -1,4 +1,4 @@
-\documentclass[rapport, english]{cbsreport}
+\documentclass[rapport, english, zwart,internet]{cbsreport}
 %\usepackage{todonotes}
 \usepackage[english]{babel}
 \usepackage{amsmath}
@@ -111,7 +111,7 @@ library(rspa)
 library(editrules)
 @
 \maketitle
-\thispagestyle{empty}
+%\thispagestyle{empty}
 
 \begin{abstract}
 Data cleaning, or data preparation is an essential part of statistical
@@ -132,7 +132,7 @@ These lecture notes are based on a tutorial given by the authors at the
 
 
 \newpage
-\thispagestyle{empty}
+%\thispagestyle{empty}
 \tableofcontents
 
 \newpage
